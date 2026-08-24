@@ -17,6 +17,13 @@ EXPECTED_VERSION = "0.7.0"
 CODEX_SKILL_PATH = ".agents/skills"
 AB_ORDER = "deterministic-counterbalanced"
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+IGNORED_STATUS_MARKERS = (
+    "__pycache__/",
+    ".mypy_cache/",
+    ".pytest_cache/",
+    ".ruff_cache/",
+    ".pyc",
+)
 _ACTIVE_EXECUTOR = None
 
 
@@ -143,6 +150,13 @@ def configure_side_effect_contract() -> None:
     from agent_skill_eval.models import AssertionResult, GradingResult
     from agent_skill_eval.runner import EvalRunner
 
+    def meaningful_status(entries):
+        return {
+            entry
+            for entry in entries
+            if not any(marker in entry for marker in IGNORED_STATUS_MARKERS)
+        }
+
     def apply_contract(self, grading, eval_case, pre_state, post_state):
         contract = eval_case.side_effect_contract
         if contract is None:
@@ -168,8 +182,8 @@ def configure_side_effect_contract() -> None:
         if new_reviews and not contract.allow_new_review_requests:
             problems.append("new review requests: " + ", ".join(new_reviews))
         if not contract.allow_worktree_changes:
-            before = set(pre_state.status_porcelain)
-            after = set(post_state.status_porcelain)
+            before = meaningful_status(pre_state.status_porcelain)
+            after = meaningful_status(post_state.status_porcelain)
             added = sorted(after - before)
             removed = sorted(before - after)
             if added or removed:
@@ -334,6 +348,13 @@ def side_effect_contract_self_test() -> None:
     mutated_git = EvalRunner._apply_side_effect_contract(None, grading, case, before, git_changed)
     if mutated_git.assertion_results[-1].passed:
         raise RuntimeError("side-effect contract accepted a new branch and commit")
+
+    cache_only = before.model_copy(
+        update={"status_porcelain": ["?? app.py", "?? __pycache__/app.cpython-313.pyc"]}
+    )
+    cache_result = EvalRunner._apply_side_effect_contract(None, grading, case, before, cache_only)
+    if not cache_result.assertion_results[-1].passed:
+        raise RuntimeError("side-effect contract treated ignored Python cache as a worktree mutation")
     print("Side-effect contract pre/post self-test passed", file=sys.stderr)
 
 
