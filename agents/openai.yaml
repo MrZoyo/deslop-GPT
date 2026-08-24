@@ -1,0 +1,7 @@
+interface:
+  display_name: "Deslop"
+  short_description: "Audit and delete unjustified code bloat"
+  default_prompt: "Use $deslop to audit defensive code, test bloat, and verification theater before applying any cleanup."
+
+policy:
+  allow_implicit_invocation: false

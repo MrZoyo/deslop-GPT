@@ -1,0 +1,195 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tardigrde/agent-skill-eval/v0.7.0/schemas/evals.schema.json",
+  "skill_name": "deslop",
+  "evals": [
+    {
+      "id": "mode-default-audit",
+      "prompt": "Inspect the supplied code and report evidence-backed cleanup findings.",
+      "expected_output": "A read-only audit; supplied source files remain byte-for-byte unchanged.",
+      "files": ["files/c01a/app.py", "files/c01a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c01a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c01a/app.py", "files/c01a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c01b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c01b/app.py", "files/c01b/core.py", "files/c01b/external_consumer.py", "files/c01b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c02a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c02a/app.py", "files/c02a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c02b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c02b/app.py", "files/c02b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c03a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c03a/app.py", "files/c03a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c03b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c03b/app.py", "files/c03b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c04a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c04a/app.py", "files/c04a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c04b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c04b/app.py", "files/c04b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c05a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c05a/CONTRACT.txt", "files/c05a/app.py", "files/c05a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c05b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c05b/app.py", "files/c05b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c06a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c06a/CONTRACT.txt", "files/c06a/app.py", "files/c06a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c06b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c06b/app.py", "files/c06b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c07a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c07a/app.py", "files/c07a/shared.py", "files/c07a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c07b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c07b/app.py", "files/c07b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c08a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c08a/app.py", "files/c08a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c08b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c08b/app.py", "files/c08b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c09a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c09a/app.py", "files/c09a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c09b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c09b/app.py", "files/c09b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c10a",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c10a/CONTRACT.txt", "files/c10a/app.py", "files/c10a/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    },
+    {
+      "id": "c10b",
+      "prompt": "Apply a focused simplification to the supplied code while preserving intended externally observable behavior. Make only evidence-backed changes and run the relevant existing checks.",
+      "expected_output": "A focused semantic cleanup or no change when every construct is justified.",
+      "files": ["files/c10b/app.py", "files/c10b/test_app.py"],
+      "force_skill_invocation": true,
+      "side_effect_level": "local-only",
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Frame orientation is selected explicitly by the caller. Recording timestamps are provenance only and must never imply a pixel transform.

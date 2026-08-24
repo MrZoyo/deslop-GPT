@@ -1,0 +1,22 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - name: Validate skill and fixtures
+        run: python scripts/validate_corpus.py
+      - name: Validate agent-skill-eval manifest
+        run: uvx --from agent-skill-eval==0.7.0 agent-skill-eval validate evals/evals.json

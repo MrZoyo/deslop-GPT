@@ -1,0 +1,1 @@
+The motion threshold is caller-configurable and defaults to 0.001. Frame size and RGB processing mode are fixed properties of this adapter.

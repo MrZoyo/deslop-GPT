@@ -1,0 +1,25 @@
+{
+  "schema": "deslop-adjudication-v1",
+  "cases": [
+    {"id": "c01a", "pair": 1, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted dead-code deletion plus hidden episode behavior"},
+    {"id": "c01b", "pair": 1, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "external consumer imports a published facade"},
+    {"id": "c02a", "pair": 2, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted redundant-test deletion plus per-result behavior"},
+    {"id": "c02b", "pair": 2, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "fault injection verifies atomic cleanup and propagation"},
+    {"id": "c03a", "pair": 3, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted consolidation with two real parser consumers"},
+    {"id": "c03b", "pair": 3, "expected": "preserve", "evidence": "confirmed_boundary", "source": "mcap_preprocess_pipeline", "oracle": "two versioned format stages and temporary lifecycle"},
+    {"id": "c04a", "pair": 4, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted removal of contradictory error controls"},
+    {"id": "c04b", "pair": 4, "expected": "preserve", "evidence": "confirmed_boundary", "source": "mcap_preprocess_pipeline", "oracle": "current and documented legacy protocol samples"},
+    {"id": "c05a", "pair": 5, "expected": "simplify", "evidence": "confirmed_change", "source": "mcap_preprocess_pipeline", "oracle": "accepted removal of timestamp-derived image transformation"},
+    {"id": "c05b", "pair": 5, "expected": "preserve", "evidence": "confirmed_boundary", "source": "mcap_preprocess_pipeline", "oracle": "invalid external format and calibrated geometry inputs"},
+    {"id": "c06a", "pair": 6, "expected": "simplify", "evidence": "confirmed_change", "source": "mcap_preprocess_pipeline", "oracle": "accepted removal of adapter default-value lock"},
+    {"id": "c06b", "pair": 6, "expected": "preserve", "evidence": "confirmed_boundary", "source": "mcap_preprocess_pipeline", "oracle": "mixed format and temporal-gap fault injection"},
+    {"id": "c07a", "pair": 7, "expected": "simplify", "evidence": "confirmed_change", "source": "mcap_preprocess_pipeline", "oracle": "accepted sanitizer owner consolidation"},
+    {"id": "c07b", "pair": 7, "expected": "preserve", "evidence": "confirmed_boundary", "source": "mcap_preprocess_pipeline", "oracle": "secret leakage and idempotence checks"},
+    {"id": "c08a", "pair": 8, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted deletion of test that invoked no production code"},
+    {"id": "c08b", "pair": 8, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "independent physical event and numerical failure cases"},
+    {"id": "c09a", "pair": 9, "expected": "simplify", "evidence": "confirmed_change", "source": "mcap_preprocess_pipeline", "oracle": "accepted per-episode payload deduplication"},
+    {"id": "c09b", "pair": 9, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "tampered persisted ledger against frozen manifest"},
+    {"id": "c10a", "pair": 10, "expected": "simplify", "evidence": "confirmed_change", "source": "mcap_preprocess_pipeline", "oracle": "accepted support for multiple embedded calibration variants"},
+    {"id": "c10b", "pair": 10, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "persisted media corruption after producer write"}
+  ]
+}

@@ -1,0 +1,1 @@
+Each recording carries its own independently embedded calibration. A batch may contain multiple valid calibration variants; preserve every episode-to-variant mapping instead of forcing one batch-wide digest.
