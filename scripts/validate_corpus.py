@@ -15,6 +15,13 @@ EVALS_PATH = ROOT / "evals" / "evals.json"
 ADJUDICATION_PATH = ROOT / "evals" / "adjudication.json"
 CALIBRATION_ROOT = ROOT / "evals" / "calibration"
 CASE_ID = re.compile(r"c(0[1-9]|10)[ab]")
+SIDE_EFFECT_CONTRACT_KEYS = {
+    "allow_new_local_branches",
+    "allow_new_remote_branches",
+    "allow_new_commits",
+    "allow_new_review_requests",
+    "allow_worktree_changes",
+}
 
 
 def fail(message: str) -> None:
@@ -55,6 +62,8 @@ def validate_skill() -> None:
         fail("agent-skill-eval compatibility wrapper must pin version 0.7.0")
     if 'CODEX_SKILL_PATH = ".agents/skills"' not in wrapper_text:
         fail("agent-skill-eval compatibility wrapper must use .agents/skills")
+    if 'command in {"run", "self-test"}' not in wrapper_text:
+        fail("agent-skill-eval compatibility wrapper must expose self-test")
 
 
 def validate_eval_case(case: dict[str, object], seen_ids: set[str]) -> None:
@@ -71,6 +80,18 @@ def validate_eval_case(case: dict[str, object], seen_ids: set[str]) -> None:
         fail(f"{case_id}: explicit-only skill must be force-invoked")
     if case.get("side_effect_level") != "local-only":
         fail(f"{case_id}: fixtures must remain local-only")
+    side_effect_contract = case.get("side_effect_contract")
+    if not isinstance(side_effect_contract, dict):
+        fail(f"{case_id}: missing side_effect_contract")
+    if set(side_effect_contract) != SIDE_EFFECT_CONTRACT_KEYS:
+        fail(f"{case_id}: incomplete side_effect_contract")
+    expected_worktree_changes = case_id != "mode-default-audit"
+    expected_contract = {
+        key: expected_worktree_changes if key == "allow_worktree_changes" else False
+        for key in SIDE_EFFECT_CONTRACT_KEYS
+    }
+    if side_effect_contract != expected_contract:
+        fail(f"{case_id}: unexpected side_effect_contract")
     if case.get("assertions") != []:
         fail(f"{case_id}: visible assertions would leak adjudication; use the hidden hook")
 
@@ -103,6 +124,10 @@ def load_adjudication() -> tuple[dict[str, dict[str, object]], int, int]:
     document = json.loads(ADJUDICATION_PATH.read_text())
     if document.get("schema") != "deslop-adjudication-v1":
         fail("unexpected adjudication schema")
+    if document.get("corpus_role") != "development":
+        fail("public corpus must be labeled as development data")
+    if document.get("corpus_version") != "dev-v1":
+        fail("unexpected development corpus version")
     expected_fixture_count = document.get("expected_fixture_count")
     expected_baseline_tests = document.get("expected_baseline_tests")
     if not isinstance(expected_fixture_count, int) or expected_fixture_count < 1:
@@ -190,16 +215,20 @@ def result_with_prefix(rows: list[dict[str, object]], prefix: str) -> dict[str, 
 
 
 def materialize_calibration(case_id: str, expected: object, destination: Path) -> Path:
-    fixture = ROOT / "evals" / "files" / case_id
     state_name = "golden_after" if expected == "simplify" else "destructive_mutant"
     overlay = CALIBRATION_ROOT / case_id / state_name
     overlay_files = sorted(path for path in overlay.rglob("*") if path.is_file())
     if not overlay_files:
         fail(f"{case_id}: missing {state_name} calibration overlay")
+    return materialize_overlay(case_id, state_name, destination)
 
+
+def materialize_overlay(case_id: str, state_name: str, destination: Path) -> Path:
+    fixture = ROOT / "evals" / "files" / case_id
+    overlay = CALIBRATION_ROOT / case_id / state_name
     workspace = destination / case_id
     shutil.copytree(fixture, workspace)
-    for path in overlay_files:
+    for path in sorted(path for path in overlay.rglob("*") if path.is_file()):
         relative = path.relative_to(overlay)
         target = workspace / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -211,16 +240,20 @@ def run_hidden_grader_calibration(adjudication: dict[str, dict[str, object]]) ->
     for case_id, case in sorted(adjudication.items()):
         before_rows = run_grader(case_id, ROOT / "evals" / "files" / case_id)
         before_passed = bool(before_rows[0]["passed"])
+        before_tests = bool(result_with_prefix(before_rows, "remaining unittest suite")["passed"])
         before_budget = bool(result_with_prefix(before_rows, "negative-change budget")["passed"])
+        if not before_tests:
+            fail(f"{case_id}: before-state remaining tests must pass")
         if not before_budget:
             fail(f"{case_id}: unchanged fixture exceeds the negative-change budget")
 
         with tempfile.TemporaryDirectory() as directory:
             calibrated_workspace = materialize_calibration(case_id, case["expected"], Path(directory))
             calibrated_rows = run_grader(case_id, calibrated_workspace)
-            if case["expected"] == "simplify":
-                run_tests(calibrated_workspace, f"{case_id} golden_after")
         calibrated_passed = bool(calibrated_rows[0]["passed"])
+        calibrated_tests = bool(
+            result_with_prefix(calibrated_rows, "remaining unittest suite")["passed"]
+        )
         calibrated_budget = bool(
             result_with_prefix(calibrated_rows, "negative-change budget")["passed"]
         )
@@ -232,15 +265,81 @@ def run_hidden_grader_calibration(adjudication: dict[str, dict[str, object]]) ->
                 fail(f"{case_id}: simplify before-state must fail hidden adjudication")
             if not calibrated_passed:
                 fail(f"{case_id}: golden_after must pass hidden adjudication")
+            if not calibrated_tests:
+                fail(f"{case_id}: golden_after remaining tests must pass")
         else:
             if not before_passed:
                 fail(f"{case_id}: preserve before-state must pass hidden adjudication")
             if calibrated_passed:
                 fail(f"{case_id}: destructive_mutant must fail hidden adjudication")
 
-    audit_rows = run_grader("mode-default-audit", ROOT / "evals" / "files" / "c01a")
-    if not audit_rows[0]["passed"]:
+
+
+def run_alternate_valid_calibration(adjudication: dict[str, dict[str, object]]) -> int:
+    count = 0
+    for case_id, case in sorted(adjudication.items()):
+        alternate_root = CALIBRATION_ROOT / case_id / "alternate_valid"
+        if not alternate_root.is_dir():
+            continue
+        if case["expected"] != "simplify":
+            fail(f"{case_id}: alternate_valid currently belongs only to simplify cases")
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = materialize_overlay(case_id, "alternate_valid", Path(directory))
+            rows = run_grader(case_id, workspace)
+        if not rows[0]["passed"]:
+            fail(f"{case_id}: alternate_valid must pass hidden adjudication")
+        if not result_with_prefix(rows, "remaining unittest suite").get("passed"):
+            fail(f"{case_id}: alternate_valid remaining tests must pass")
+        if not result_with_prefix(rows, "negative-change budget").get("passed"):
+            fail(f"{case_id}: alternate_valid exceeds the negative-change budget")
+        count += 1
+    if count < 1:
+        fail("at least one alternate_valid calibration is required")
+    return count
+
+
+def run_audit_calibration() -> None:
+    fixture = ROOT / "evals" / "files" / "c01a"
+    unchanged_rows = run_grader("mode-default-audit", fixture)
+    if not unchanged_rows[0]["passed"]:
         fail("default audit hidden check does not pass on unchanged input")
+
+    mutations = {
+        "added file": lambda workspace: (workspace / "audit-report.md").write_text("report\n"),
+        "modified file": lambda workspace: (workspace / "app.py").write_text("modified\n"),
+        "deleted file": lambda workspace: (workspace / "test_app.py").unlink(),
+    }
+    for label, mutate in mutations.items():
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "audit"
+            shutil.copytree(fixture, workspace)
+            mutate(workspace)
+            rows = run_grader("mode-default-audit", workspace)
+        if rows[0]["passed"]:
+            fail(f"default audit accepted an {label}")
+
+
+def run_remaining_tests_calibration() -> None:
+    fixture = ROOT / "evals" / "files" / "c01b"
+    mutations = {
+        "failing test": lambda workspace: (workspace / "test_app.py").write_text(
+            "import unittest\n\n"
+            "class BrokenTests(unittest.TestCase):\n"
+            "    def test_broken(self):\n"
+            "        self.fail('broken')\n"
+        ),
+        "zero tests": lambda workspace: (workspace / "test_app.py").unlink(),
+    }
+    for label, mutate in mutations.items():
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "remaining-tests"
+            shutil.copytree(fixture, workspace)
+            mutate(workspace)
+            rows = run_grader("c01b", workspace)
+        if not rows[0]["passed"]:
+            fail(f"{label} calibration no longer isolates the remaining-test gate")
+        if result_with_prefix(rows, "remaining unittest suite").get("passed") is not False:
+            fail(f"remaining-test gate accepted {label}")
 
 
 def run_negative_budget_calibration() -> None:
@@ -282,8 +381,8 @@ def run_negative_budget_calibration() -> None:
 def run_skill_discovery_calibration() -> None:
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
-        workspace = root / "c01b"
-        shutil.copytree(ROOT / "evals" / "files" / "c01b", workspace)
+        workspace = root / "audit"
+        shutil.copytree(ROOT / "evals" / "files" / "c01a", workspace)
         installed_skill = workspace / ".agents" / "skills" / "deslop"
         installed_skill.mkdir(parents=True)
         skill_bytes = (ROOT / "SKILL.md").read_bytes()
@@ -297,7 +396,7 @@ def run_skill_discovery_calibration() -> None:
         metadata_path = root / "run_meta.json"
         metadata_path.write_text("{}")
         rows = run_grader(
-            "c01b",
+            "mode-default-audit",
             workspace,
             {
                 "ASE_AGENT": "codex",
@@ -307,17 +406,33 @@ def run_skill_discovery_calibration() -> None:
             },
         )
 
-        discovery = result_with_prefix(rows, "Codex skill discovery")
-        if discovery.get("passed") is not True:
-            fail(f"Codex skill-discovery calibration failed: {discovery.get('evidence')}")
-        if result_with_prefix(rows, "negative-change budget").get("passed") is not True:
-            fail("negative-change budget counted the canonical Codex Skill payload")
+        if len(rows) != 1 or not rows[0]["passed"]:
+            fail("successful Skill discovery changed audit scoring")
+        if any(str(row.get("text", "")).startswith("Codex skill discovery") for row in rows):
+            fail("successful Skill discovery emitted a scored assertion")
         metadata = json.loads(metadata_path.read_text())
         skill_discovery = metadata.get("skill_discovery", {})
+        if skill_discovery.get("verified") is not True:
+            fail("run metadata did not mark Codex Skill discovery as verified")
         if skill_discovery.get("path") != ".agents/skills/deslop":
             fail("run metadata did not record the canonical Codex Skill path")
         if skill_discovery.get("content_hash") != expected_hash:
             fail("run metadata did not record the installed Skill content hash")
+
+        metadata_path.write_text("{}")
+        failed_rows = run_grader(
+            "mode-default-audit",
+            workspace,
+            {
+                "ASE_AGENT": "codex",
+                "ASE_WITH_SKILL": "1",
+                "ASE_SKILL_HASH": "wrong-hash",
+                "ASE_RUN_META_PATH": str(metadata_path),
+            },
+        )
+        discovery_failure = result_with_prefix(failed_rows, "Codex skill discovery")
+        if discovery_failure.get("passed") is not False:
+            fail("failed Skill discovery did not emit a hard-fail assertion")
 
 
 def main() -> None:
@@ -350,6 +465,9 @@ def main() -> None:
     if test_count != expected_baseline_tests:
         fail(f"expected {expected_baseline_tests} baseline tests, got {test_count}")
     run_hidden_grader_calibration(adjudication)
+    alternate_count = run_alternate_valid_calibration(adjudication)
+    run_audit_calibration()
+    run_remaining_tests_calibration()
     run_negative_budget_calibration()
     run_skill_discovery_calibration()
 
@@ -358,7 +476,8 @@ def main() -> None:
         f"{preserve_count} confirmed boundaries, 1 authorization control; "
         f"{fixture_count} fixtures and {test_count} baseline tests passed; "
         "hidden grader calibration passed 20/20 positive + 20/20 negative states; "
-        "recursive negative-change and canonical skill-discovery calibrations passed."
+        f"{alternate_count} alternate valid states passed; zero-mutation audit, recursive "
+        "negative-change, remaining-test, and score-neutral skill-discovery calibrations passed."
     )
 
 

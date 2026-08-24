@@ -11,7 +11,7 @@ Focus on three primary targets:
 
 1. defensive bloat inside trusted code paths;
 2. tests that add volume without distinct behavioral signal;
-3. verification theater in which a producer verifies information it generated itself.
+3. circular verification where the verifier has no meaningfully independent information, authority, or failure domain.
 
 Dead code, wrapper towers, speculative abstractions, compatibility residue, and comment noise are secondary targets when evidence supports deletion.
 
@@ -63,6 +63,14 @@ A pattern match is a lead, not a verdict. Confidence measures evidence, not ugli
 - **MEDIUM:** Apparently unnecessary, but caller, history, compatibility, or boundary context must be resolved first.
 - **LOW / PRESERVE BY DEFAULT:** Security, authorization, concurrency, persistence, transactions, external protocols, resource limits, supported compatibility, and numerical invariants whose purpose may not be locally visible.
 
+In apply mode:
+
+- **HIGH:** Delete or simplify once the local impact and evidence are resolved.
+- **MEDIUM:** Do not modify until the missing caller, contract, history, compatibility, or boundary question is resolved.
+- **LOW:** Preserve unless direct contrary evidence is established.
+
+Apply authorization is permission to edit, not permission to resolve uncertainty in favor of deletion.
+
 Read references only when relevant:
 
 - [references/code-smells.md](references/code-smells.md) for defensive code, wrappers, abstractions, dead paths, and comments.
@@ -109,6 +117,7 @@ If an apply pass produces substantial positive net lines, more indirection, or m
 - Do not replace a deleted abstraction with another abstraction.
 - Preserve small obvious duplication when a shared abstraction would encode no shared knowledge.
 - Remove comments that restate code; preserve concise explanations of external constraints, surprising invariants, scientific assumptions, security boundaries, and real tradeoffs.
+- In `deep apply`, exclude generated code, vendored dependencies, `third_party` trees, migration history, lockfiles, and externally generated snapshots or artifacts unless the user explicitly includes them or repository evidence establishes direct ownership.
 
 Verification adds value only when the verifier has information, authority, or a failure domain meaningfully independent from the producer. Otherwise investigate the entire self-verification chain for deletion, including tests that exist only to protect it.
 

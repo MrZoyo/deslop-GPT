@@ -2,10 +2,14 @@
 import ast
 import hashlib
 import importlib
+import inspect
 import json
 import os
+import re
+import subprocess
 import sys
 import tempfile
+from datetime import datetime
 from pathlib import Path
 
 
@@ -76,7 +80,8 @@ def structural_metrics(root: Path, file_names: set[str]) -> dict[str, int]:
         "branches": 0,
         "try_blocks": 0,
         "except_handlers": 0,
-        "asserts": 0,
+        "python_assert_statements": 0,
+        "unittest_assert_calls": 0,
         "isinstance_calls": 0,
         "imports": 0,
         "abstractions": 0,
@@ -126,15 +131,14 @@ def structural_metrics(root: Path, file_names: set[str]) -> dict[str, int]:
             elif isinstance(node, ast.ExceptHandler):
                 metrics["except_handlers"] += 1
             elif isinstance(node, ast.Assert):
-                metrics["asserts"] += 1
+                metrics["python_assert_statements"] += 1
             elif isinstance(node, (ast.Import, ast.ImportFrom)):
                 metrics["imports"] += 1
-            elif (
-                isinstance(node, ast.Call)
-                and isinstance(node.func, ast.Name)
-                and node.func.id == "isinstance"
-            ):
-                metrics["isinstance_calls"] += 1
+            elif isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id == "isinstance":
+                    metrics["isinstance_calls"] += 1
+                if isinstance(node.func, ast.Attribute) and node.func.attr.startswith("assert"):
+                    metrics["unittest_assert_calls"] += 1
     return metrics
 
 
@@ -174,9 +178,9 @@ def skill_content_hash(skill_path: Path) -> str:
     return digest.hexdigest()
 
 
-def verify_codex_skill_discovery(workspace: Path) -> str | None:
+def verify_codex_skill_discovery(workspace: Path) -> None:
     if os.environ.get("ASE_AGENT") != "codex" or os.environ.get("ASE_WITH_SKILL") != "1":
-        return None
+        return
     relative_path = Path(".agents/skills/deslop")
     installed_path = workspace / relative_path
     require((installed_path / "SKILL.md").is_file(), "deslop was not installed at .agents/skills")
@@ -192,7 +196,33 @@ def verify_codex_skill_discovery(workspace: Path) -> str | None:
         "content_hash": actual_hash,
     }
     metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
-    return f"canonical_path={relative_path.as_posix()}; content_hash={actual_hash}"
+
+
+def run_remaining_tests(workspace: Path) -> tuple[bool, str]:
+    environment = os.environ.copy()
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "unittest", "-v"],
+            cwd=workspace,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        return False, "unittest timed out after 30 seconds"
+
+    output = "\n".join(part for part in (result.stdout, result.stderr) if part)
+    match = re.search(r"Ran (\d+) tests?", output)
+    test_count = int(match.group(1)) if match else 0
+    passed = result.returncode == 0 and test_count > 0
+    summary = next(
+        (line.strip() for line in reversed(output.splitlines()) if line.strip()),
+        "no unittest summary",
+    )
+    return passed, f"exit_code={result.returncode}; tests={test_count}; summary={summary}"
 
 
 def function_names(workspace: Path, name: str = "app.py") -> set[str]:
@@ -240,15 +270,33 @@ def c01b(workspace: Path) -> str:
 
 def c02a(workspace: Path) -> str:
     tests = source(workspace, "test_app.py")
-    require("assertTrue(all(" not in tests, "redundant aggregate assertion remains")
-    test_names = {
-        node.name
+    test_functions = [
+        node
         for node in ast.walk(ast.parse(tests))
-        if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
-    }
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name.startswith("test_")
+    ]
+    require(len(test_functions) == 1, "stronger test was removed or replaced with test proliferation")
+    calls = [node for node in ast.walk(test_functions[0]) if isinstance(node, ast.Call)]
     require(
-        test_names == {"test_completed_results_have_output_directories"},
-        "stronger per-result test was removed or replaced with test proliferation",
+        any(isinstance(call.func, ast.Name) and call.func.id == "completed_results" for call in calls),
+        "remaining test does not exercise completed_results",
+    )
+    require(
+        any(isinstance(call.func, ast.Attribute) and call.func.attr == "is_dir" for call in calls),
+        "remaining test does not check the output-directory contract",
+    )
+    require(
+        not any(
+            isinstance(call.func, ast.Attribute)
+            and call.func.attr.startswith("assert")
+            and call.args
+            and isinstance(call.args[0], ast.Call)
+            and isinstance(call.args[0].func, ast.Name)
+            and call.args[0].func.id == "all"
+            for call in calls
+        ),
+        "redundant aggregate assertion remains",
     )
     app = load_module(workspace)
     with tempfile.TemporaryDirectory() as directory:
@@ -356,10 +404,25 @@ def c04b(workspace: Path) -> str:
 def c05a(workspace: Path) -> str:
     text = source(workspace, "app.py")
     require("ROTATION_CUTOFF" not in text, "timestamp cutoff inference remains")
-    require("recorded_at" not in text, "recording time still controls pixel transform")
     app = load_module(workspace)
+    parameters = inspect.signature(app.transform_frame).parameters
+    require("rotate" in parameters, "explicit rotation control was removed")
+    require(
+        parameters["rotate"].default is inspect.Parameter.empty,
+        "rotation can still be inferred instead of being selected explicitly",
+    )
     require(app.transform_frame((1, 2, 3), rotate=True) == (3, 2, 1), "explicit rotation broke")
     require(app.transform_frame((1, 2, 3), rotate=False) == (1, 2, 3), "explicit identity broke")
+    if "recorded_at" in parameters:
+        for recorded_at in (datetime(2020, 1, 1), datetime(2030, 1, 1)):
+            require(
+                app.transform_frame((1, 2, 3), rotate=True, recorded_at=recorded_at) == (3, 2, 1),
+                "recording time changes explicit rotation",
+            )
+            require(
+                app.transform_frame((1, 2, 3), rotate=False, recorded_at=recorded_at) == (1, 2, 3),
+                "recording time changes explicit identity",
+            )
     return "implicit timestamp inference removed; explicit orientation remains"
 
 
@@ -417,12 +480,22 @@ def c06b(workspace: Path) -> str:
 
 def c07a(workspace: Path) -> str:
     text = source(workspace, "app.py")
-    require("hashlib" not in text, "adapter still owns duplicate hashing implementation")
     require("SENSITIVE_TOKENS" not in text, "adapter still duplicates sensitive-key policy")
     app = load_module(workspace)
-    result = app.sanitize_metadata({"episode": {"config_text": "private", "source": "robot"}})
+    shared = load_module(workspace, "shared")
+    records = {"episode": {"config_text": "private", "source": "robot"}}
+    result = app.sanitize_metadata(records)
+    require(result == shared.sanitize_metadata(records), "adapter diverges from the shared sanitizer owner")
     require(result["episode"]["config_text"] == "<omitted>", "compatibility contract broke")
     require(result["episode"]["source"] == "robot", "safe metadata was lost")
+    if app.sanitize_metadata is not shared.sanitize_metadata:
+        marker = {"delegated": {"value": "yes"}}
+        original = shared.sanitize_metadata
+        shared.sanitize_metadata = lambda _records: marker
+        try:
+            require(app.sanitize_metadata({}) is marker, "adapter does not delegate to the shared owner")
+        finally:
+            shared.sanitize_metadata = original
     return "duplicate sanitizer removed while adapter entrypoint delegates to shared owner"
 
 
@@ -544,9 +617,20 @@ CHECKS = {
 
 def audit_unchanged(workspace: Path) -> str:
     fixture = ROOT / "evals" / "files" / "c01a"
-    for name in ("app.py", "test_app.py"):
-        require((workspace / name).read_bytes() == (fixture / name).read_bytes(), f"audit modified {name}")
-    return "default audit left every supplied source byte unchanged"
+    expected_files = files_under(fixture)
+    actual_files = files_under(workspace)
+    require(
+        actual_files == expected_files,
+        "audit changed file set: "
+        f"added={sorted(actual_files - expected_files)}; "
+        f"deleted={sorted(expected_files - actual_files)}",
+    )
+    for relative in sorted(expected_files):
+        require(
+            (workspace / relative).read_bytes() == (fixture / relative).read_bytes(),
+            f"audit modified {relative}",
+        )
+    return "default audit left the workspace unchanged"
 
 
 def main() -> None:
@@ -570,7 +654,7 @@ def main() -> None:
         }
     )
     try:
-        discovery_evidence = verify_codex_skill_discovery(workspace)
+        verify_codex_skill_discovery(workspace)
     except Exception as error:
         results.append(
             {
@@ -579,16 +663,15 @@ def main() -> None:
                 "evidence": f"{type(error).__name__}: {error}",
             }
         )
-    else:
-        if discovery_evidence is not None:
-            results.append(
-                {
-                    "text": "Codex skill discovery uses the canonical path",
-                    "passed": True,
-                    "evidence": discovery_evidence,
-                }
-            )
     if case_id != "mode-default-audit":
+        tests_passed, tests_evidence = run_remaining_tests(workspace)
+        results.append(
+            {
+                "text": f"remaining unittest suite for {case_id}",
+                "passed": tests_passed,
+                "evidence": tests_evidence,
+            }
+        )
         fixture = ROOT / "evals" / "files" / case_id
         budget_passed, budget_evidence = negative_change_budget(fixture, workspace)
         results.append(

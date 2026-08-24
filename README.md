@@ -81,9 +81,9 @@ Evaluation tools that influenced this repository:
 
 No superiority claim is made without comparable repeated runs.
 
-## Evaluation corpus
+## Development corpus
 
-The repository includes 20 de-identified Python fixtures derived from accepted changes and active contracts in two robotics data pipelines, plus one authorization case:
+The public `dev-v1` corpus includes 20 de-identified Python fixtures derived from accepted changes and active contracts in two robotics data pipelines, plus one authorization case. These cases informed Skill and grader design; they are development data, not a held-out basis for public performance claims.
 
 | Class | Cases | Purpose |
 | --- | ---: | --- |
@@ -91,13 +91,14 @@ The repository includes 20 de-identified Python fixtures derived from accepted c
 | Confirmed change | 10 | Measure simplification recall |
 | Authorization control | 1 | Confirm default invocation stays read-only |
 | Baseline contract tests | 37 | Confirm every fixture starts valid |
-| Grader calibration states | 40 | Prove every oracle accepts a valid state and rejects an invalid state |
+| Core grader calibration states | 40 | Prove every oracle accepts a valid state and rejects an invalid state |
+| Alternate valid states | 3 | Reject historical-patch-only grading in representative cases |
 
 The pairs cover dead helpers versus public façades, redundant tests versus atomic publication, duplicated option definitions versus real format orchestration, contradictory recovery flags versus precise compatibility fallback, inferred transforms versus external geometry gates, forced defaults versus data-quality constraints, duplicate sanitizers versus credential redaction, fixture-tautological tests versus physical outcome rules, duplicated payloads versus frozen ledgers, and batch-wide identity paranoia versus persisted media validation.
 
-Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay.
+Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, remaining-test execution, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay; representative simplify cases also have an `alternate_valid` implementation.
 
-Results are intentionally not published yet. Model scores will be added only after repeated, pinned, reproducible A/B runs. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
+Results are intentionally not published yet. Internal A/B runs may use `dev-v1`, but public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
 See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 
@@ -112,6 +113,11 @@ python3 scripts/validate_corpus.py
 `agent-skill-eval 0.7.0` installs Codex skills into the legacy `.codex/skills` path. All Codex benchmark commands therefore go through the pinned compatibility wrapper, which switches only Codex to the [current canonical `.agents/skills` path](https://developers.openai.com/codex/skills). Validate the harness format through `uv`:
 
 ```bash
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py self-test \
+  --skill . \
+  --evals evals/evals.json
+
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate evals/evals.json
 ```
@@ -131,7 +137,7 @@ uv run --with agent-skill-eval==0.7.0 \
   --post-grade-command "python3 evals/grade_case.py"
 ```
 
-Before any `run`, the wrapper binds the installation name to the suite/frontmatter name `deslop` even when the checkout directory is named `deslop-GPT`, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, then installs the evaluated Skill into a temporary `.agents/skills/deslop` directory and verifies the installed content hash. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook repeats the path/hash check in every with-Skill Codex workspace and records it under `skill_discovery` in `run_meta.json`. A run that bypasses the wrapper or hook must not be published as a benchmark result.
+Before any `run`, the wrapper binds the installation name to the suite/frontmatter name `deslop` even when the checkout directory is named `deslop-GPT`, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, then installs the evaluated Skill into a temporary `.agents/skills/deslop` directory and verifies the installed content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
 
 Record the model, reasoning effort, Codex version, harness version, run count, token cost, and wall time with every published result.
 
@@ -142,7 +148,7 @@ Metrics are ordered deliberately:
 1. **Behavior Preservation Rate** — proportion of `confirmed_boundary` cases that pass hidden contracts.
 2. **Slop Removal Recall** — proportion of `confirmed_change` cases that reach the adjudicated simpler state and pass hidden contracts.
 3. **Complexity Reduction** — net lines, wrappers, validators, branches, and test cases removed.
-4. **Cleanup-induced Slop** — production lines, test lines, helpers, abstractions, validations, and dependencies added by cleanup.
+4. **Cleanup-induced Slop** — new files plus deltas in production/test nonblank lines, functions, test functions, classes, control flow, exception machinery, assertion sites, `isinstance` calls, imports, and heuristic abstractions.
 
 A large deletion with a low preservation rate is failure. A cleanup that grows the codebase with new scaffolding is also failure.
 

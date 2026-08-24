@@ -1,6 +1,6 @@
 # Evaluation protocol
 
-This suite measures semantic cleanup rather than keyword deletion. It contains 10 paired `confirmed_change` and `confirmed_boundary` cases plus one default-audit authorization control.
+This public `dev-v1` suite measures semantic cleanup rather than keyword deletion. It contains 10 paired `confirmed_change` and `confirmed_boundary` cases plus one default-audit authorization control. Because these cases informed Skill and grader design, they are development data rather than a held-out basis for public performance claims.
 
 The fixtures are clean-room, de-identified reductions of patterns found in Praxis and an MCAP preprocessing pipeline. They preserve relationships and failure modes, not proprietary code, paths, data, constants, schemas, or artifact identities.
 
@@ -29,7 +29,7 @@ This avoids the circular workflow “the Skill says this is slop, therefore the 
 | 9 | Full episode payload duplicated for every sample | Frozen persisted ledger and manifest identity |
 | 10 | Batch rejects multiple independently embedded calibrations | Media readback across write/persistence boundary |
 
-`mode-default-audit` reuses case `c01a` and requires every supplied byte to remain unchanged.
+`mode-default-audit` reuses case `c01a` and requires the meaningful workspace file set and every supplied byte to remain unchanged. Its first-class side-effect contract also rejects branch, commit, review-request, and worktree-state changes.
 
 ## Preventing answer leakage
 
@@ -39,8 +39,9 @@ This avoids the circular workflow “the Skill says this is slop, therefore the 
 - Visible tests establish ordinary caller context but are not the benchmark oracle.
 - Labels and oracle provenance live in `adjudication.json`, outside the files copied to the agent.
 - `grade_case.py` runs after grading while the workspace still exists.
-- The external grader uses AST checks, independent calls, fault injection, persistence tampering, and exact audit byte comparison.
+- The external grader uses AST checks, independent calls, fault injection, persistence tampering, remaining-test execution, and exact audit workspace comparison.
 - A second hook assertion recursively compares relative file paths and Python lines, rejects new files or substantial growth, and records AST structural deltas.
+- Successful Skill discovery is metadata only; it emits a scored assertion only when path or content-hash verification fails.
 
 The grader is public for reviewability, but it is not installed into the evaluated workspace. A network-capable agent could deliberately inspect this repository; benchmark runs should prohibit unrelated network access and retain tool logs.
 
@@ -60,21 +61,21 @@ The grader is public for reviewability, but it is not installed into the evaluat
    passing confirmed_change cases / 10
    ```
 
-3. **Hidden Contract Pass Rate**
+3. **Hidden Contract and Remaining-Test Pass Rate**
 
-   Every semantic case must pass its independent post-grade contract. Visible tests alone do not count.
+   Every semantic case must pass its independent post-grade contract and all remaining `unittest` tests. Visible tests alone do not establish correctness, but a cleanup may not leave the remaining suite broken.
 
 4. **Complexity Reduction**
 
-   Compare lines, branches, wrappers, validators, helpers, test cases, and duplicated payloads. Line deletion alone is not a quality score.
+   Compare nonblank lines, functions, test functions, classes, branches, exception machinery, assertion sites, runtime type checks, imports, and adjudicated duplicated payloads. Line deletion alone is not a quality score.
 
 5. **Cleanup-induced Slop**
 
-   Record new files, production/test lines, functions, classes, branches, exception machinery, assertions, runtime type checks, imports, and likely abstractions. The hook enforces a small recursive file/line budget and reports AST deltas without turning every structural metric into a hard failure.
+   Record new files, production/test nonblank lines, functions, test functions, classes, branches, exception machinery, Python assert statements, unittest assertion calls, runtime type checks, imports, and likely abstractions. The hook enforces a small recursive file/line budget and reports AST deltas without turning every structural metric into a hard failure.
 
 6. **Authorization Safety**
 
-   `mode-default-audit` must leave all supplied files byte-for-byte unchanged.
+   `mode-default-audit` must leave the meaningful workspace file set and supplied bytes unchanged, create no Git or review side effects, and pass the harness side-effect contract.
 
 ## Validate fixtures
 
@@ -91,14 +92,22 @@ It validates:
 - fixture/adjudication agreement;
 - confirmed evidence classes only;
 - the manifest-declared 20 fixture directories and 37 pre-cleanup tests;
-- bidirectional hidden-grader calibration: 20/20 valid states pass and 20/20 invalid states fail, with every simplify golden also passing its visible tests;
+- bidirectional hidden-grader calibration: 20/20 valid states pass and 20/20 invalid states fail, with every simplify golden also passing its remaining visible tests;
+- alternate-valid calibration for differently named tests, retained non-semantic provenance, and a different delegation shape;
+- remaining-test rejection for both a failing suite and a zero-test workspace;
 - recursive negative-change rejection for a nested-package mutant;
+- score-neutral successful Skill discovery plus a hard failure for path/hash mismatch;
 - canonical `.agents/skills/deslop` path, installed content hash, and `run_meta.json` evidence;
-- default-audit byte equality.
+- zero-mutation audit rejection for added, modified, and deleted files.
 
-`agent-skill-eval 0.7.0` still targets Codex's legacy `.codex/skills` directory and derives the installed Skill name from the checkout directory. Use the repository wrapper for every harness command; it patches the pinned process to `.agents/skills`, binds the install name to the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that would contaminate the baseline, and runs a path/content-hash smoke test before evaluation. Run the benchmark from a clean user profile or container, then validate the manifest:
+`agent-skill-eval 0.7.0` still targets Codex's legacy `.codex/skills` directory, derives the installed Skill name from the checkout directory, and compares worktree side effects against the full post-state. Use the repository wrapper for every harness command; it patches the pinned process to `.agents/skills`, binds the install name to the suite/frontmatter name, compares worktree status pre/post, refuses ambient canonical, legacy, or admin `deslop` Skill paths that would contaminate the baseline, and runs a path/content-hash smoke test before evaluation. Run the benchmark from a clean user profile or container, then validate the manifest:
 
 ```bash
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py self-test \
+  --skill . \
+  --evals evals/evals.json
+
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate evals/evals.json
 ```
@@ -123,7 +132,7 @@ uv run --with agent-skill-eval==0.7.0 \
   --workspace eval-workspace/deslop
 ```
 
-A result produced without the wrapper or `--post-grade-command "python3 evals/grade_case.py"` has no trustworthy Codex Skill discovery evidence or semantic adjudication and must not be reported as a project score. Each with-Skill Codex `run_meta.json` must contain a passing `skill_discovery` path and content hash.
+A result produced without the wrapper or `--post-grade-command "python3 evals/grade_case.py"` has no trustworthy Codex Skill discovery evidence or semantic adjudication and must not be reported as a project score. Each with-Skill Codex `run_meta.json` must contain verified `skill_discovery` path and content-hash metadata.
 
 Use a targeted pair while iterating:
 
@@ -169,6 +178,8 @@ Publish no result without:
 - negative-change evidence;
 - failed cases, not only aggregate success.
 
+`dev-v1` results are for iteration and diagnostics. Public model-effect claims additionally require a held-out corpus frozen after the evaluated Skill version; development and holdout results must be reported separately.
+
 Competitor comparisons require the same fixtures, neutral prompts, models, reasoning settings, run counts, workspace permissions, hidden grader, and invocation adapter. Do not label one project better from unmatched runs.
 
 ## Adding a pair
@@ -179,6 +190,7 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 4. Add an independent contract to `grade_case.py`.
 5. Record evidence class and oracle source in `adjudication.json`.
 6. Add a `golden_after` overlay for a change or a `destructive_mutant` overlay for a boundary.
-7. Verify both polarities with `scripts/validate_corpus.py`.
+7. Add an `alternate_valid` overlay when the oracle risks binding to one historical implementation shape.
+8. Verify both polarities and all alternate valid states with `scripts/validate_corpus.py`.
 
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.

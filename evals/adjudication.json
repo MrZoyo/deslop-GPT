@@ -1,5 +1,7 @@
 {
   "schema": "deslop-adjudication-v1",
+  "corpus_role": "development",
+  "corpus_version": "dev-v1",
   "expected_fixture_count": 20,
   "expected_baseline_tests": 37,
   "cases": [

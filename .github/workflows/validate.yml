@@ -17,6 +17,14 @@ jobs:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
       - name: Validate skill and fixtures
-        run: python scripts/validate_corpus.py
+        run: python3 scripts/validate_corpus.py
+      - name: Validate harness wrapper
+        run: |
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py self-test \
+            --skill . \
+            --evals evals/evals.json
       - name: Validate agent-skill-eval manifest
-        run: uvx --from agent-skill-eval==0.7.0 agent-skill-eval validate evals/evals.json
+        run: |
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/evals.json
