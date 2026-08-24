@@ -40,7 +40,7 @@ This avoids the circular workflow “the Skill says this is slop, therefore the 
 - Labels and oracle provenance live in `adjudication.json`, outside the files copied to the agent.
 - `grade_case.py` runs after grading while the workspace still exists.
 - The external grader uses AST checks, independent calls, fault injection, persistence tampering, and exact audit byte comparison.
-- A second hook assertion records nonblank Python line delta and rejects new top-level files or substantial growth.
+- A second hook assertion recursively compares relative file paths and Python lines, rejects new files or substantial growth, and records AST structural deltas.
 
 The grader is public for reviewability, but it is not installed into the evaluated workspace. A network-capable agent could deliberately inspect this repository; benchmark runs should prohibit unrelated network access and retain tool logs.
 
@@ -70,7 +70,7 @@ The grader is public for reviewability, but it is not installed into the evaluat
 
 5. **Cleanup-induced Slop**
 
-   Record new files, production/test lines, helpers, abstractions, validations, wrappers, dependencies, and compatibility paths. The hook enforces a small per-fixture growth budget; full repository benchmarks should report richer structural metrics.
+   Record new files, production/test lines, functions, classes, branches, exception machinery, assertions, runtime type checks, imports, and likely abstractions. The hook enforces a small recursive file/line budget and reports AST deltas without turning every structural metric into a hard failure.
 
 6. **Authorization Safety**
 
@@ -81,7 +81,7 @@ The grader is public for reviewability, but it is not installed into the evaluat
 Run the dependency-free validator:
 
 ```bash
-python scripts/validate_corpus.py
+python3 scripts/validate_corpus.py
 ```
 
 It validates:
@@ -90,14 +90,17 @@ It validates:
 - neutral IDs and prompts;
 - fixture/adjudication agreement;
 - confirmed evidence classes only;
-- 20 fixture directories and 37 pre-cleanup tests;
-- hidden-grader polarity: all 10 before-state changes fail and all 10 boundaries pass;
+- the manifest-declared 20 fixture directories and 37 pre-cleanup tests;
+- bidirectional hidden-grader calibration: 20/20 valid states pass and 20/20 invalid states fail, with every simplify golden also passing its visible tests;
+- recursive negative-change rejection for a nested-package mutant;
+- canonical `.agents/skills/deslop` path, installed content hash, and `run_meta.json` evidence;
 - default-audit byte equality.
 
-Then validate the current `agent-skill-eval` manifest:
+`agent-skill-eval 0.7.0` still targets Codex's legacy `.codex/skills` directory and derives the installed Skill name from the checkout directory. Use the repository wrapper for every harness command; it patches the pinned process to `.agents/skills`, binds the install name to the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that would contaminate the baseline, and runs a path/content-hash smoke test before evaluation. Run the benchmark from a clean user profile or container, then validate the manifest:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval validate evals/evals.json
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate evals/evals.json
 ```
 
 The harness may warn that the suite has no visible assertions or natural-trigger case. Both are intentional: semantic assertions come from the post-grade hook, and `deslop` is explicit-invocation only.
@@ -107,7 +110,8 @@ The harness may warn that the suite has no visible assertions or natural-trigger
 Pin every reproducibility variable and include the required post-grade hook:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py run \
   --skill . \
   --evals evals/evals.json \
   --agent codex \
@@ -115,16 +119,17 @@ uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
   --reasoning-effort medium \
   --runs 5 \
   --baseline \
-  --post-grade-command "python evals/grade_case.py" \
+  --post-grade-command "python3 evals/grade_case.py" \
   --workspace eval-workspace/deslop
 ```
 
-A result produced without `--post-grade-command "python evals/grade_case.py"` has no semantic adjudication and must not be reported as a project score.
+A result produced without the wrapper or `--post-grade-command "python3 evals/grade_case.py"` has no trustworthy Codex Skill discovery evidence or semantic adjudication and must not be reported as a project score. Each with-Skill Codex `run_meta.json` must contain a passing `skill_discovery` path and content hash.
 
 Use a targeted pair while iterating:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py run \
   --skill . \
   --evals evals/evals.json \
   --agent codex \
@@ -134,13 +139,14 @@ uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
   --baseline \
   --eval-id c01a \
   --eval-id c01b \
-  --post-grade-command "python evals/grade_case.py"
+  --post-grade-command "python3 evals/grade_case.py"
 ```
 
 Generate the harness report:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval report \
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py report \
   --workspace eval-workspace/deslop \
   --format markdown \
   --show-evidence
@@ -172,6 +178,7 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 3. Keep labels and expected action out of workspace files and prompts.
 4. Add an independent contract to `grade_case.py`.
 5. Record evidence class and oracle source in `adjudication.json`.
-6. Verify before-state polarity with `scripts/validate_corpus.py`.
+6. Add a `golden_after` overlay for a change or a `destructive_mutant` overlay for a boundary.
+7. Verify both polarities with `scripts/validate_corpus.py`.
 
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.

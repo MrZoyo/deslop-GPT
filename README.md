@@ -91,10 +91,11 @@ The repository includes 20 de-identified Python fixtures derived from accepted c
 | Confirmed change | 10 | Measure simplification recall |
 | Authorization control | 1 | Confirm default invocation stays read-only |
 | Baseline contract tests | 37 | Confirm every fixture starts valid |
+| Grader calibration states | 40 | Prove every oracle accepts a valid state and rejects an invalid state |
 
 The pairs cover dead helpers versus public façades, redundant tests versus atomic publication, duplicated option definitions versus real format orchestration, contradictory recovery flags versus precise compatibility fallback, inferred transforms versus external geometry gates, forced defaults versus data-quality constraints, duplicate sanitizers versus credential redaction, fixture-tautological tests versus physical outcome rules, duplicated payloads versus frozen ledgers, and batch-wide identity paranoia versus persisted media validation.
 
-Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, authorization checks, and a negative-change budget after the agent finishes.
+Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay.
 
 Results are intentionally not published yet. Model scores will be added only after repeated, pinned, reproducible A/B runs. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
@@ -102,22 +103,24 @@ See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 
 ## Validate locally
 
-The dependency-free validator checks Skill structure, explicit-only policy, neutral prompts, corpus/adjudication agreement, confirmed evidence classes, all baseline tests, hidden-grader polarity, and authorization safety:
+The dependency-free validator checks Skill structure, explicit-only policy, neutral prompts, corpus/adjudication agreement, confirmed evidence classes, the manifest-declared 20 fixtures and 37 baseline tests, bidirectional hidden-grader calibration, recursive negative-change enforcement, canonical Skill discovery metadata, and authorization safety:
 
 ```bash
-python scripts/validate_corpus.py
+python3 scripts/validate_corpus.py
 ```
 
-Validate the harness format with `agent-skill-eval` through `uv`:
+`agent-skill-eval 0.7.0` installs Codex skills into the legacy `.codex/skills` path. All Codex benchmark commands therefore go through the pinned compatibility wrapper, which switches only Codex to the [current canonical `.agents/skills` path](https://developers.openai.com/codex/skills). Validate the harness format through `uv`:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval validate evals/evals.json
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate evals/evals.json
 ```
 
 Run a real Codex A/B evaluation with a deliberately pinned model and repeated trials:
 
 ```bash
-uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py run \
   --skill . \
   --evals evals/evals.json \
   --agent codex \
@@ -125,10 +128,10 @@ uvx --from agent-skill-eval==0.7.0 agent-skill-eval run \
   --reasoning-effort medium \
   --runs 5 \
   --baseline \
-  --post-grade-command "python evals/grade_case.py"
+  --post-grade-command "python3 evals/grade_case.py"
 ```
 
-The post-grade hook is required. A run without it has no semantic score and must not be published as a benchmark result.
+Before any `run`, the wrapper binds the installation name to the suite/frontmatter name `deslop` even when the checkout directory is named `deslop-GPT`, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, then installs the evaluated Skill into a temporary `.agents/skills/deslop` directory and verifies the installed content hash. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook repeats the path/hash check in every with-Skill Codex workspace and records it under `skill_discovery` in `run_meta.json`. A run that bypasses the wrapper or hook must not be published as a benchmark result.
 
 Record the model, reasoning effort, Codex version, harness version, run count, token cost, and wall time with every published result.
 
@@ -155,9 +158,11 @@ references/verification-and-trust.md
 references/scientific-code.md    Numerical false-positive guidance
 evals/evals.json                 agent-skill-eval suite
 evals/adjudication.json          Labels, evidence class, and oracle source
+evals/calibration/               Positive goldens and destructive mutants
 evals/grade_case.py              Hidden post-grade contracts and budget checks
 evals/files/                     Neutral paired fixtures copied to agents
 scripts/validate_corpus.py       Dependency-free static validation
+scripts/run_agent_skill_eval.py  Pinned canonical-path compatibility wrapper
 ```
 
 Fixtures live under `evals/files/` rather than a top-level `fixtures/` directory because that is the native safe-path layout consumed by `agent-skill-eval`.

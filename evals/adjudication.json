@@ -1,5 +1,7 @@
 {
   "schema": "deslop-adjudication-v1",
+  "expected_fixture_count": 20,
+  "expected_baseline_tests": 37,
   "cases": [
     {"id": "c01a", "pair": 1, "expected": "simplify", "evidence": "confirmed_change", "source": "Praxis", "oracle": "accepted dead-code deletion plus hidden episode behavior"},
     {"id": "c01b", "pair": 1, "expected": "preserve", "evidence": "confirmed_boundary", "source": "Praxis", "oracle": "external consumer imports a published facade"},

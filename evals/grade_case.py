@@ -10,6 +10,30 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+IGNORED_WORKSPACE_PARTS = {
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+}
+INSTALLED_SKILL_PREFIXES = {
+    "claude-code": (".claude", "skills", "deslop"),
+    "codex": (".agents", "skills", "deslop"),
+    "fake": (".fake", "skills", "deslop"),
+    "opencode": (".opencode", "skills", "deslop"),
+}
+ABSTRACTION_TOKENS = (
+    "abc",
+    "adapter",
+    "factory",
+    "manager",
+    "protocol",
+    "provider",
+    "registry",
+    "validator",
+)
 
 
 def require(condition: bool, message: str) -> None:
@@ -19,6 +43,156 @@ def require(condition: bool, message: str) -> None:
 
 def source(workspace: Path, name: str) -> str:
     return (workspace / name).read_text()
+
+
+def files_under(root: Path) -> set[str]:
+    files = set()
+    installed_skill_prefix = None
+    if os.environ.get("ASE_WITH_SKILL") == "1":
+        installed_skill_prefix = INSTALLED_SKILL_PREFIXES.get(os.environ.get("ASE_AGENT", ""))
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root)
+        if any(part in IGNORED_WORKSPACE_PARTS for part in relative.parts):
+            continue
+        if (
+            installed_skill_prefix is not None
+            and relative.parts[: len(installed_skill_prefix)] == installed_skill_prefix
+        ):
+            continue
+        files.add(relative.as_posix())
+    return files
+
+
+def structural_metrics(root: Path, file_names: set[str]) -> dict[str, int]:
+    metrics = {
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "test_lines": 0,
+        "functions": 0,
+        "test_functions": 0,
+        "classes": 0,
+        "branches": 0,
+        "try_blocks": 0,
+        "except_handlers": 0,
+        "asserts": 0,
+        "isinstance_calls": 0,
+        "imports": 0,
+        "abstractions": 0,
+        "syntax_errors": 0,
+    }
+    branch_types = (ast.If, ast.IfExp, ast.For, ast.AsyncFor, ast.While, ast.Match)
+    try_types = (ast.Try, ast.TryStar)
+
+    for file_name in sorted(name for name in file_names if name.endswith(".py")):
+        path = root / file_name
+        text = path.read_text()
+        nonblank_lines = sum(bool(line.strip()) for line in text.splitlines())
+        metrics["nonblank_python_lines"] += nonblank_lines
+        relative_path = Path(file_name)
+        is_test = relative_path.name.startswith("test_") or "tests" in relative_path.parts
+        metrics["test_lines" if is_test else "production_lines"] += nonblank_lines
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            metrics["syntax_errors"] += 1
+            continue
+
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                metrics["functions"] += 1
+                if node.name.startswith("test_"):
+                    metrics["test_functions"] += 1
+                if any(token in node.name.lower() for token in ABSTRACTION_TOKENS):
+                    metrics["abstractions"] += 1
+            elif isinstance(node, ast.ClassDef):
+                metrics["classes"] += 1
+                base_names = {
+                    base.id
+                    for base in node.bases
+                    if isinstance(base, ast.Name)
+                }
+                if any(token in node.name.lower() for token in ABSTRACTION_TOKENS) or base_names & {
+                    "ABC",
+                    "Protocol",
+                }:
+                    metrics["abstractions"] += 1
+
+            if isinstance(node, branch_types):
+                metrics["branches"] += 1
+            elif isinstance(node, try_types):
+                metrics["try_blocks"] += 1
+            elif isinstance(node, ast.ExceptHandler):
+                metrics["except_handlers"] += 1
+            elif isinstance(node, ast.Assert):
+                metrics["asserts"] += 1
+            elif isinstance(node, (ast.Import, ast.ImportFrom)):
+                metrics["imports"] += 1
+            elif (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and node.func.id == "isinstance"
+            ):
+                metrics["isinstance_calls"] += 1
+    return metrics
+
+
+def negative_change_budget(fixture: Path, workspace: Path) -> tuple[bool, str]:
+    original_files = files_under(fixture)
+    current_files = files_under(workspace)
+    new_files = sorted(current_files - original_files)
+    deleted_files = sorted(original_files - current_files)
+    original_metrics = structural_metrics(fixture, original_files)
+    current_metrics = structural_metrics(workspace, current_files)
+    structural_delta = {
+        name: current_metrics[name] - original_metrics[name]
+        for name in original_metrics
+    }
+    line_delta = structural_delta["nonblank_python_lines"]
+    passed = not new_files and line_delta <= 3
+    evidence = (
+        f"nonblank_python_line_delta={line_delta}; "
+        f"new_files={new_files}; deleted_files={deleted_files}; "
+        f"structural_delta={json.dumps(structural_delta, sort_keys=True, separators=(',', ':'))}"
+    )
+    return passed, evidence
+
+
+def skill_content_hash(skill_path: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(skill_path.rglob("*")):
+        if path.is_dir():
+            continue
+        relative = path.relative_to(skill_path)
+        if any(part in {"evals", "__pycache__", ".git"} for part in relative.parts):
+            continue
+        digest.update(relative.as_posix().encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def verify_codex_skill_discovery(workspace: Path) -> str | None:
+    if os.environ.get("ASE_AGENT") != "codex" or os.environ.get("ASE_WITH_SKILL") != "1":
+        return None
+    relative_path = Path(".agents/skills/deslop")
+    installed_path = workspace / relative_path
+    require((installed_path / "SKILL.md").is_file(), "deslop was not installed at .agents/skills")
+    actual_hash = skill_content_hash(installed_path)
+    expected_hash = os.environ["ASE_SKILL_HASH"]
+    require(actual_hash == expected_hash, "installed deslop content hash differs from the run metadata")
+
+    metadata_path = Path(os.environ["ASE_RUN_META_PATH"])
+    metadata = json.loads(metadata_path.read_text())
+    metadata["skill_discovery"] = {
+        "verified": True,
+        "path": relative_path.as_posix(),
+        "content_hash": actual_hash,
+    }
+    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
+    return f"canonical_path={relative_path.as_posix()}; content_hash={actual_hash}"
 
 
 def function_names(workspace: Path, name: str = "app.py") -> set[str]:
@@ -395,30 +569,33 @@ def main() -> None:
             "evidence": evidence,
         }
     )
+    try:
+        discovery_evidence = verify_codex_skill_discovery(workspace)
+    except Exception as error:
+        results.append(
+            {
+                "text": "Codex skill discovery uses the canonical path",
+                "passed": False,
+                "evidence": f"{type(error).__name__}: {error}",
+            }
+        )
+    else:
+        if discovery_evidence is not None:
+            results.append(
+                {
+                    "text": "Codex skill discovery uses the canonical path",
+                    "passed": True,
+                    "evidence": discovery_evidence,
+                }
+            )
     if case_id != "mode-default-audit":
         fixture = ROOT / "evals" / "files" / case_id
-        original_names = {path.name for path in fixture.iterdir() if path.is_file()}
-        current_names = {
-            path.name
-            for path in workspace.iterdir()
-            if path.is_file() and not path.name.startswith(".")
-        }
-        new_files = sorted(current_names - original_names)
-        original_lines = sum(
-            sum(bool(line.strip()) for line in path.read_text().splitlines())
-            for path in fixture.glob("*.py")
-        )
-        current_lines = sum(
-            sum(bool(line.strip()) for line in path.read_text().splitlines())
-            for path in workspace.glob("*.py")
-        )
-        delta = current_lines - original_lines
-        budget_passed = not new_files and delta <= 3
+        budget_passed, budget_evidence = negative_change_budget(fixture, workspace)
         results.append(
             {
                 "text": f"negative-change budget for {case_id}",
                 "passed": budget_passed,
-                "evidence": f"nonblank_python_line_delta={delta}; new_files={new_files}",
+                "evidence": budget_evidence,
             }
         )
     print(json.dumps(results))
