@@ -1,0 +1,303 @@
+{
+  "schema": "deslop-eval-result-v2",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-24T21:31:38Z",
+    "completed_at_utc": "2026-08-24T21:36:06Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "67d168c88274cbe8484448314f30c2cf75c7996b",
+    "dirty_at_run_start": false,
+    "corpus": "dev-v1",
+    "corpus_role": "development",
+    "cases": [
+      "mode-default-audit"
+    ]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.0",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 1,
+    "model_calls": 2,
+    "concurrency": 1,
+    "max_retries": null,
+    "timeout_seconds": null,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_policy": "not-pinned-by-harness",
+    "local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/grade_case.py"
+  },
+  "task_order": {
+    "strategy": "deterministic-counterbalanced",
+    "rule": "Skill first when case_position + run_index is even; baseline first otherwise.",
+    "case_order": [
+      "mode-default-audit"
+    ],
+    "actual_start_order": [
+      {
+        "sequence": 1,
+        "case_id": "mode-default-audit",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 2,
+        "case_id": "mode-default-audit",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      }
+    ]
+  },
+  "skill": {
+    "path": "skill/deslop",
+    "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706",
+    "payload_files": 7,
+    "payload_bytes": 34126,
+    "payload_words": 4352
+  },
+  "aggregate": {
+    "without_skill": {
+      "behavior_preservation": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "slop_removal_recall": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "semantic_full_case_pass": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "authorization_safety": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "all_case_full_pass": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "pass_at_k": 1.0,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 1.0,
+      "mean_wall_time_seconds": 150.698,
+      "mean_total_tokens": 93747.0,
+      "mean_cached_input_tokens": 58880.0,
+      "mean_non_cached_input_tokens": 32551.0,
+      "mean_output_tokens": 2316.0,
+      "mean_reasoning_output_tokens": 950.0,
+      "mean_completed_commands": 6.0,
+      "mean_agent_messages": 3.0
+    },
+    "with_skill": {
+      "behavior_preservation": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "slop_removal_recall": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "semantic_full_case_pass": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "authorization_safety": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "all_case_full_pass": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "pass_at_k": 1.0,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 1.0,
+      "mean_wall_time_seconds": 116.575,
+      "mean_total_tokens": 149552.0,
+      "mean_cached_input_tokens": 126976.0,
+      "mean_non_cached_input_tokens": 17951.0,
+      "mean_output_tokens": 4625.0,
+      "mean_reasoning_output_tokens": 2330.0,
+      "mean_completed_commands": 5.0,
+      "mean_agent_messages": 6.0
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate_secondary": 0.0,
+      "mean_wall_time_seconds": -34.123000000000005,
+      "mean_total_tokens": 55805.0,
+      "mean_cached_input_tokens": 68096.0,
+      "mean_non_cached_input_tokens": -14600.0,
+      "mean_output_tokens": 2309.0,
+      "mean_reasoning_output_tokens": 1380.0,
+      "mean_completed_commands": -1.0,
+      "mean_agent_messages": 3.0,
+      "behavior_preservation": null,
+      "slop_removal_recall": null,
+      "semantic_full_case_pass": null,
+      "authorization_safety": 0.0,
+      "all_case_full_pass": 0.0
+    },
+    "paired_outcomes": {
+      "summary": {
+        "all": {
+          "both_pass": 1,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 1
+        },
+        "simplify": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 0
+        },
+        "preserve": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 0
+        },
+        "audit": {
+          "both_pass": 1,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 1
+        }
+      },
+      "cases": [
+        {
+          "case_id": "mode-default-audit",
+          "expected": "audit",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        }
+      ]
+    },
+    "all_calls": {
+      "total_tokens": 243299,
+      "input_tokens": 236358,
+      "cached_input_tokens": 185856,
+      "non_cached_input_tokens": 50502,
+      "output_tokens": 6941,
+      "reasoning_output_tokens": 3280,
+      "cost_usd": null,
+      "cost_note": "Unavailable; at least one run reported no cost telemetry."
+    }
+  },
+  "runs": [
+    {
+      "sequence": 1,
+      "case_id": "mode-default-audit",
+      "expected": "audit",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 2,
+      "assertions_total": 2,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "default audit left the workspace unchanged"
+        }
+      },
+      "timing": {
+        "duration_ms": 116575,
+        "total_tokens": 149552,
+        "input_tokens": 144927,
+        "cached_input_tokens": 126976,
+        "non_cached_input_tokens": 17951,
+        "output_tokens": 4625,
+        "reasoning_output_tokens": 2330,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 0,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      }
+    },
+    {
+      "sequence": 2,
+      "case_id": "mode-default-audit",
+      "expected": "audit",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 2,
+      "assertions_total": 2,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "default audit left the workspace unchanged"
+        }
+      },
+      "timing": {
+        "duration_ms": 150698,
+        "total_tokens": 93747,
+        "input_tokens": 91431,
+        "cached_input_tokens": 58880,
+        "non_cached_input_tokens": 32551,
+        "output_tokens": 2316,
+        "reasoning_output_tokens": 950,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 0,
+        "agent_messages": 3
+      }
+    }
+  ]
+}

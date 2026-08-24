@@ -1,0 +1,3839 @@
+{
+  "schema": "deslop-eval-result-v2",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-24T20:25:16Z",
+    "completed_at_utc": "2026-08-24T21:28:05Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "a865d51405b167e2e54513ea704b7e0f060be197",
+    "dirty_at_run_start": false,
+    "corpus": "dev-v1",
+    "corpus_role": "development",
+    "cases": [
+      "mode-default-audit",
+      "c01a",
+      "c01b",
+      "c02a",
+      "c02b",
+      "c03a",
+      "c03b",
+      "c04a",
+      "c04b",
+      "c05a",
+      "c05b",
+      "c06a",
+      "c06b",
+      "c07a",
+      "c07b",
+      "c08a",
+      "c08b",
+      "c09a",
+      "c09b",
+      "c10a",
+      "c10b"
+    ]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.0",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 1,
+    "model_calls": 42,
+    "concurrency": 1,
+    "max_retries": null,
+    "timeout_seconds": null,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_policy": "not-pinned-by-harness",
+    "local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/grade_case.py"
+  },
+  "task_order": {
+    "strategy": "deterministic-counterbalanced",
+    "rule": "Skill first when case_position + run_index is even; baseline first otherwise.",
+    "case_order": [
+      "mode-default-audit",
+      "c01a",
+      "c01b",
+      "c02a",
+      "c02b",
+      "c03a",
+      "c03b",
+      "c04a",
+      "c04b",
+      "c05a",
+      "c05b",
+      "c06a",
+      "c06b",
+      "c07a",
+      "c07b",
+      "c08a",
+      "c08b",
+      "c09a",
+      "c09b",
+      "c10a",
+      "c10b"
+    ],
+    "actual_start_order": [
+      {
+        "sequence": 1,
+        "case_id": "mode-default-audit",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 2,
+        "case_id": "mode-default-audit",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 3,
+        "case_id": "c01a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 4,
+        "case_id": "c01a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 5,
+        "case_id": "c01b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 6,
+        "case_id": "c01b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 7,
+        "case_id": "c02a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 8,
+        "case_id": "c02a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 9,
+        "case_id": "c02b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 10,
+        "case_id": "c02b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 11,
+        "case_id": "c03a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 12,
+        "case_id": "c03a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 13,
+        "case_id": "c03b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 14,
+        "case_id": "c03b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 15,
+        "case_id": "c04a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 16,
+        "case_id": "c04a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 17,
+        "case_id": "c04b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 18,
+        "case_id": "c04b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 19,
+        "case_id": "c05a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 20,
+        "case_id": "c05a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 21,
+        "case_id": "c05b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 22,
+        "case_id": "c05b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 23,
+        "case_id": "c06a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 24,
+        "case_id": "c06a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 25,
+        "case_id": "c06b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 26,
+        "case_id": "c06b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 27,
+        "case_id": "c07a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 28,
+        "case_id": "c07a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 29,
+        "case_id": "c07b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 30,
+        "case_id": "c07b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 31,
+        "case_id": "c08a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 32,
+        "case_id": "c08a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 33,
+        "case_id": "c08b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 34,
+        "case_id": "c08b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 35,
+        "case_id": "c09a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 36,
+        "case_id": "c09a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 37,
+        "case_id": "c09b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 38,
+        "case_id": "c09b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 39,
+        "case_id": "c10a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 40,
+        "case_id": "c10a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 41,
+        "case_id": "c10b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 42,
+        "case_id": "c10b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      }
+    ]
+  },
+  "skill": {
+    "path": "skill/deslop",
+    "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706",
+    "payload_files": 7,
+    "payload_bytes": 34126,
+    "payload_words": 4352
+  },
+  "aggregate": {
+    "without_skill": {
+      "behavior_preservation": {
+        "passed": 10,
+        "total": 10,
+        "rate": 1.0
+      },
+      "slop_removal_recall": {
+        "passed": 6,
+        "total": 10,
+        "rate": 0.6
+      },
+      "semantic_full_case_pass": {
+        "passed": 16,
+        "total": 20,
+        "rate": 0.8
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 1,
+        "rate": 0.0
+      },
+      "all_case_full_pass": {
+        "passed": 16,
+        "total": 21,
+        "rate": 0.7619047619047619
+      },
+      "pass_at_k": 0.7619047619047619,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 0.9285714285714286,
+      "mean_wall_time_seconds": 75.2872380952381,
+      "mean_total_tokens": 102114.76190476191,
+      "mean_cached_input_tokens": 83175.61904761905,
+      "mean_non_cached_input_tokens": 16741.095238095237,
+      "mean_output_tokens": 2198.0476190476193,
+      "mean_reasoning_output_tokens": 863.0952380952381,
+      "mean_completed_commands": 6.333333333333333,
+      "mean_agent_messages": 3.8095238095238093
+    },
+    "with_skill": {
+      "behavior_preservation": {
+        "passed": 7,
+        "total": 10,
+        "rate": 0.7
+      },
+      "slop_removal_recall": {
+        "passed": 8,
+        "total": 10,
+        "rate": 0.8
+      },
+      "semantic_full_case_pass": {
+        "passed": 15,
+        "total": 20,
+        "rate": 0.75
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 1,
+        "rate": 0.0
+      },
+      "all_case_full_pass": {
+        "passed": 15,
+        "total": 21,
+        "rate": 0.7142857142857143
+      },
+      "pass_at_k": 0.7142857142857143,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 0.9166666666666666,
+      "mean_wall_time_seconds": 103.25266666666667,
+      "mean_total_tokens": 165037.42857142858,
+      "mean_cached_input_tokens": 134875.42857142858,
+      "mean_non_cached_input_tokens": 26900.04761904762,
+      "mean_output_tokens": 3261.9523809523807,
+      "mean_reasoning_output_tokens": 1325.047619047619,
+      "mean_completed_commands": 6.714285714285714,
+      "mean_agent_messages": 4.809523809523809
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate_secondary": -0.011904761904761973,
+      "mean_wall_time_seconds": 27.965428571428575,
+      "mean_total_tokens": 62922.66666666667,
+      "mean_cached_input_tokens": 51699.80952380953,
+      "mean_non_cached_input_tokens": 10158.952380952382,
+      "mean_output_tokens": 1063.9047619047615,
+      "mean_reasoning_output_tokens": 461.95238095238096,
+      "mean_completed_commands": 0.3809523809523814,
+      "mean_agent_messages": 1.0,
+      "behavior_preservation": -0.30000000000000004,
+      "slop_removal_recall": 0.20000000000000007,
+      "semantic_full_case_pass": -0.050000000000000044,
+      "authorization_safety": 0.0,
+      "all_case_full_pass": -0.04761904761904756
+    },
+    "paired_outcomes": {
+      "summary": {
+        "all": {
+          "both_pass": 11,
+          "skill_improves": 4,
+          "skill_regresses": 5,
+          "both_fail": 1,
+          "total": 21
+        },
+        "simplify": {
+          "both_pass": 4,
+          "skill_improves": 4,
+          "skill_regresses": 2,
+          "both_fail": 0,
+          "total": 10
+        },
+        "preserve": {
+          "both_pass": 7,
+          "skill_improves": 0,
+          "skill_regresses": 3,
+          "both_fail": 0,
+          "total": 10
+        },
+        "audit": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 1,
+          "total": 1
+        }
+      },
+      "cases": [
+        {
+          "case_id": "c01a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": true,
+          "outcome": "skill_improves"
+        },
+        {
+          "case_id": "c01b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c02a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": true,
+          "outcome": "skill_improves"
+        },
+        {
+          "case_id": "c02b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c03a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": false,
+          "outcome": "skill_regresses"
+        },
+        {
+          "case_id": "c03b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c04a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c04b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c05a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": true,
+          "outcome": "skill_improves"
+        },
+        {
+          "case_id": "c05b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c06a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c06b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c07a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": false,
+          "outcome": "skill_regresses"
+        },
+        {
+          "case_id": "c07b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": false,
+          "outcome": "skill_regresses"
+        },
+        {
+          "case_id": "c08a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c08b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c09a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "c09b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": false,
+          "outcome": "skill_regresses"
+        },
+        {
+          "case_id": "c10a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": true,
+          "outcome": "skill_improves"
+        },
+        {
+          "case_id": "c10b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": false,
+          "outcome": "skill_regresses"
+        },
+        {
+          "case_id": "mode-default-audit",
+          "expected": "audit",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": false,
+          "outcome": "both_fail"
+        }
+      ]
+    },
+    "all_calls": {
+      "total_tokens": 5610196,
+      "input_tokens": 5495536,
+      "cached_input_tokens": 4579072,
+      "non_cached_input_tokens": 916464,
+      "output_tokens": 114660,
+      "reasoning_output_tokens": 45951,
+      "cost_usd": null,
+      "cost_note": "Unavailable; at least one run reported no cost telemetry."
+    }
+  },
+  "runs": [
+    {
+      "sequence": 1,
+      "case_id": "mode-default-audit",
+      "expected": "audit",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 1,
+      "assertions_total": 2,
+      "assertion_pass_rate": 0.5,
+      "gates": {
+        "side_effect_contract": {
+          "passed": false,
+          "evidence": "worktree status changed: added=['?? __pycache__/']; removed=[]"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "default audit left the workspace unchanged"
+        }
+      },
+      "timing": {
+        "duration_ms": 53342,
+        "total_tokens": 71749,
+        "input_tokens": 69802,
+        "cached_input_tokens": 50176,
+        "non_cached_input_tokens": 19626,
+        "output_tokens": 1947,
+        "reasoning_output_tokens": 686,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 4,
+        "completed_file_changes": 0,
+        "agent_messages": 3
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      }
+    },
+    {
+      "sequence": 2,
+      "case_id": "mode-default-audit",
+      "expected": "audit",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 1,
+      "assertions_total": 2,
+      "assertion_pass_rate": 0.5,
+      "gates": {
+        "side_effect_contract": {
+          "passed": false,
+          "evidence": "worktree status changed: added=['?? __pycache__/']; removed=[]"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "default audit left the workspace unchanged"
+        }
+      },
+      "timing": {
+        "duration_ms": 47963,
+        "total_tokens": 55363,
+        "input_tokens": 53762,
+        "cached_input_tokens": 43776,
+        "non_cached_input_tokens": 9986,
+        "output_tokens": 1601,
+        "reasoning_output_tokens": 771,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 4,
+        "completed_file_changes": 0,
+        "agent_messages": 2
+      }
+    },
+    {
+      "sequence": 3,
+      "case_id": "c01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: unused first_record helper remains"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-1,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 79440,
+        "total_tokens": 104389,
+        "input_tokens": 102482,
+        "cached_input_tokens": 73984,
+        "non_cached_input_tokens": 28498,
+        "output_tokens": 1907,
+        "reasoning_output_tokens": 551,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "diagnostics": {
+        "first_record_removed": false,
+        "digest_helper_removed": false,
+        "hashlib_dependency_removed": true,
+        "load_episode_preserved": true
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -1,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 4,
+      "case_id": "c01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "dead parser and digest helpers removed; episode reader still works"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-12; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-2,\"classes\":0,\"except_handlers\":0,\"functions\":-3,\"imports\":-1,\"isinstance_calls\":0,\"nonblank_python_lines\":-12,\"production_lines\":-12,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 77476,
+        "total_tokens": 130602,
+        "input_tokens": 128250,
+        "cached_input_tokens": 109568,
+        "non_cached_input_tokens": 18682,
+        "output_tokens": 2352,
+        "reasoning_output_tokens": 756,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "diagnostics": {
+        "first_record_removed": true,
+        "digest_helper_removed": true,
+        "hashlib_dependency_removed": true,
+        "load_episode_preserved": true
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -12,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -2,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -3,
+        "imports": -1,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -12,
+        "production_lines": -12,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 5,
+      "case_id": "c01b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "published facade remains usable by an external consumer"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-1,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 127074,
+        "total_tokens": 247148,
+        "input_tokens": 243369,
+        "cached_input_tokens": 213760,
+        "non_cached_input_tokens": 29609,
+        "output_tokens": 3779,
+        "reasoning_output_tokens": 1732,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 10,
+        "completed_file_changes": 2,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -1,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 6,
+      "case_id": "c01b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "published facade remains usable by an external consumer"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-1,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 72251,
+        "total_tokens": 92735,
+        "input_tokens": 90591,
+        "cached_input_tokens": 77824,
+        "non_cached_input_tokens": 12767,
+        "output_tokens": 2144,
+        "reasoning_output_tokens": 488,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 12,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -1,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 7,
+      "case_id": "c02a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: redundant aggregate assertion remains"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 80746,
+        "total_tokens": 119274,
+        "input_tokens": 116708,
+        "cached_input_tokens": 97024,
+        "non_cached_input_tokens": 19684,
+        "output_tokens": 2566,
+        "reasoning_output_tokens": 1356,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 8,
+      "case_id": "c02a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "aggregate assertion removed; stronger per-result contract remains"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-1; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-1,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":-1,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 82546,
+        "total_tokens": 131669,
+        "input_tokens": 129429,
+        "cached_input_tokens": 89600,
+        "non_cached_input_tokens": 39829,
+        "output_tokens": 2240,
+        "reasoning_output_tokens": 594,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -1,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": -1,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 9,
+      "case_id": "c02b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "failure propagates and exact partial output is removed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-1; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-1,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":-1,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 91212,
+        "total_tokens": 167734,
+        "input_tokens": 164977,
+        "cached_input_tokens": 123904,
+        "non_cached_input_tokens": 41073,
+        "output_tokens": 2757,
+        "reasoning_output_tokens": 1236,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -1,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": -1,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 10,
+      "case_id": "c02b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "failure propagates and exact partial output is removed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 112173,
+        "total_tokens": 162558,
+        "input_tokens": 159471,
+        "cached_input_tokens": 142080,
+        "non_cached_input_tokens": 17391,
+        "output_tokens": 3087,
+        "reasoning_output_tokens": 1555,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 10,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 11,
+      "case_id": "c03a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "one option owner serves both real parser consumers"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-2; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":1,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-2,\"production_lines\":-2,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 42153,
+        "total_tokens": 54435,
+        "input_tokens": 53331,
+        "cached_input_tokens": 45824,
+        "non_cached_input_tokens": 7507,
+        "output_tokens": 1104,
+        "reasoning_output_tokens": 213,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 3,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 1,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -2,
+        "production_lines": -2,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 12,
+      "case_id": "c03a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "one option owner serves both real parser consumers"
+        },
+        "remaining_tests": {
+          "passed": false,
+          "evidence": "exit_code=5; tests=0; summary=NO TESTS RAN",
+          "count": 0
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-14; new_files=[]; deleted_files=['test_app.py']; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":-1,\"except_handlers\":0,\"functions\":-1,\"imports\":-2,\"isinstance_calls\":0,\"nonblank_python_lines\":-14,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-10,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 126960,
+        "total_tokens": 211418,
+        "input_tokens": 207234,
+        "cached_input_tokens": 179456,
+        "non_cached_input_tokens": 27778,
+        "output_tokens": 4184,
+        "reasoning_output_tokens": 1799,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -14,
+        "new_files": [],
+        "deleted_files": [
+          "test_app.py"
+        ]
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": -1,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -2,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -14,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -10,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 13,
+      "case_id": "c03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "wrapper preserves two format boundaries and temporary lifecycle"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-3; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-3,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":-3,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 88640,
+        "total_tokens": 120264,
+        "input_tokens": 117057,
+        "cached_input_tokens": 97536,
+        "non_cached_input_tokens": 19521,
+        "output_tokens": 3207,
+        "reasoning_output_tokens": 1297,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -3,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -3,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": -3,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 14,
+      "case_id": "c03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "wrapper preserves two format boundaries and temporary lifecycle"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 90055,
+        "total_tokens": 145334,
+        "input_tokens": 142754,
+        "cached_input_tokens": 123136,
+        "non_cached_input_tokens": 19618,
+        "output_tokens": 2580,
+        "reasoning_output_tokens": 1596,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 15,
+      "case_id": "c04a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "contradictory recovery flags removed; production conversion fails directly"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-16; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-4,\"classes\":0,\"except_handlers\":-1,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-16,\"production_lines\":-16,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":-1,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 55725,
+        "total_tokens": 78666,
+        "input_tokens": 77068,
+        "cached_input_tokens": 62720,
+        "non_cached_input_tokens": 14348,
+        "output_tokens": 1598,
+        "reasoning_output_tokens": 377,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -16,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -4,
+        "classes": 0,
+        "except_handlers": -1,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -16,
+        "production_lines": -16,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": -1,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 16,
+      "case_id": "c04a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "contradictory recovery flags removed; production conversion fails directly"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-16; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-4,\"classes\":0,\"except_handlers\":-1,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-16,\"production_lines\":-16,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":-1,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 108061,
+        "total_tokens": 174748,
+        "input_tokens": 171562,
+        "cached_input_tokens": 153088,
+        "non_cached_input_tokens": 18474,
+        "output_tokens": 3186,
+        "reasoning_output_tokens": 1196,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -16,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -4,
+        "classes": 0,
+        "except_handlers": -1,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -16,
+        "production_lines": -16,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": -1,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 17,
+      "case_id": "c04b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "precise KeyError fallback preserves current and supported legacy protocols"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-2; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-2,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":-2,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 106136,
+        "total_tokens": 167793,
+        "input_tokens": 164281,
+        "cached_input_tokens": 126976,
+        "non_cached_input_tokens": 37305,
+        "output_tokens": 3512,
+        "reasoning_output_tokens": 1972,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -2,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": -2,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 18,
+      "case_id": "c04b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "precise KeyError fallback preserves current and supported legacy protocols"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-3; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":1,\"classes\":0,\"except_handlers\":-1,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-3,\"production_lines\":-3,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":-1,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 74976,
+        "total_tokens": 107260,
+        "input_tokens": 105093,
+        "cached_input_tokens": 93952,
+        "non_cached_input_tokens": 11141,
+        "output_tokens": 2167,
+        "reasoning_output_tokens": 666,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -3,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 1,
+        "classes": 0,
+        "except_handlers": -1,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -3,
+        "production_lines": -3,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": -1,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 19,
+      "case_id": "c05a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: rotation can still be inferred instead of being selected explicitly"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-3; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-3,\"production_lines\":-3,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 62485,
+        "total_tokens": 78573,
+        "input_tokens": 76994,
+        "cached_input_tokens": 67840,
+        "non_cached_input_tokens": 9154,
+        "output_tokens": 1579,
+        "reasoning_output_tokens": 349,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -3,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -3,
+        "production_lines": -3,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 20,
+      "case_id": "c05a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "implicit timestamp inference removed; explicit orientation remains"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-3; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-3,\"production_lines\":-3,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 77229,
+        "total_tokens": 115598,
+        "input_tokens": 113134,
+        "cached_input_tokens": 97536,
+        "non_cached_input_tokens": 15598,
+        "output_tokens": 2464,
+        "reasoning_output_tokens": 721,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -3,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -3,
+        "production_lines": -3,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 21,
+      "case_id": "c05b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "external format and calibrated geometry gates remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 115273,
+        "total_tokens": 208783,
+        "input_tokens": 205234,
+        "cached_input_tokens": 180224,
+        "non_cached_input_tokens": 25010,
+        "output_tokens": 3549,
+        "reasoning_output_tokens": 1741,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 10,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 22,
+      "case_id": "c05b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "external format and calibrated geometry gates remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 77674,
+        "total_tokens": 84407,
+        "input_tokens": 81768,
+        "cached_input_tokens": 71936,
+        "non_cached_input_tokens": 9832,
+        "output_tokens": 2639,
+        "reasoning_output_tokens": 1605,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 0,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 23,
+      "case_id": "c06a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "redundant default lock removed; geometry and processing contracts remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":1,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":-2,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":1,\"test_lines\":2,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 49068,
+        "total_tokens": 56431,
+        "input_tokens": 54822,
+        "cached_input_tokens": 40704,
+        "non_cached_input_tokens": 14118,
+        "output_tokens": 1609,
+        "reasoning_output_tokens": 465,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 3,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 1,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": -2,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 1,
+        "test_lines": 2,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 24,
+      "case_id": "c06a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "redundant default lock removed; geometry and processing contracts remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 162943,
+        "total_tokens": 266672,
+        "input_tokens": 262279,
+        "cached_input_tokens": 233216,
+        "non_cached_input_tokens": 29063,
+        "output_tokens": 4393,
+        "reasoning_output_tokens": 1412,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 11,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 25,
+      "case_id": "c06b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "format consistency and temporal quality gates remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=1; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":1,\"production_lines\":1,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 77227,
+        "total_tokens": 127558,
+        "input_tokens": 124862,
+        "cached_input_tokens": 106496,
+        "non_cached_input_tokens": 18366,
+        "output_tokens": 2696,
+        "reasoning_output_tokens": 1261,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 1,
+        "production_lines": 1,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 26,
+      "case_id": "c06b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "format consistency and temporal quality gates remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=3; summary=OK",
+          "count": 3
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=2; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":2,\"production_lines\":2,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 89289,
+        "total_tokens": 121776,
+        "input_tokens": 119353,
+        "cached_input_tokens": 75008,
+        "non_cached_input_tokens": 44345,
+        "output_tokens": 2423,
+        "reasoning_output_tokens": 758,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 2,
+        "production_lines": 2,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 27,
+      "case_id": "c07a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "duplicate sanitizer removed while adapter entrypoint delegates to shared owner"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-20; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-6,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":0,\"isinstance_calls\":-2,\"nonblank_python_lines\":-20,\"production_lines\":-20,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 69454,
+        "total_tokens": 93301,
+        "input_tokens": 91322,
+        "cached_input_tokens": 80896,
+        "non_cached_input_tokens": 10426,
+        "output_tokens": 1979,
+        "reasoning_output_tokens": 415,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -20,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -6,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": 0,
+        "isinstance_calls": -2,
+        "nonblank_python_lines": -20,
+        "production_lines": -20,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 28,
+      "case_id": "c07a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: adapter still duplicates sensitive-key policy"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-22; new_files=[]; deleted_files=['shared.py']; structural_delta={\"abstractions\":0,\"branches\":-6,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-1,\"isinstance_calls\":-2,\"nonblank_python_lines\":-22,\"production_lines\":-22,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 65764,
+        "total_tokens": 132967,
+        "input_tokens": 131027,
+        "cached_input_tokens": 110592,
+        "non_cached_input_tokens": 20435,
+        "output_tokens": 1940,
+        "reasoning_output_tokens": 642,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -22,
+        "new_files": [],
+        "deleted_files": [
+          "shared.py"
+        ]
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -6,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -1,
+        "isinstance_calls": -2,
+        "nonblank_python_lines": -22,
+        "production_lines": -22,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 29,
+      "case_id": "c07b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: sanitizer is not idempotent"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-9; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":0,\"isinstance_calls\":-1,\"nonblank_python_lines\":-9,\"production_lines\":-5,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-4,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 126642,
+        "total_tokens": 183499,
+        "input_tokens": 178972,
+        "cached_input_tokens": 145920,
+        "non_cached_input_tokens": 33052,
+        "output_tokens": 4527,
+        "reasoning_output_tokens": 2205,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 3,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -9,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": 0,
+        "isinstance_calls": -1,
+        "nonblank_python_lines": -9,
+        "production_lines": -5,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -4,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 30,
+      "case_id": "c07b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "public-report security boundary and non-secret fingerprint remain"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-1; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-1,\"production_lines\":-1,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 71772,
+        "total_tokens": 82593,
+        "input_tokens": 80708,
+        "cached_input_tokens": 64000,
+        "non_cached_input_tokens": 16708,
+        "output_tokens": 1885,
+        "reasoning_output_tokens": 610,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -1,
+        "production_lines": -1,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 31,
+      "case_id": "c08a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "fixture-tautological empty-directory test removed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-5; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-2,\"isinstance_calls\":0,\"nonblank_python_lines\":-5,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-5,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 74110,
+        "total_tokens": 92117,
+        "input_tokens": 89823,
+        "cached_input_tokens": 79872,
+        "non_cached_input_tokens": 9951,
+        "output_tokens": 2294,
+        "reasoning_output_tokens": 910,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -5,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -2,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -5,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -5,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 32,
+      "case_id": "c08a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "fixture-tautological empty-directory test removed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-5; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-2,\"isinstance_calls\":0,\"nonblank_python_lines\":-5,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-5,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 69317,
+        "total_tokens": 130034,
+        "input_tokens": 128136,
+        "cached_input_tokens": 93440,
+        "non_cached_input_tokens": 34696,
+        "output_tokens": 1898,
+        "reasoning_output_tokens": 530,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -5,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -2,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -5,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -5,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 33,
+      "case_id": "c08b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "event order, numerical validity, and rebound remain distinct hard failures"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=4; summary=OK",
+          "count": 4
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-2; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":-1,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-2,\"production_lines\":-2,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":-1,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 106790,
+        "total_tokens": 163666,
+        "input_tokens": 159862,
+        "cached_input_tokens": 133888,
+        "non_cached_input_tokens": 25974,
+        "output_tokens": 3804,
+        "reasoning_output_tokens": 1652,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -2,
+        "production_lines": -2,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": -1,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 34,
+      "case_id": "c08b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "event order, numerical validity, and rebound remain distinct hard failures"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=4; summary=OK",
+          "count": 4
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":0,\"production_lines\":0,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 72638,
+        "total_tokens": 117682,
+        "input_tokens": 115808,
+        "cached_input_tokens": 97024,
+        "non_cached_input_tokens": 18784,
+        "output_tokens": 1874,
+        "reasoning_output_tokens": 565,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 0,
+        "production_lines": 0,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 35,
+      "case_id": "c09a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "one shared action payload serves all samples while anchors remain per sample"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 101134,
+        "total_tokens": 136772,
+        "input_tokens": 133805,
+        "cached_input_tokens": 115968,
+        "non_cached_input_tokens": 17837,
+        "output_tokens": 2967,
+        "reasoning_output_tokens": 1022,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 8,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 36,
+      "case_id": "c09a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "one shared action payload serves all samples while anchors remain per sample"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 108219,
+        "total_tokens": 187106,
+        "input_tokens": 184056,
+        "cached_input_tokens": 150784,
+        "non_cached_input_tokens": 33272,
+        "output_tokens": 3050,
+        "reasoning_output_tokens": 1011,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 2,
+        "agent_messages": 4
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 37,
+      "case_id": "c09b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "AssertionError: tampered frozen ledger was accepted"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-10; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":-1,\"imports\":-1,\"isinstance_calls\":0,\"nonblank_python_lines\":-10,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-6,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 131842,
+        "total_tokens": 163628,
+        "input_tokens": 159628,
+        "cached_input_tokens": 123904,
+        "non_cached_input_tokens": 35724,
+        "output_tokens": 4000,
+        "reasoning_output_tokens": 1909,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 2,
+        "agent_messages": 6
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -10,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -1,
+        "imports": -1,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -10,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -6,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 38,
+      "case_id": "c09b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "persisted frozen ledger identity and denominator remain enforced"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-4; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-4,\"production_lines\":-4,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 87063,
+        "total_tokens": 126929,
+        "input_tokens": 124249,
+        "cached_input_tokens": 103936,
+        "non_cached_input_tokens": 20313,
+        "output_tokens": 2680,
+        "reasoning_output_tokens": 1121,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -4,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -4,
+        "production_lines": -4,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 39,
+      "case_id": "c10a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "batch accepts and records multiple independently embedded calibration variants"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": false,
+          "evidence": "nonblank_python_line_delta=13; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":1,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":13,\"production_lines\":-3,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":1,\"test_lines\":16,\"try_blocks\":0,\"unittest_assert_calls\":2}"
+        }
+      },
+      "timing": {
+        "duration_ms": 85707,
+        "total_tokens": 112854,
+        "input_tokens": 110069,
+        "cached_input_tokens": 99072,
+        "non_cached_input_tokens": 10997,
+        "output_tokens": 2785,
+        "reasoning_output_tokens": 972,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": false,
+        "nonblank_python_line_delta": 13,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 1,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": 13,
+        "production_lines": -3,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 1,
+        "test_lines": 16,
+        "try_blocks": 0,
+        "unittest_assert_calls": 2
+      }
+    },
+    {
+      "sequence": 40,
+      "case_id": "c10a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "batch accepts and records multiple independently embedded calibration variants"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-2; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-1,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-2,\"production_lines\":-2,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":-1}"
+        }
+      },
+      "timing": {
+        "duration_ms": 153753,
+        "total_tokens": 185305,
+        "input_tokens": 180079,
+        "cached_input_tokens": 157184,
+        "non_cached_input_tokens": 22895,
+        "output_tokens": 5226,
+        "reasoning_output_tokens": 2126,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 3,
+        "agent_messages": 5
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -1,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -2,
+        "production_lines": -2,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": -1
+      }
+    },
+    {
+      "sequence": 41,
+      "case_id": "c10b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "assertion_pass_rate": 0.75,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": false,
+          "evidence": "TypeError: cannot unpack non-iterable PosixPath object"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=1; summary=OK",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-28; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":-3,\"classes\":0,\"except_handlers\":0,\"functions\":-2,\"imports\":-2,\"isinstance_calls\":0,\"nonblank_python_lines\":-28,\"production_lines\":-22,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":-1,\"test_lines\":-6,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 111860,
+        "total_tokens": 177845,
+        "input_tokens": 174055,
+        "cached_input_tokens": 155136,
+        "non_cached_input_tokens": 18919,
+        "output_tokens": 3790,
+        "reasoning_output_tokens": 1348,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "a57136df515f13ab9240a73089acc537064e4f34646aa912eb51e76f8c4d2706"
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -28,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": -3,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": -2,
+        "imports": -2,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -28,
+        "production_lines": -22,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": -1,
+        "test_lines": -6,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    },
+    {
+      "sequence": 42,
+      "case_id": "c10b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "readback validation detects corruption across the persistence boundary"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "exit_code=0; tests=2; summary=OK",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-3; new_files=[]; deleted_files=[]; structural_delta={\"abstractions\":0,\"branches\":0,\"classes\":0,\"except_handlers\":0,\"functions\":0,\"imports\":0,\"isinstance_calls\":0,\"nonblank_python_lines\":-3,\"production_lines\":-3,\"python_assert_statements\":0,\"syntax_errors\":0,\"test_functions\":0,\"test_lines\":0,\"try_blocks\":0,\"unittest_assert_calls\":0}"
+        }
+      },
+      "timing": {
+        "duration_ms": 85156,
+        "total_tokens": 120961,
+        "input_tokens": 118270,
+        "cached_input_tokens": 90112,
+        "non_cached_input_tokens": 28158,
+        "output_tokens": 2691,
+        "reasoning_output_tokens": 1760,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 3
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -3,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstractions": 0,
+        "branches": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "functions": 0,
+        "imports": 0,
+        "isinstance_calls": 0,
+        "nonblank_python_lines": -3,
+        "production_lines": -3,
+        "python_assert_statements": 0,
+        "syntax_errors": 0,
+        "test_functions": 0,
+        "test_lines": 0,
+        "try_blocks": 0,
+        "unittest_assert_calls": 0
+      }
+    }
+  ]
+}
