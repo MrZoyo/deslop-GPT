@@ -194,3 +194,5 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 8. Verify both polarities and all alternate valid states with `scripts/validate_corpus.py`.
 
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.
+
+The first internal Codex pilot is recorded in [`results/dev-v1-pilot-20260825.md`](results/dev-v1-pilot-20260825.md). It is diagnostic development data, not a public performance claim.
