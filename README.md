@@ -39,23 +39,25 @@ The public Skill is conservative about starting and aggressive about subtracting
 | `$deslop deep` | Repository-wide audit |
 | `$deslop deep apply` | Repository-wide cleanup without redesign |
 
-Implicit invocation is disabled in [`agents/openai.yaml`](agents/openai.yaml). The Skill never interprets an ordinary request as permission for destructive cleanup.
+Implicit invocation is disabled in [`skill/deslop/agents/openai.yaml`](skill/deslop/agents/openai.yaml). The Skill never interprets an ordinary request as permission for destructive cleanup.
 
 ## Install
 
-Codex loads user-level skills from `$HOME/.agents/skills`. Install this repository directly:
+The runtime Skill is the self-contained [`skill/deslop/`](skill/deslop/) directory. Ask `$skill-installer` to install this GitHub directory:
 
-```bash
-git clone https://github.com/MrZoyo/deslop-GPT.git "$HOME/.agents/skills/deslop"
+```text
+https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop
 ```
 
-Update it later with:
+For local development, clone the repository outside the Skill discovery tree and symlink only the runtime directory. [OpenAI's Skill documentation](https://developers.openai.com/codex/build-skills) confirms that Codex follows symlinked Skill folders:
 
 ```bash
-git -C "$HOME/.agents/skills/deslop" pull --ff-only
+git clone https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+mkdir -p "$HOME/.agents/skills"
+ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-You can also invoke `$skill-installer` in Codex and ask it to install the skill from this repository URL. Codex detects skill changes automatically; restart Codex if it does not appear.
+Update that checkout with `git -C "$HOME/.local/share/deslop-GPT" pull --ff-only`. Codex detects Skill changes automatically; restart Codex if an update does not appear.
 
 ## What makes it different
 
@@ -73,6 +75,7 @@ Related projects include:
 - [LeonardNJU/code-humanizer](https://github.com/LeonardNJU/code-humanizer)
 - [agent-sh/deslop](https://github.com/agent-sh/deslop)
 - [dabit3/deslop](https://github.com/dabit3/deslop)
+- [oh-my-claudecode/ai-slop-cleaner](https://github.com/Yeachan-Heo/oh-my-claudecode/tree/main/skills/ai-slop-cleaner)
 
 Evaluation tools that influenced this repository:
 
@@ -115,7 +118,7 @@ python3 scripts/validate_corpus.py
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py self-test \
-  --skill . \
+  --skill skill/deslop \
   --evals evals/evals.json
 
 uv run --with agent-skill-eval==0.7.0 \
@@ -127,7 +130,7 @@ Run a real Codex A/B evaluation with a deliberately pinned model and repeated tr
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
-  --skill . \
+  --skill skill/deslop \
   --evals evals/evals.json \
   --agent codex \
   --agent-model codex=<model> \
@@ -137,7 +140,7 @@ uv run --with agent-skill-eval==0.7.0 \
   --post-grade-command "python3 evals/grade_case.py"
 ```
 
-Before any `run`, the wrapper binds the installation name to the suite/frontmatter name `deslop` even when the checkout directory is named `deslop-GPT`, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, then installs the evaluated Skill into a temporary `.agents/skills/deslop` directory and verifies the installed content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
+Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
 
 Record the model, reasoning effort, Codex version, harness version, run count, token cost, and wall time with every published result.
 
@@ -155,13 +158,10 @@ A large deletion with a low preservation rate is failure. A cleanup that grows t
 ## Repository layout
 
 ```text
-SKILL.md                         Core workflow and authorization model
-agents/openai.yaml               UI metadata and explicit-only policy
-references/code-smells.md        Defensive and structural checklist
-references/test-smells.md        Test pruning and oracle independence
-references/verification-and-trust.md
-                                 Trust decision tree and circular verification
-references/scientific-code.md    Numerical false-positive guidance
+skill/deslop/                    Pure runtime Skill payload
+  SKILL.md                       Core workflow and authorization model
+  agents/openai.yaml             UI metadata and explicit-only policy
+  references/                    Smell, trust, test, and scientific guidance
 evals/evals.json                 agent-skill-eval suite
 evals/adjudication.json          Labels, evidence class, and oracle source
 evals/calibration/               Positive goldens and destructive mutants

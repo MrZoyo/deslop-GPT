@@ -11,6 +11,7 @@ from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SKILL_ROOT = ROOT / "skill" / "deslop"
 EVALS_PATH = ROOT / "evals" / "evals.json"
 ADJUDICATION_PATH = ROOT / "evals" / "adjudication.json"
 CALIBRATION_ROOT = ROOT / "evals" / "calibration"
@@ -28,8 +29,19 @@ def fail(message: str) -> None:
     raise ValueError(message)
 
 
+def skill_content_hash(root: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(path for path in root.rglob("*") if path.is_file()):
+        relative = path.relative_to(root).as_posix()
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def validate_skill() -> None:
-    skill_text = (ROOT / "SKILL.md").read_text()
+    skill_text = (SKILL_ROOT / "SKILL.md").read_text()
     if not skill_text.startswith("---\n"):
         fail("SKILL.md is missing YAML frontmatter")
     frontmatter = skill_text.split("---", 2)[1]
@@ -49,12 +61,25 @@ def validate_skill() -> None:
         "references/scientific-code.md",
     }
     for reference in required_references:
-        if reference not in skill_text or not (ROOT / reference).is_file():
+        if reference not in skill_text or not (SKILL_ROOT / reference).is_file():
             fail(f"SKILL.md does not route to {reference}")
 
-    openai_yaml = (ROOT / "agents" / "openai.yaml").read_text()
+    openai_yaml = (SKILL_ROOT / "agents" / "openai.yaml").read_text()
     if "allow_implicit_invocation: false" not in openai_yaml:
-        fail("agents/openai.yaml must disable implicit invocation")
+        fail("skill/deslop/agents/openai.yaml must disable implicit invocation")
+
+    expected_payload = {"SKILL.md", "agents/openai.yaml", *required_references}
+    actual_payload = {
+        path.relative_to(SKILL_ROOT).as_posix()
+        for path in SKILL_ROOT.rglob("*")
+        if path.is_file()
+    }
+    if actual_payload != expected_payload:
+        fail(
+            "runtime Skill payload differs from the allowed file set: "
+            f"extra={sorted(actual_payload - expected_payload)} "
+            f"missing={sorted(expected_payload - actual_payload)}"
+        )
 
     wrapper = ROOT / "scripts" / "run_agent_skill_eval.py"
     wrapper_text = wrapper.read_text()
@@ -186,7 +211,13 @@ def run_grader(
     extra_environment: dict[str, str] | None = None,
 ) -> list[dict[str, object]]:
     environment = os.environ.copy()
-    for name in ("ASE_AGENT", "ASE_WITH_SKILL", "ASE_SKILL_HASH", "ASE_RUN_META_PATH"):
+    for name in (
+        "ASE_AGENT",
+        "ASE_WITH_SKILL",
+        "ASE_SKILL_HASH",
+        "ASE_RUN_META_PATH",
+        "ASE_OUTPUT_DIR",
+    ):
         environment.pop(name, None)
     environment["ASE_EVAL_ID"] = case_id
     environment["ASE_WORKSPACE_PATH"] = str(workspace)
@@ -298,6 +329,38 @@ def run_alternate_valid_calibration(adjudication: dict[str, dict[str, object]]) 
     return count
 
 
+def run_c01a_diagnostics_calibration() -> None:
+    expected_states = {
+        "before": {
+            "first_record_removed": False,
+            "digest_helper_removed": False,
+            "hashlib_dependency_removed": False,
+            "load_episode_preserved": True,
+        },
+        "golden_after": {
+            "first_record_removed": True,
+            "digest_helper_removed": True,
+            "hashlib_dependency_removed": True,
+            "load_episode_preserved": True,
+        },
+    }
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        workspaces = {
+            "before": ROOT / "evals" / "files" / "c01a",
+            "golden_after": materialize_overlay("c01a", "golden_after", root),
+        }
+        for state, workspace in workspaces.items():
+            output_dir = root / f"{state}-output"
+            output_dir.mkdir()
+            rows = run_grader("c01a", workspace, {"ASE_OUTPUT_DIR": str(output_dir)})
+            diagnostics = json.loads((output_dir / "diagnostics.json").read_text())
+            if diagnostics.get("details") != expected_states[state]:
+                fail(f"c01a {state} diagnostics do not match the calibrated state")
+            if len(rows) != 3:
+                fail("c01a diagnostics changed scored assertion count")
+
+
 def run_audit_calibration() -> None:
     fixture = ROOT / "evals" / "files" / "c01a"
     unchanged_rows = run_grader("mode-default-audit", fixture)
@@ -385,14 +448,8 @@ def run_skill_discovery_calibration() -> None:
         shutil.copytree(ROOT / "evals" / "files" / "c01a", workspace)
         installed_skill = workspace / ".agents" / "skills" / "deslop"
         installed_skill.mkdir(parents=True)
-        skill_bytes = (ROOT / "SKILL.md").read_bytes()
-        (installed_skill / "SKILL.md").write_bytes(skill_bytes)
-
-        digest = hashlib.sha256()
-        digest.update(b"SKILL.md\0")
-        digest.update(skill_bytes)
-        digest.update(b"\0")
-        expected_hash = digest.hexdigest()
+        shutil.copytree(SKILL_ROOT, installed_skill, dirs_exist_ok=True)
+        expected_hash = skill_content_hash(SKILL_ROOT)
         metadata_path = root / "run_meta.json"
         metadata_path.write_text("{}")
         rows = run_grader(
@@ -466,6 +523,7 @@ def main() -> None:
         fail(f"expected {expected_baseline_tests} baseline tests, got {test_count}")
     run_hidden_grader_calibration(adjudication)
     alternate_count = run_alternate_valid_calibration(adjudication)
+    run_c01a_diagnostics_calibration()
     run_audit_calibration()
     run_remaining_tests_calibration()
     run_negative_budget_calibration()
@@ -476,8 +534,9 @@ def main() -> None:
         f"{preserve_count} confirmed boundaries, 1 authorization control; "
         f"{fixture_count} fixtures and {test_count} baseline tests passed; "
         "hidden grader calibration passed 20/20 positive + 20/20 negative states; "
-        f"{alternate_count} alternate valid states passed; zero-mutation audit, recursive "
-        "negative-change, remaining-test, and score-neutral skill-discovery calibrations passed."
+        f"{alternate_count} alternate valid states passed; non-scored c01a diagnostics, "
+        "zero-mutation audit, recursive negative-change, remaining-test, and score-neutral "
+        "skill-discovery calibrations passed."
     )
 
 

@@ -35,13 +35,14 @@ This avoids the circular workflow “the Skill says this is slop, therefore the 
 
 - Workspace directories and eval IDs are neutral (`c01a`, `c01b`, ...).
 - Prompts never say which construct to delete or preserve and do not mention `$deslop` themselves.
-- `force_skill_invocation` adds `$deslop` only to the with-Skill configuration, so the without-Skill baseline receives the same natural cleanup task without an unknown Skill name.
+- `force_skill_invocation` adds `$deslop` only to the with-Skill configuration, so the without-Skill baseline receives the same strong evidence-backed cleanup task without an unknown Skill name. The benchmark measures incremental Skill value over that prompt, not over an unprompted Codex session.
 - Visible tests establish ordinary caller context but are not the benchmark oracle.
 - Labels and oracle provenance live in `adjudication.json`, outside the files copied to the agent.
 - `grade_case.py` runs after grading while the workspace still exists.
 - The external grader uses AST checks, independent calls, fault injection, persistence tampering, remaining-test execution, and exact audit workspace comparison.
 - A second hook assertion recursively compares relative file paths and Python lines, rejects new files or substantial growth, and records AST structural deltas.
 - Successful Skill discovery is metadata only; it emits a scored assertion only when path or content-hash verification fails.
+- Development cases may write `diagnostics.json` beside the raw output for non-scored sub-check details; diagnostics never add or reweight assertions.
 
 The grader is public for reviewability, but it is not installed into the evaluated workspace. A network-capable agent could deliberately inspect this repository; benchmark runs should prohibit unrelated network access and retain tool logs.
 
@@ -100,12 +101,12 @@ It validates:
 - canonical `.agents/skills/deslop` path, installed content hash, and `run_meta.json` evidence;
 - zero-mutation audit rejection for added, modified, and deleted files.
 
-`agent-skill-eval 0.7.0` still targets Codex's legacy `.codex/skills` directory, derives the installed Skill name from the checkout directory, and compares worktree side effects against the full post-state. Use the repository wrapper for every harness command; it patches the pinned process to `.agents/skills`, binds the install name to the suite/frontmatter name, compares worktree status pre/post, refuses ambient canonical, legacy, or admin `deslop` Skill paths that would contaminate the baseline, and runs a path/content-hash smoke test before evaluation. Run the benchmark from a clean user profile or container, then validate the manifest:
+`agent-skill-eval 0.7.0` still targets Codex's legacy `.codex/skills` directory and compares worktree side effects against the full post-state. Use the repository wrapper for every harness command; it patches the pinned process to `.agents/skills`, verifies the `skill/deslop` directory and suite/frontmatter name agree, compares worktree status pre/post, refuses ambient canonical, legacy, or admin `deslop` Skill paths that would contaminate the baseline, and runs a path/content-hash smoke test before evaluation. Run the benchmark from a clean user profile or container, then validate the manifest:
 
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py self-test \
-  --skill . \
+  --skill skill/deslop \
   --evals evals/evals.json
 
 uv run --with agent-skill-eval==0.7.0 \
@@ -121,7 +122,7 @@ Pin every reproducibility variable and include the required post-grade hook:
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
-  --skill . \
+  --skill skill/deslop \
   --evals evals/evals.json \
   --agent codex \
   --agent-model codex=<model> \
@@ -139,7 +140,7 @@ Use a targeted pair while iterating:
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
-  --skill . \
+  --skill skill/deslop \
   --evals evals/evals.json \
   --agent codex \
   --agent-model codex=<model> \
@@ -195,4 +196,4 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.
 
-The first internal Codex pilot is recorded in [`results/dev-v1-pilot-20260825.md`](results/dev-v1-pilot-20260825.md). It is diagnostic development data, not a public performance claim.
+The first internal Codex pilot is recorded in [`results/dev-v1-pilot-20260825.md`](results/dev-v1-pilot-20260825.md), with sanitized machine-readable evidence in [`results/dev-v1-pilot-20260825.json`](results/dev-v1-pilot-20260825.json). It is diagnostic development data, not a public performance claim.

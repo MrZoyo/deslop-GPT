@@ -243,17 +243,36 @@ def load_module(workspace: Path, name: str = "app"):
         sys.path.pop(0)
 
 
+def write_diagnostics(case_id: str, details: dict[str, object]) -> None:
+    output_dir = os.environ.get("ASE_OUTPUT_DIR")
+    if output_dir:
+        path = Path(output_dir) / "diagnostics.json"
+        path.write_text(json.dumps({"case": case_id, "details": details}, indent=2) + "\n")
+
+
 def c01a(workspace: Path) -> str:
     names = function_names(workspace)
-    require("first_record" not in names, "unused first_record helper remains")
-    require("json_equal_via_digest" not in names, "unused digest equality helper remains")
-    require("hashlib" not in source(workspace, "app.py"), "dead digest dependency remains")
-    app = load_module(workspace)
-    with tempfile.TemporaryDirectory() as directory:
-        path = Path(directory) / "episode.jsonl"
-        path.write_text('{"type":"header","fps":60}\n{"type":"result","passed":true}\n')
-        header, result = app.load_episode(path)
-    require(header["fps"] == 60 and result["passed"] is True, "episode behavior regressed")
+    details: dict[str, object] = {
+        "first_record_removed": "first_record" not in names,
+        "digest_helper_removed": "json_equal_via_digest" not in names,
+        "hashlib_dependency_removed": "hashlib" not in source(workspace, "app.py"),
+        "load_episode_preserved": False,
+    }
+    try:
+        app = load_module(workspace)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "episode.jsonl"
+            path.write_text('{"type":"header","fps":60}\n{"type":"result","passed":true}\n')
+            header, result = app.load_episode(path)
+        details["load_episode_preserved"] = header["fps"] == 60 and result["passed"] is True
+    except Exception as error:
+        details["load_episode_error"] = f"{type(error).__name__}: {error}"
+
+    write_diagnostics("c01a", details)
+    require(details["first_record_removed"] is True, "unused first_record helper remains")
+    require(details["digest_helper_removed"] is True, "unused digest equality helper remains")
+    require(details["hashlib_dependency_removed"] is True, "dead digest dependency remains")
+    require(details["load_episode_preserved"] is True, "episode behavior regressed")
     return "dead parser and digest helpers removed; episode reader still works"
 
 

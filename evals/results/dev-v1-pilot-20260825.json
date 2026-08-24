@@ -1,0 +1,196 @@
+{
+  "schema": "deslop-eval-result-v1",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-24T16:59:52Z",
+    "completed_at_utc": "2026-08-24T17:05:24Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "evaluated_source": "9dc516d plus staging-payload fix later committed as 3a99723",
+    "corpus": "dev-v1",
+    "cases": ["c01a", "c01b"]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.0",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 1,
+    "model_calls": 4,
+    "concurrency": 1,
+    "retries": 0,
+    "timeout_seconds": 900,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_and_local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/grade_case.py"
+  },
+  "skill": {
+    "content_hash": "835a30c4bfb9df8a0d9ff572f0a580fa01cdf74082efb94054cdd7dd034eb330",
+    "payload_files": 12,
+    "payload_bytes": 77645,
+    "payload_words": 7919,
+    "note": "Predates the later physical runtime separation into skill/deslop.",
+    "post_pilot_runtime_payload": {
+      "content_hash": "13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527",
+      "files": 6,
+      "bytes": 33063,
+      "words": 4184,
+      "evaluated_in_this_pilot": false
+    }
+  },
+  "aggregate": {
+    "without_skill": {
+      "mean_assertion_pass_rate": 0.875,
+      "full_pass_rate": 0.5,
+      "pass_at_1": 0.5,
+      "mean_wall_time_seconds": 67.9855,
+      "mean_total_tokens": 99996.5,
+      "mean_completed_command_executions": 6.0,
+      "mean_agent_messages": 3.0
+    },
+    "with_skill": {
+      "mean_assertion_pass_rate": 0.875,
+      "full_pass_rate": 0.5,
+      "pass_at_1": 0.5,
+      "mean_wall_time_seconds": 97.019,
+      "mean_total_tokens": 220293.0,
+      "mean_completed_command_executions": 8.5,
+      "mean_agent_messages": 4.0
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate": 0.0,
+      "full_pass_rate": 0.0,
+      "pass_at_1": 0.0,
+      "mean_wall_time_seconds": 29.0335,
+      "mean_total_tokens": 120296.5,
+      "mean_completed_command_executions": 2.5,
+      "mean_agent_messages": 1.0
+    },
+    "all_calls": {
+      "total_tokens": 640579,
+      "input_tokens": 630176,
+      "cached_input_tokens": 521600,
+      "non_cached_input_tokens": 108576,
+      "output_tokens": 10403,
+      "reasoning_output_tokens": 4639,
+      "cost_usd": null,
+      "cost_note": "Unavailable; the CLI reported no cost and no pricing config was supplied."
+    }
+  },
+  "runs": [
+    {
+      "case": "c01a",
+      "with_skill": false,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "semantic": {"passed": false, "evidence": "unused first_record helper remains"},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
+      "structural_delta": {"production_lines": -4, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 4, "completed_file_changes": 1, "agent_messages": 3},
+      "timing": {
+        "duration_ms": 51229,
+        "total_tokens": 66036,
+        "input_tokens": 64791,
+        "cached_input_tokens": 50944,
+        "non_cached_input_tokens": 13847,
+        "output_tokens": 1245,
+        "reasoning_output_tokens": 433,
+        "cost_usd": null
+      }
+    },
+    {
+      "case": "c01a",
+      "with_skill": true,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "835a30c4bfb9df8a0d9ff572f0a580fa01cdf74082efb94054cdd7dd034eb330"
+      },
+      "semantic": {"passed": false, "evidence": "unused first_record helper remains"},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
+      "structural_delta": {"production_lines": -4, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 7, "completed_file_changes": 1, "agent_messages": 5},
+      "timing": {
+        "duration_ms": 88389,
+        "total_tokens": 127095,
+        "input_tokens": 124615,
+        "cached_input_tokens": 106240,
+        "non_cached_input_tokens": 18375,
+        "output_tokens": 2480,
+        "reasoning_output_tokens": 914,
+        "cost_usd": null
+      }
+    },
+    {
+      "case": "c01b",
+      "with_skill": false,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "semantic": {"passed": true, "evidence": "published facade remains usable by an external consumer"},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -1},
+      "structural_delta": {"production_lines": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 8, "completed_file_changes": 1, "agent_messages": 3},
+      "timing": {
+        "duration_ms": 84742,
+        "total_tokens": 133957,
+        "input_tokens": 131538,
+        "cached_input_tokens": 112128,
+        "non_cached_input_tokens": 19410,
+        "output_tokens": 2419,
+        "reasoning_output_tokens": 1043,
+        "cost_usd": null
+      }
+    },
+    {
+      "case": "c01b",
+      "with_skill": true,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "skill_discovery": {
+        "verified": true,
+        "path": ".agents/skills/deslop",
+        "content_hash": "835a30c4bfb9df8a0d9ff572f0a580fa01cdf74082efb94054cdd7dd034eb330"
+      },
+      "semantic": {"passed": true, "evidence": "published facade remains usable by an external consumer"},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -3},
+      "structural_delta": {"production_lines": -3, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 10, "completed_file_changes": 1, "agent_messages": 3},
+      "timing": {
+        "duration_ms": 105649,
+        "total_tokens": 313491,
+        "input_tokens": 309232,
+        "cached_input_tokens": 252288,
+        "non_cached_input_tokens": 56944,
+        "output_tokens": 4259,
+        "reasoning_output_tokens": 2249,
+        "cost_usd": null
+      }
+    }
+  ],
+  "excluded_attempts": [
+    {
+      "reason": "recursive in-repository eval-workspace copied into staged Skill payload",
+      "included_in_metrics": false,
+      "artifacts_retained": false
+    }
+  ]
+}

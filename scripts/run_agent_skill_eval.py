@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json
 import os
-import shutil
 import sys
 import tempfile
 from importlib.metadata import version
@@ -10,16 +9,6 @@ from pathlib import Path
 
 EXPECTED_VERSION = "0.7.0"
 CODEX_SKILL_PATH = ".agents/skills"
-STAGED_SKILL_CONTEXT = None
-STAGED_SKILL_PATH: Path | None = None
-STAGED_SKILL_EXCLUDED_DIRS = {
-    ".git",
-    ".mypy_cache",
-    ".pytest_cache",
-    ".ruff_cache",
-    "__pycache__",
-    "evals",
-}
 
 
 def option_value(arguments: list[str], option: str) -> str | None:
@@ -31,7 +20,7 @@ def option_value(arguments: list[str], option: str) -> str | None:
     return None
 
 
-def configure_skill_name(skill_argument: str, evals_argument: str) -> None:
+def validate_skill_identity(skill_argument: str, evals_argument: str) -> None:
     from agent_skill_eval.skills import SkillInstaller
 
     skill_path = Path(skill_argument).resolve()
@@ -40,37 +29,15 @@ def configure_skill_name(skill_argument: str, evals_argument: str) -> None:
     if not isinstance(expected_name, str) or not expected_name:
         raise RuntimeError("eval suite must declare a non-empty skill_name")
 
-    global STAGED_SKILL_CONTEXT, STAGED_SKILL_PATH
-    STAGED_SKILL_CONTEXT = tempfile.TemporaryDirectory(prefix="deslop-skill-")
-    staged_root = Path(STAGED_SKILL_CONTEXT.name) / expected_name
-    shutil.copytree(
-        skill_path,
-        staged_root,
-        ignore=shutil.ignore_patterns(*STAGED_SKILL_EXCLUDED_DIRS, "eval-workspace*"),
-    )
-    STAGED_SKILL_PATH = staged_root
-    if any(
-        part.startswith("eval-workspace")
-        for path in STAGED_SKILL_PATH.rglob("*")
-        for part in path.relative_to(STAGED_SKILL_PATH).parts
-    ):
-        raise RuntimeError("staged Skill payload unexpectedly contains benchmark workspaces")
-
     installer = SkillInstaller(skill_path)
-    installer.skill_name = expected_name
     problems = installer.frontmatter_problems()
     if problems:
         raise RuntimeError("invalid Skill metadata: " + "; ".join(problems))
-
-    original_init = SkillInstaller.__init__
-
-    def normalized_init(self, path: Path) -> None:
-        source_path = Path(path).resolve()
-        original_init(self, STAGED_SKILL_PATH if source_path == skill_path else path)
-        if Path(path).resolve() == skill_path:
-            self.skill_name = expected_name
-
-    SkillInstaller.__init__ = normalized_init
+    if installer.skill_name != expected_name:
+        raise RuntimeError(
+            f"eval suite skill_name {expected_name!r} does not match Skill directory "
+            f"{installer.skill_name!r}"
+        )
 
 
 def configure_side_effect_contract() -> None:
@@ -235,7 +202,7 @@ def main() -> None:
         evals_argument = option_value(arguments, "--evals") or option_value(arguments, "-e")
         if skill_argument is None or evals_argument is None:
             raise RuntimeError(f"{command} requires --skill and --evals")
-        configure_skill_name(skill_argument, evals_argument)
+        validate_skill_identity(skill_argument, evals_argument)
         configure_side_effect_contract()
         smoke_test(skill_argument, check_ambient=command == "run")
         if command == "self-test":

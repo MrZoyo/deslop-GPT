@@ -22,7 +22,7 @@ jobs:
         run: |
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py self-test \
-            --skill . \
+            --skill skill/deslop \
             --evals evals/evals.json
       - name: Validate agent-skill-eval manifest
         run: |
