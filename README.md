@@ -49,6 +49,8 @@ The runtime Skill is the self-contained [`skill/deslop/`](skill/deslop/) directo
 https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop
 ```
 
+Current [OpenAI Skill documentation](https://developers.openai.com/codex/skills) uses `$HOME/.agents/skills` as the canonical user discovery path. The bundled `$skill-installer` may still copy into its legacy `$CODEX_HOME/skills` destination; use the symlink method below when the canonical path itself matters.
+
 For local development, clone the repository outside the Skill discovery tree and symlink only the runtime directory. [OpenAI's Skill documentation](https://developers.openai.com/codex/build-skills) confirms that Codex follows symlinked Skill folders:
 
 ```bash
@@ -136,11 +138,12 @@ uv run --with agent-skill-eval==0.7.0 \
   --agent-model codex=<model> \
   --reasoning-effort medium \
   --runs 5 \
+  --concurrency 1 \
   --baseline \
   --post-grade-command "python3 evals/grade_case.py"
 ```
 
-Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
+Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations, and deterministically counterbalances A/B submission order by case and run parity. Run published benchmarks with concurrency 1 so submission order is execution order. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
 
 Record the model, reasoning effort, Codex version, harness version, run count, token cost, and wall time with every published result.
 
@@ -154,6 +157,8 @@ Metrics are ordered deliberately:
 4. **Cleanup-induced Slop** — new files plus deltas in production/test nonblank lines, functions, test functions, classes, control flow, exception machinery, assertion sites, `isinstance` calls, imports, and heuristic abstractions.
 
 A large deletion with a low preservation rate is failure. A cleanup that grows the codebase with new scaffolding is also failure.
+
+Harness mean assertion pass rate is retained only as a within-version diagnostic. Adding another safety gate changes that mean without changing model behavior, so project-level comparisons use the case-level metrics above.
 
 ## Repository layout
 

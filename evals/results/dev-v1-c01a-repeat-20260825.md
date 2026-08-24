@@ -6,9 +6,9 @@ Status: internal diagnostic only. This is not a public performance claim.
 
 - Repository commit: `03325d2b4433ee4747e47656ea80126af1c4e75f`
 - Run window: `2026-08-24T19:38:18Z` to `2026-08-24T19:46:35Z` (`2026-08-25` in Asia/Shanghai)
-- Runtime Skill: `skill/deslop/`
-- Skill content hash: `13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527`
-- Skill payload: 6 files, 33,063 bytes, 4,184 words
+- Runtime Skill evaluated in this historical run: `skill/deslop/`
+- Skill content hash at run time: `13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527`
+- Skill payload at run time: 6 files, 33,063 bytes, 4,184 words
 - Harness: `agent-skill-eval==0.7.0`
 - Agent CLI: `codex-cli 0.149.0`
 - Model: `gpt-5.6-sol`

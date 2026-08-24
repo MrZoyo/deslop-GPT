@@ -154,7 +154,7 @@ def negative_change_budget(fixture: Path, workspace: Path) -> tuple[bool, str]:
         for name in original_metrics
     }
     line_delta = structural_delta["nonblank_python_lines"]
-    passed = not new_files and line_delta <= 3
+    passed = not new_files and line_delta <= 3 and current_metrics["syntax_errors"] == 0
     evidence = (
         f"nonblank_python_line_delta={line_delta}; "
         f"new_files={new_files}; deleted_files={deleted_files}; "

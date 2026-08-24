@@ -68,7 +68,12 @@ def validate_skill() -> None:
     if "allow_implicit_invocation: false" not in openai_yaml:
         fail("skill/deslop/agents/openai.yaml must disable implicit invocation")
 
-    expected_payload = {"SKILL.md", "agents/openai.yaml", *required_references}
+    expected_payload = {
+        "SKILL.md",
+        "LICENSE.txt",
+        "agents/openai.yaml",
+        *required_references,
+    }
     actual_payload = {
         path.relative_to(SKILL_ROOT).as_posix()
         for path in SKILL_ROOT.rglob("*")
@@ -89,6 +94,12 @@ def validate_skill() -> None:
         fail("agent-skill-eval compatibility wrapper must use .agents/skills")
     if 'command in {"run", "self-test"}' not in wrapper_text:
         fail("agent-skill-eval compatibility wrapper must expose self-test")
+    if 'AB_ORDER = "deterministic-counterbalanced"' not in wrapper_text:
+        fail("agent-skill-eval compatibility wrapper must counterbalance A/B order")
+
+    exporter = ROOT / "scripts" / "export_results.py"
+    if not exporter.is_file():
+        fail("sanitized result exporter is missing")
 
 
 def validate_eval_case(case: dict[str, object], seen_ids: set[str]) -> None:
@@ -440,6 +451,17 @@ def run_negative_budget_calibration() -> None:
     ):
         fail("negative-change budget did not report recursive file and AST evidence")
 
+    with tempfile.TemporaryDirectory() as directory:
+        workspace = Path(directory) / "c01b"
+        shutil.copytree(ROOT / "evals" / "files" / "c01b", workspace)
+        (workspace / "test_app.py").write_text("def broken(:\n")
+        rows = run_grader("c01b", workspace)
+    budget = result_with_prefix(rows, "negative-change budget")
+    if budget.get("passed") is not False:
+        fail("negative-change budget accepted a Python syntax error")
+    if '"syntax_errors":1' not in str(budget.get("evidence", "")):
+        fail("negative-change budget did not report the Python syntax error")
+
 
 def run_skill_discovery_calibration() -> None:
     with tempfile.TemporaryDirectory() as directory:
@@ -535,8 +557,8 @@ def main() -> None:
         f"{fixture_count} fixtures and {test_count} baseline tests passed; "
         "hidden grader calibration passed 20/20 positive + 20/20 negative states; "
         f"{alternate_count} alternate valid states passed; non-scored c01a diagnostics, "
-        "zero-mutation audit, recursive negative-change, remaining-test, and score-neutral "
-        "skill-discovery calibrations passed."
+        "zero-mutation audit, recursive and syntax-safe negative-change, remaining-test, "
+        "score-neutral skill-discovery, and deterministic A/B requirements passed."
     )
 
 

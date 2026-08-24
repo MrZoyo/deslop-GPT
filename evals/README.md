@@ -41,6 +41,7 @@ This avoids the circular workflow “the Skill says this is slop, therefore the 
 - `grade_case.py` runs after grading while the workspace still exists.
 - The external grader uses AST checks, independent calls, fault injection, persistence tampering, remaining-test execution, and exact audit workspace comparison.
 - A second hook assertion recursively compares relative file paths and Python lines, rejects new files or substantial growth, and records AST structural deltas.
+- Any Python syntax error is a hard negative-change-budget failure.
 - Successful Skill discovery is metadata only; it emits a scored assertion only when path or content-hash verification fails.
 - Development cases may write `diagnostics.json` beside the raw output for non-scored sub-check details; diagnostics never add or reweight assertions.
 
@@ -128,10 +129,13 @@ uv run --with agent-skill-eval==0.7.0 \
   --agent-model codex=<model> \
   --reasoning-effort medium \
   --runs 5 \
+  --concurrency 1 \
   --baseline \
   --post-grade-command "python3 evals/grade_case.py" \
   --workspace eval-workspace/deslop
 ```
+
+The wrapper submits deterministic counterbalanced pairs. With concurrency 1, case/run parity alternates `Skill → baseline` and `baseline → Skill`; the strategy and actual start sequence are retained in result metadata.
 
 A result produced without the wrapper or `--post-grade-command "python3 evals/grade_case.py"` has no trustworthy Codex Skill discovery evidence or semantic adjudication and must not be reported as a project score. Each with-Skill Codex `run_meta.json` must contain verified `skill_discovery` path and content-hash metadata.
 
@@ -146,6 +150,7 @@ uv run --with agent-skill-eval==0.7.0 \
   --agent-model codex=<model> \
   --reasoning-effort medium \
   --runs 3 \
+  --concurrency 1 \
   --baseline \
   --eval-id c01a \
   --eval-id c01b \
@@ -161,6 +166,16 @@ uv run --with agent-skill-eval==0.7.0 \
   --format markdown \
   --show-evidence
 ```
+
+Export transcript-free machine-readable evidence directly from the raw iteration directory:
+
+```bash
+python3 scripts/export_results.py \
+  eval-workspace/deslop/deslop-workspace/iteration-1 \
+  --output evals/results/dev-v1-full-YYYYMMDD.json
+```
+
+The exporter records explicit semantic, remaining-test, side-effect, and negative-change gates per run. Harness assertion mean remains a secondary within-version diagnostic; headline comparisons use preservation, removal recall, and full case pass.
 
 Split preservation and simplification results using `evals/adjudication.json`; do not publish only the harness-wide aggregate.
 
