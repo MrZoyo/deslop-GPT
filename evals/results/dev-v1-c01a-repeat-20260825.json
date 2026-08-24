@@ -1,0 +1,183 @@
+{
+  "schema": "deslop-eval-result-v1",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-24T19:38:18Z",
+    "completed_at_utc": "2026-08-24T19:46:35Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "03325d2b4433ee4747e47656ea80126af1c4e75f",
+    "corpus": "dev-v1",
+    "cases": ["c01a"]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.0",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 3,
+    "model_calls": 6,
+    "concurrency": 1,
+    "retries": 0,
+    "timeout_seconds": 900,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_and_local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/grade_case.py"
+  },
+  "skill": {
+    "path": "skill/deslop",
+    "content_hash": "13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527",
+    "payload_files": 6,
+    "payload_bytes": 33063,
+    "payload_words": 4184
+  },
+  "aggregate": {
+    "without_skill": {
+      "mean_assertion_pass_rate": 0.8333333333333334,
+      "full_pass_rate": 0.3333333333333333,
+      "pass_at_3": 1.0,
+      "mean_wall_time_seconds": 73.93166666666667,
+      "mean_total_tokens": 106655.66666666667,
+      "mean_cached_input_tokens": 82432.0,
+      "mean_non_cached_input_tokens": 22228.666666666668,
+      "mean_output_tokens": 1995.0,
+      "mean_reasoning_output_tokens": 562.6666666666666,
+      "mean_completed_command_executions": 5.333333333333333,
+      "mean_agent_messages": 4.666666666666667
+    },
+    "with_skill": {
+      "mean_assertion_pass_rate": 0.9166666666666666,
+      "full_pass_rate": 0.6666666666666666,
+      "pass_at_3": 1.0,
+      "mean_wall_time_seconds": 90.73433333333334,
+      "mean_total_tokens": 158104.0,
+      "mean_cached_input_tokens": 134229.33333333334,
+      "mean_non_cached_input_tokens": 21230.333333333332,
+      "mean_output_tokens": 2644.3333333333335,
+      "mean_reasoning_output_tokens": 704.6666666666666,
+      "mean_completed_command_executions": 9.0,
+      "mean_agent_messages": 5.666666666666667
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate": 0.08333333333333326,
+      "full_pass_rate": 0.3333333333333333,
+      "pass_at_3": 0.0,
+      "mean_wall_time_seconds": 16.802666666666667,
+      "mean_total_tokens": 51448.33333333333,
+      "mean_cached_input_tokens": 51797.33333333334,
+      "mean_non_cached_input_tokens": -998.3333333333358,
+      "mean_output_tokens": 649.3333333333335,
+      "mean_reasoning_output_tokens": 142.0,
+      "mean_completed_command_executions": 3.666666666666667,
+      "mean_agent_messages": 1.0
+    },
+    "all_calls": {
+      "total_tokens": 794279,
+      "input_tokens": 780361,
+      "cached_input_tokens": 649984,
+      "non_cached_input_tokens": 130377,
+      "output_tokens": 13918,
+      "reasoning_output_tokens": 3802,
+      "cost_usd": null,
+      "cost_note": "Unavailable; the CLI reported no cost and no pricing config was supplied."
+    },
+    "stability": {
+      "without_skill": {"runs": 3, "full_passes": 1, "flaky": true},
+      "with_skill": {"runs": 3, "full_passes": 2, "flaky": true}
+    }
+  },
+  "runs": [
+    {
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "diagnostics": {"first_record_removed": false, "digest_helper_removed": false, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
+      "structural_delta": {"production_lines": -4, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 6, "completed_file_changes": 1, "agent_messages": 5},
+      "timing": {"duration_ms": 72656, "total_tokens": 145831, "input_tokens": 143639, "cached_input_tokens": 121856, "non_cached_input_tokens": 21783, "output_tokens": 2192, "reasoning_output_tokens": 759, "cost_usd": null}
+    },
+    {
+      "with_skill": false,
+      "run_index": 2,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "diagnostics": {"first_record_removed": true, "digest_helper_removed": true, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -12},
+      "structural_delta": {"production_lines": -12, "functions": -3, "imports": -1, "branches": -2},
+      "trajectory": {"completed_turns": 1, "completed_commands": 5, "completed_file_changes": 1, "agent_messages": 4},
+      "timing": {"duration_ms": 63532, "total_tokens": 78955, "input_tokens": 77454, "cached_input_tokens": 58624, "non_cached_input_tokens": 18830, "output_tokens": 1501, "reasoning_output_tokens": 371, "cost_usd": null}
+    },
+    {
+      "with_skill": false,
+      "run_index": 3,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "diagnostics": {"first_record_removed": false, "digest_helper_removed": false, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
+      "structural_delta": {"production_lines": -4, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 5, "completed_file_changes": 1, "agent_messages": 5},
+      "timing": {"duration_ms": 85607, "total_tokens": 95181, "input_tokens": 92889, "cached_input_tokens": 66816, "non_cached_input_tokens": 26073, "output_tokens": 2292, "reasoning_output_tokens": 558, "cost_usd": null}
+    },
+    {
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "skill_discovery": {"verified": true, "path": ".agents/skills/deslop", "content_hash": "13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527"},
+      "diagnostics": {"first_record_removed": true, "digest_helper_removed": true, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -12},
+      "structural_delta": {"production_lines": -12, "functions": -3, "imports": -1, "branches": -2},
+      "trajectory": {"completed_turns": 1, "completed_commands": 6, "completed_file_changes": 1, "agent_messages": 5},
+      "timing": {"duration_ms": 78993, "total_tokens": 182767, "input_tokens": 180766, "cached_input_tokens": 153600, "non_cached_input_tokens": 27166, "output_tokens": 2001, "reasoning_output_tokens": 489, "cost_usd": null}
+    },
+    {
+      "with_skill": true,
+      "run_index": 2,
+      "full_pass": false,
+      "assertions_passed": 3,
+      "assertions_total": 4,
+      "skill_discovery": {"verified": true, "path": ".agents/skills/deslop", "content_hash": "13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527"},
+      "diagnostics": {"first_record_removed": false, "digest_helper_removed": false, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
+      "structural_delta": {"production_lines": -4, "functions": -1, "imports": -1},
+      "trajectory": {"completed_turns": 1, "completed_commands": 7, "completed_file_changes": 0, "agent_messages": 4},
+      "timing": {"duration_ms": 72233, "total_tokens": 106480, "input_tokens": 104397, "cached_input_tokens": 87040, "non_cached_input_tokens": 17357, "output_tokens": 2083, "reasoning_output_tokens": 698, "cost_usd": null}
+    },
+    {
+      "with_skill": true,
+      "run_index": 3,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "skill_discovery": {"verified": true, "path": ".agents/skills/deslop", "content_hash": "13f9de264fd14d8f55f774a47aab93cb25ed45572708c588cebabf7b5bd0b527"},
+      "diagnostics": {"first_record_removed": true, "digest_helper_removed": true, "hashlib_dependency_removed": true, "load_episode_preserved": true},
+      "remaining_tests": {"passed": true, "count": 1},
+      "side_effect_contract": {"passed": true},
+      "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -12},
+      "structural_delta": {"production_lines": -12, "functions": -3, "imports": -1, "branches": -2},
+      "trajectory": {"completed_turns": 1, "completed_commands": 14, "completed_file_changes": 1, "agent_messages": 8},
+      "timing": {"duration_ms": 120977, "total_tokens": 185065, "input_tokens": 181216, "cached_input_tokens": 162048, "non_cached_input_tokens": 19168, "output_tokens": 3849, "reasoning_output_tokens": 927, "cost_usd": null}
+    }
+  ]
+}

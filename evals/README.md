@@ -197,3 +197,5 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.
 
 The first internal Codex pilot is recorded in [`results/dev-v1-pilot-20260825.md`](results/dev-v1-pilot-20260825.md), with sanitized machine-readable evidence in [`results/dev-v1-pilot-20260825.json`](results/dev-v1-pilot-20260825.json). It is diagnostic development data, not a public performance claim.
+
+The three-run `c01a` follow-up is recorded in [`results/dev-v1-c01a-repeat-20260825.md`](results/dev-v1-c01a-repeat-20260825.md), with sanitized evidence in [`results/dev-v1-c01a-repeat-20260825.json`](results/dev-v1-c01a-repeat-20260825.json). Both configurations were flaky; the observed 2/3 versus 1/3 result is not an effectiveness claim.

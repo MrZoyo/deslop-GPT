@@ -101,7 +101,7 @@ The pairs cover dead helpers versus public façades, redundant tests versus atom
 
 Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, remaining-test execution, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay; representative simplify cases also have an `alternate_valid` implementation.
 
-Results are intentionally not published yet. Internal A/B runs may use `dev-v1`, but public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
+No project-level performance score is published. Small `dev-v1` diagnostics are retained under `evals/results/`, but public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
 See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 

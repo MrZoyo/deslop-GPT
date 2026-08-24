@@ -90,6 +90,13 @@
       "assertions_passed": 3,
       "assertions_total": 4,
       "semantic": {"passed": false, "evidence": "unused first_record helper remains"},
+      "diagnostics": {
+        "first_record_removed": false,
+        "digest_helper_removed": false,
+        "hashlib_dependency_removed": true,
+        "load_episode_preserved": true,
+        "source": "agent output and structural delta; diagnostics sidecar was added after this pilot"
+      },
       "remaining_tests": {"passed": true, "count": 1},
       "side_effect_contract": {"passed": true},
       "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
@@ -118,6 +125,13 @@
         "content_hash": "835a30c4bfb9df8a0d9ff572f0a580fa01cdf74082efb94054cdd7dd034eb330"
       },
       "semantic": {"passed": false, "evidence": "unused first_record helper remains"},
+      "diagnostics": {
+        "first_record_removed": false,
+        "digest_helper_removed": false,
+        "hashlib_dependency_removed": true,
+        "load_episode_preserved": true,
+        "source": "agent output and structural delta; diagnostics sidecar was added after this pilot"
+      },
       "remaining_tests": {"passed": true, "count": 1},
       "side_effect_contract": {"passed": true},
       "negative_change_budget": {"passed": true, "new_files": [], "nonblank_python_line_delta": -4},
