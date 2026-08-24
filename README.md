@@ -1,18 +1,18 @@
 # deslop
 
-**A deletion-first Agent Skill for removing defensive overengineering, test bloat, and verification theater from agent-maintained codebases.**
+**A deletion-first Agent Skill for removing accumulated agent-created test bloat, verification theater, and defensive/fallback bloat from agent-maintained codebases.**
 
 `deslop` is a semantic cleanup policy, not a generic code humanizer. It asks what concrete contract or failure a construct serves, deletes machinery with no defensible answer, and explicitly records suspicious-looking code it chose to preserve.
 
-Its three primary targets are:
+Its three primary targets, in priority order, are:
 
 ```text
-Defensive bloat
-Test bloat
-Verification theater
+Test-suite bloat (~50%)
+Verification theater (~25%)
+Defensive/fallback bloat (~25%)
 ```
 
-Dead code, wrapper towers, speculative abstractions, compatibility residue, and low-information comments are secondary targets.
+Generic dead code, wrapper towers, speculative abstractions, compatibility residue, and low-information comments are secondary targets. They are in scope only when they belong to one of the three focused clusters.
 
 ## Why this exists
 
@@ -23,7 +23,7 @@ Deletion-oriented agents often fail in opposite directions:
 - they delete production code, then add more tests and scaffolding than they removed;
 - they treat locally generated hashes, schemas, receipts, and evidence as meaningful verification.
 
-`deslop` is designed around false-positive resistance. A verifier is useful only when it has information, authority, or a failure domain meaningfully independent from the producer. A test is useful only when it protects distinct behavior with a meaningful oracle.
+`deslop` is designed around false-positive resistance and closed justification loops. A verifier is useful only when it has information, authority, or a failure domain meaningfully independent from the producer. A test is useful only when it protects distinct behavior with a meaningful oracle. Production code does not justify a test merely because the test exercises it, and a test does not justify production code merely because the production code exists.
 
 ## Safety model
 
@@ -65,9 +65,9 @@ Update that checkout with `git -C "$HOME/.local/share/deslop-GPT" pull --ff-only
 
 This project does not claim to be the first AI-code cleaner. Its narrower focus is:
 
-1. redundant defensive programming inside trusted paths;
-2. test suites as first-class cleanup targets;
-3. circular verification beyond SHA, including schema, recomputation, evidence, signatures, and receipts;
+1. accumulated test-suite bloat as the first cleanup target;
+2. circular verification beyond SHA, including schema, recomputation, evidence, signatures, and receipts;
+3. defensive and fallback accumulation that masks current errors;
 4. scientific and numerical false-positive avoidance;
 5. a production-derived adversarial corpus pairing every deletion target with a preservation case;
 6. behavior preservation as the first evaluation metric.
@@ -86,7 +86,7 @@ Evaluation tools that influenced this repository:
 
 No superiority claim is made without comparable repeated runs.
 
-## Development corpus
+## Development corpora
 
 The public `dev-v1` corpus includes 20 de-identified Python fixtures derived from accepted changes and active contracts in two robotics data pipelines, plus one authorization case. These cases informed Skill and grader design; they are development data, not a held-out basis for public performance claims.
 
@@ -103,7 +103,9 @@ The pairs cover dead helpers versus public façades, redundant tests versus atom
 
 Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, remaining-test execution, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay; representative simplify cases also have an `alternate_valid` implementation.
 
-No project-level performance score is published. Small `dev-v1` diagnostics are retained under `evals/results/`, but public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
+`dev-v1` is retained as historical semantic-deletion safety data. It is not a generic cleanup target and must not be used as the sole tuning objective. The new [`dev-v2-focused`](evals/dev-v2-focused/README.md) development layer is restricted to test bloat (~50%), verification theater (~25%), and defensive/fallback bloat (~25%), with paired preservation counterexamples and three accumulated-slop mini repositories.
+
+No project-level performance score is published. Diagnostics under `evals/results/` are development evidence only; public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
 See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 
@@ -113,6 +115,12 @@ The dependency-free validator checks Skill structure, explicit-only policy, neut
 
 ```bash
 python3 scripts/validate_corpus.py
+```
+
+Validate the focused accumulated-slop layer separately:
+
+```bash
+python3 scripts/validate_focused_corpus.py
 ```
 
 `agent-skill-eval 0.7.0` installs Codex skills into the legacy `.codex/skills` path. All Codex benchmark commands therefore go through the pinned compatibility wrapper, which switches only Codex to the [current canonical `.agents/skills` path](https://developers.openai.com/codex/skills). Validate the harness format through `uv`:
@@ -151,10 +159,18 @@ Record the model, reasoning effort, Codex version, harness version, run count, t
 
 Metrics are ordered deliberately:
 
-1. **Behavior Preservation Rate** — proportion of `confirmed_boundary` cases that pass hidden contracts.
-2. **Slop Removal Recall** — proportion of `confirmed_change` cases that reach the adjudicated simpler state and pass hidden contracts.
-3. **Complexity Reduction** — net lines, wrappers, validators, branches, and test cases removed.
-4. **Cleanup-induced Slop** — new files plus deltas in production/test nonblank lines, functions, test functions, classes, control flow, exception machinery, assertion sites, `isinstance` calls, imports, and heuristic abstractions.
+### A. Semantic decision quality
+
+1. **Behavior Preservation Rate** — proportion of preservation cases that pass hidden contracts.
+2. **Simplification Case Recall** — proportion of deletion cases that reach the adjudicated simpler state and pass hidden contracts. This is case-level semantic recall, not a percentage of lines removed.
+
+### B. Reduction magnitude and cost
+
+3. **Test reduction** — test LOC, test count, deterministic test runtime, and expensive fixture/invocation counts.
+4. **Verification/fallback reduction** — checksum, receipt, manifest, validator, try/except, compatibility, and fallback machinery removed.
+5. **Cleanup-induced additions** — new tests, wrappers, abstractions, dependencies, branches, and production/test LOC.
+
+Reduction magnitude is evaluated only after hidden behavior gates pass. Raw LOC deletion is not success.
 
 A large deletion with a low preservation rate is failure. A cleanup that grows the codebase with new scaffolding is also failure.
 
@@ -166,13 +182,15 @@ Harness mean assertion pass rate is retained only as a within-version diagnostic
 skill/deslop/                    Pure runtime Skill payload
   SKILL.md                       Core workflow and authorization model
   agents/openai.yaml             UI metadata and explicit-only policy
-  references/                    Smell, trust, test, and scientific guidance
+  references/                    Focused test, trust, fallback, and scientific guidance
 evals/evals.json                 agent-skill-eval suite
 evals/adjudication.json          Labels, evidence class, and oracle source
 evals/calibration/               Positive goldens and destructive mutants
 evals/grade_case.py              Hidden post-grade contracts and budget checks
 evals/files/                     Neutral paired fixtures copied to agents
+evals/dev-v2-focused/            Focused corpus and accumulated-slop mini repos
 scripts/validate_corpus.py       Dependency-free static validation
+scripts/validate_focused_corpus.py  Focused corpus and mini-repo validation
 scripts/run_agent_skill_eval.py  Pinned canonical-path compatibility wrapper
 ```
 

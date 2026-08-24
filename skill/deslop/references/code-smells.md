@@ -1,6 +1,6 @@
 # Code Smells
 
-Use this checklist for production code. A smell identifies where to investigate; caller and contract evidence decides whether to delete.
+Use this checklist for production code after test bloat and verification clusters have been inspected. A smell identifies where to investigate; caller, correction, and contract evidence decide whether to delete. Generic dead code and ordinary duplication are secondary unless they belong to a focused cluster.
 
 | Smell | Signal | Evidence needed | Common false positives | Preferred simplification |
 | --- | --- | --- | --- | --- |
@@ -21,6 +21,33 @@ Use this checklist for production code. A smell identifies where to investigate;
 | Comment noise | Text narrates syntax, types, or generic intent | Ask whether it contributes information not present in clear code | External constraint, workaround, invariant, tradeoff | Delete restatement; preserve concise “why” |
 | Type workaround drift | Cast chains, ignores, and runtime probes conflict with surrounding conventions | Confirm current type contract and toolchain behavior | Broken third-party stubs, version-gated API | Express the real type directly and remove stale workarounds |
 | Inferred transformation | Date, filename, project ID, or incidental metadata silently selects a data transform | Find the authoritative caller choice and historical failure evidence | Versioned protocol fields with explicit semantics | Replace guessing with an explicit option and record it |
+
+## Fail-visible bias
+
+Inside trusted code, unexpected failures should normally surface. Robustness is not a license to hide programming errors. Investigate these patterns first:
+
+- broad `except Exception` around ordinary internal work;
+- catch-log-rethrow that adds no stable translation, cleanup, or attribution;
+- catch-and-fallback after a new path raises unexpectedly;
+- `try new behavior; otherwise run old behavior` without a supported version or protocol signal;
+- silent defaults after malformed or missing internal state;
+- compatibility branches with no reachable supported consumer;
+- repeated validation after a trusted boundary or after a typed representation is established;
+- defensive branches whose only evidence is tests created for those branches.
+
+For each branch, ask:
+
+1. What exact failure is recoverable?
+2. Does the current user requirement or protocol require recovery, translation, cleanup, or compatibility?
+3. Can ordinary runtime failure expose an internal bug more usefully?
+4. Is the fallback's test an independent contract, or part of a closed justification loop?
+5. What supported consumer would break if this branch disappeared?
+
+If the answer is only “be robust,” “future-proof,” or “keep old tests green,” prefer direct failure. A bug fix should replace incorrect behavior, not preserve it behind a fallback. Preserve narrow exception handling when it performs concrete cleanup, translates a stable public error, enforces a documented legacy protocol, or protects a real resource/transaction boundary.
+
+## Defensive clusters, not isolated lines
+
+Do not delete only the most visible helper while leaving its mutually supporting tests, validators, wrappers, or fallback branches. Follow the justification chain outward. If production code, a test, and a receipt/validator each exist only to justify one another, treat them as one deletion candidate. A cluster is preserved only when its chain reaches an independent user requirement, external caller, protocol, security boundary, persistence/corruption boundary, or scientific invariant.
 
 ## Deletion Evidence
 

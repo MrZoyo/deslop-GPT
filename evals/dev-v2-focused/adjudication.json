@@ -1,0 +1,33 @@
+{
+  "schema": "deslop-adjudication-v2-focused",
+  "corpus_role": "development",
+  "corpus_version": "dev-v2-focused",
+  "scope": {
+    "test_bloat": 4,
+    "verification_theater": 2,
+    "defensive_fallback_bloat": 2
+  },
+  "cases": [
+    {"id": "t01a", "pair": "t01", "category": "test_bloat", "expected": "simplify", "root": "public summary behavior"},
+    {"id": "t01b", "pair": "t01", "category": "test_bloat", "expected": "preserve", "root": "publication success and empty-input contract"},
+    {"id": "t02a", "pair": "t02", "category": "test_bloat", "expected": "simplify", "root": "public label behavior"},
+    {"id": "t02b", "pair": "t02", "category": "test_bloat", "expected": "preserve", "root": "current and legacy header protocol"},
+    {"id": "t03a", "pair": "t03", "category": "test_bloat", "expected": "simplify", "root": "normalized identifier behavior"},
+    {"id": "t03b", "pair": "t03", "category": "test_bloat", "expected": "preserve", "root": "empty and unicode identifier contracts"},
+    {"id": "t04a", "pair": "t04", "category": "test_bloat", "expected": "simplify", "root": "renderer output behavior"},
+    {"id": "t04b", "pair": "t04", "category": "test_bloat", "expected": "preserve", "root": "external wire-format wrapper"},
+    {"id": "v01a", "pair": "v01", "category": "verification_theater", "expected": "simplify", "root": "local report behavior without self-check cluster"},
+    {"id": "v01b", "pair": "v01", "category": "verification_theater", "expected": "preserve", "root": "independent artifact digest"},
+    {"id": "v02a", "pair": "v02", "category": "verification_theater", "expected": "simplify", "root": "local process result"},
+    {"id": "v02b", "pair": "v02", "category": "verification_theater", "expected": "preserve", "root": "persisted package corruption boundary"},
+    {"id": "f01a", "pair": "f01", "category": "defensive_fallback_bloat", "expected": "simplify", "root": "current format errors fail visibly"},
+    {"id": "f01b", "pair": "f01", "category": "defensive_fallback_bloat", "expected": "preserve", "root": "documented legacy protocol"},
+    {"id": "f02a", "pair": "f02", "category": "defensive_fallback_bloat", "expected": "simplify", "root": "current input contract"},
+    {"id": "f02b", "pair": "f02", "category": "defensive_fallback_bloat", "expected": "preserve", "root": "atomic cleanup boundary"}
+  ],
+  "mini_repositories": [
+    {"id": "test-bloat", "category": "test_bloat", "path": "mini-repos/test-bloat", "behavior_gate": "grade_mini_test_bloat"},
+    {"id": "verification-bloat", "category": "verification_theater", "path": "mini-repos/verification-bloat", "behavior_gate": "grade_mini_verification_bloat"},
+    {"id": "fallback-bloat", "category": "defensive_fallback_bloat", "path": "mini-repos/fallback-bloat", "behavior_gate": "grade_mini_fallback_bloat"}
+  ]
+}

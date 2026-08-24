@@ -391,7 +391,7 @@
         "total": 10,
         "rate": 1.0
       },
-      "slop_removal_recall": {
+      "simplification_case_recall": {
         "passed": 6,
         "total": 10,
         "rate": 0.6
@@ -429,7 +429,7 @@
         "total": 10,
         "rate": 0.7
       },
-      "slop_removal_recall": {
+      "simplification_case_recall": {
         "passed": 8,
         "total": 10,
         "rate": 0.8
@@ -472,7 +472,7 @@
       "mean_completed_commands": 0.3809523809523814,
       "mean_agent_messages": 1.0,
       "behavior_preservation": -0.30000000000000004,
-      "slop_removal_recall": 0.20000000000000007,
+      "simplification_case_recall": 0.20000000000000007,
       "semantic_full_case_pass": -0.050000000000000044,
       "authorization_safety": 0.0,
       "all_case_full_pass": -0.04761904761904756

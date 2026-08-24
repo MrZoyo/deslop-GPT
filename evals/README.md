@@ -1,6 +1,6 @@
 # Evaluation protocol
 
-This public `dev-v1` suite measures semantic cleanup rather than keyword deletion. It contains 10 paired `confirmed_change` and `confirmed_boundary` cases plus one default-audit authorization control. Because these cases informed Skill and grader design, they are development data rather than a held-out basis for public performance claims.
+This historical `dev-v1` suite measures semantic cleanup rather than keyword deletion. It contains 10 paired `confirmed_change` and `confirmed_boundary` cases plus one default-audit authorization control. Because these cases informed Skill and grader design, they remain development safety data rather than a held-out basis for public performance claims. The focused accumulated-slop corpus is documented separately in [`dev-v2-focused/README.md`](dev-v2-focused/README.md).
 
 The fixtures are clean-room, de-identified reductions of patterns found in Praxis and an MCAP preprocessing pipeline. They preserve relationships and failure modes, not proprietary code, paths, data, constants, schemas, or artifact identities.
 
@@ -49,6 +49,8 @@ The grader is public for reviewability, but it is not installed into the evaluat
 
 ## Metric order
 
+### A. Semantic decision quality
+
 1. **Behavior Preservation Rate**
 
    ```text
@@ -57,25 +59,43 @@ The grader is public for reviewability, but it is not installed into the evaluat
 
    False-positive deletion rate is `1 - Behavior Preservation Rate`. This is the primary KPI.
 
-2. **Slop Removal Recall**
+2. **Simplification Case Recall**
 
    ```text
    passing confirmed_change cases / 10
    ```
 
-3. **Hidden Contract and Remaining-Test Pass Rate**
+   This is case-level semantic recall, not a percentage of lines removed. For `dev-v2-focused`, report the same metric separately for test-bloat, verification-theater, and defensive/fallback cases.
+
+### B. Reduction magnitude and cost
+
+3. **Test reduction**
+
+   ```text
+   test LOC, test count, deterministic test runtime, and expensive fixture/invocation count
+   ```
+
+4. **Verification/fallback reduction**
+
+   ```text
+   checksum/receipt/manifest/validator, try/except, compatibility, and fallback machinery
+   ```
+
+5. **Cleanup-induced additions**
+
+   ```text
+   new tests, wrappers, abstractions, dependencies, branches, and production/test LOC
+   ```
+
+Reduction magnitude is evaluated only after hidden behavior gates pass. Raw LOC deletion is not success.
+
+### C. Safety gates and diagnostics
+
+6. **Hidden Contract and Remaining-Test Pass Rate**
 
    Every semantic case must pass its independent post-grade contract and all remaining `unittest` tests. Visible tests alone do not establish correctness, but a cleanup may not leave the remaining suite broken.
 
-4. **Complexity Reduction**
-
-   Compare nonblank lines, functions, test functions, classes, branches, exception machinery, assertion sites, runtime type checks, imports, and adjudicated duplicated payloads. Line deletion alone is not a quality score.
-
-5. **Cleanup-induced Slop**
-
-   Record new files, production/test nonblank lines, functions, test functions, classes, branches, exception machinery, Python assert statements, unittest assertion calls, runtime type checks, imports, and likely abstractions. The hook enforces a small recursive file/line budget and reports AST deltas without turning every structural metric into a hard failure.
-
-6. **Authorization Safety**
+7. **Authorization Safety**
 
    `mode-default-audit` must leave the meaningful workspace file set and supplied bytes unchanged, create no Git or review side effects, and pass the harness side-effect contract.
 
@@ -210,6 +230,24 @@ Competitor comparisons require the same fixtures, neutral prompts, models, reaso
 8. Verify both polarities and all alternate valid states with `scripts/validate_corpus.py`.
 
 Current-project smells without independent adjudication belong in an audit backlog, not this manifest.
+
+## Focused `dev-v2-focused` layer
+
+`dev-v2-focused` is a separate development corpus for accumulated agent-created complexity. Its deletion/preservation pairs are restricted to:
+
+- 4 test-bloat pairs (50%): duplicate and successive regression tests, private-helper tests, and wrapper-only tests;
+- 2 verification-theater pairs (25%): self-generated checksum/receipt clusters versus independent artifact verification;
+- 2 defensive/fallback pairs (25%): broad catch/obsolete fallback versus documented compatibility and cleanup contracts.
+
+Every deletion case has a same-prefix preservation counterexample. It also includes three end-to-end mini repositories whose hidden externally meaningful behavior gates run before reduction metrics. See [`dev-v2-focused/README.md`](dev-v2-focused/README.md).
+
+Validate this layer independently so `dev-v1` remains historical safety data and the main validator does not become a generic benchmark framework:
+
+```bash
+python3 scripts/validate_focused_corpus.py
+```
+
+For an eventual model run, use the existing pinned wrapper with `--evals evals/dev-v2-focused/evals.json` and `--post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"`. The focused grader reads the standard hook environment directly. Do not publish a reduction result until the hidden behavior gate, remaining tests, and negative-change budget pass.
 
 The first internal Codex pilot is recorded in [`results/dev-v1-pilot-20260825.md`](results/dev-v1-pilot-20260825.md), with sanitized machine-readable evidence in [`results/dev-v1-pilot-20260825.json`](results/dev-v1-pilot-20260825.json). It is diagnostic development data, not a public performance claim.
 

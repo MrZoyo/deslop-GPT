@@ -1,157 +1,129 @@
 # Verification and Trust
 
-Verification adds value only when the verifier has information, authority, or a failure domain meaningfully independent from the producer. Hashing is only one form of circular verification.
+Verification adds value only when the verifier has information, authority, or a failure domain meaningfully independent from the producer. A checksum is not automatically a trust boundary, and a second function or test is not automatically an independent oracle.
 
-## Trust-Boundary Decision Tree
+## Closed justification loops
+
+Trace the whole dependency cluster outward:
 
 ```text
-Does the value originate outside the current trusted execution domain?
+production result
+    -> digest / receipt / manifest / validator
+    -> validator test
+    -> reason each member exists
+    -> independent evidence root?
+```
+
+Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. If a checksum exists only because its test expects it, and that test exists only because the checksum was added, the pair is **mutual-support slop**. The same loop can contain serialization added only for hashing, digest fields, result envelopes, manifests, receipts, recomputation, wrappers, and wrapper-only tests.
+
+Delete the whole closed cluster when its chain reaches no independent root. Independent roots include:
+
+- a current user requirement or correction;
+- a real external caller or public API contract;
+- a documented wire protocol or specification;
+- a separately controlled security key or trust authority;
+- an independently supplied manifest, release digest, or content-addressed identity;
+- a persistence/readback or corruption boundary;
+- an independent consumer, regulator, reproducibility workflow, or operational system;
+- a scientific or numerical invariant with an independently derived expected result.
+
+Preserve one member only when the remaining cluster still serves such a root. Do not preserve every member because another member depends on it.
+
+## Trust-boundary decision tree
+
+```text
+Does the value cross out of the current trusted execution domain?
 |
 +-- No
-|   `-- Is there a concrete corruption, concurrency, persistence, ownership,
-|       or independent hardware/process failure being detected?
-|       +-- No  -> validation or verification is likely redundant
-|       `-- Yes -> preserve only if the check can detect that failure
+|   `-- Is there concrete corruption, persistence, ownership, concurrency,
+|       or independent hardware/process failure to detect?
+|       +-- No  -> verification is probably redundant
+|       `-- Yes -> preserve only the check that can detect that failure
 |
 `-- Yes
     `-- Is the source independently controlled or untrusted?
-        +-- Yes -> parse and validate once at the boundary
+        +-- Yes -> parse / validate / decode once at the boundary
         `-- No
-            `-- Does an external protocol, specification, or consumer require it?
+            `-- Does a protocol, specification, or consumer require it?
                 +-- Yes -> preserve the required check
-                `-- No  -> investigate the concrete failure model further
+                `-- No  -> identify the concrete failure model first
 ```
 
-Public visibility alone does not create a trust boundary. An exported library function may accept hostile third-party input, but that requires contract or consumer evidence.
+Public visibility alone does not create a trust boundary. Two services owned by the same producer can still be circular; one process can still cross a real failure domain by writing, publishing, reopening, decoding, or reading persisted output.
 
-## Typical Boundaries
+## Independence test
 
-Usually genuine:
+For every claimed verification, record:
 
-- user-controlled input;
-- external network input;
-- independently produced files, datasets, manifests, or artifacts;
-- deserialization from bytes into structured values;
-- service, process, machine, or organization boundaries when trust changes;
-- signed or authenticated protocols;
-- persistence read after independent mutation or corruption is possible;
-- content-addressed systems where a digest is identity;
-- provenance consumed by an independent system or authority.
+1. **Producer:** who created the value?
+2. **Verifier:** who checks it?
+3. **Independent knowledge:** what does the verifier know that the producer did not generate?
+4. **Independent authority:** is there a separate key, manifest, specification, identity, or consumer?
+5. **Independent failure domain:** can producer and verifier fail differently?
+6. **Action:** what meaningful response follows failure?
 
-Usually not genuine by themselves:
+If all inputs, logic, authority, and failure modes are shared, the check is circular even when it uses cryptography or another process.
 
-- one internal function calling another;
-- a dataclass passed between local modules;
-- an exported function used only by trusted project code;
-- a new in-memory array;
-- an internal result object;
-- a helper returning another helper's result;
-- two layers in the same typed process.
+## SHA256 and checksum clusters
 
-At a real boundary, prefer:
+Treat SHA256/checksum machinery as a cluster, not as one function. Search for the entire chain:
 
 ```text
-untrusted input
-    -> parse / validate / decode once
-    -> typed internal representation
-    -> direct computation
+canonicalization / serialization added only for hashing
+    -> digest field or checksum helper
+    -> result envelope / manifest / receipt
+    -> recomputation or validator
+    -> tests and fixtures created only for those mechanisms
 ```
 
-Do not propagate hostility inward through every function.
+When there is no independent expected digest, identity authority, trust transition, persistence-corruption role, content-addressing role, or external consumer, investigate and remove the whole support chain. Strong deletion candidates include hashes of local arguments, parameter objects, internal arrays, result dataclasses, self-created manifests, self-issued receipts, and evidence consumed only by the same agent or process.
 
-## Independence Test
+Do not call a local digest authentication merely because it is SHA256. A digest retained after secret redaction can be a legitimate non-secret correlation fingerprint when an independently recorded input or consumer uses it; that is provenance, not authentication, and its independent role must be explicit.
 
-For any claimed verification, identify:
+## Verification-theater patterns
 
-1. **Producer:** Who created the value?
-2. **Verifier:** Who checks it?
-3. **Independent knowledge:** What does the verifier know that the producer did not generate?
-4. **Independent authority:** Does the verifier trust a separate key, specification, manifest, or identity?
-5. **Independent failure domain:** Can the producer and verifier fail differently?
-6. **Action:** What meaningful response follows failure?
-
-If producer and verifier share all inputs, logic, authority, and failure modes, the check is circular even when it uses cryptography.
-
-Independence is semantic, not a process-count heuristic. Code in one process can cross a real failure domain by encoding, writing, atomically publishing, reopening, parsing, or decoding persisted output. A readback validator may detect truncation, partial publication, codec mismatch, schema loss, or corruption that an in-memory assertion cannot. Conversely, two services controlled by the same producer with the same inputs and algorithm may still be circular.
-
-## Verification-Theater Taxonomy
-
-### Hash Theater
+### Recompute theater
 
 ```text
-produce local value -> hash it -> store digest beside it -> recompute own digest
+calculate result -> repeat the same calculation -> call it verified
 ```
 
-Delete when both value and expected digest come from the same trusted workflow. Preserve downloaded-artifact checks, external manifests, content-addressed identity, deduplication semantics, signed protocols, and independent corruption detection.
+Delete when both computations share algorithm, inputs, constants, and likely bugs. Preserve independently derived analytical checks, diversified implementations with a concrete safety purpose, and cheap invariants that detect a distinct failure class.
 
-A digest retained while secret configuration text is redacted can be a legitimate non-secret fingerprint for correlating independently recorded inputs. Do not describe that fingerprint as authentication, but do not delete it merely because it is computed locally.
-
-### Schema Theater
+### Schema and envelope theater
 
 ```text
 producer emits payload -> producer-owned schema mirrors payload -> producer validates it
 ```
 
-Delete when the schema expresses no independent protocol or consumer contract. Preserve schemas defined by an external API, wire protocol, persisted format, cross-team boundary, or independently maintained consumer.
+Delete when no external protocol, persisted format, or independent consumer relies on the schema. Preserve wire contracts and independently maintained schemas.
 
-### Recompute Theater
-
-```text
-calculate result -> wrapper repeats the same calculation -> call it verified
-```
-
-Delete when both computations share the same algorithm, inputs, constants, and likely bugs. Preserve independently derived analytical checks, diversified implementations with a concrete safety purpose, and cheap invariants that detect a distinct failure class.
-
-Reopening Parquet, media, archives, or serialized records and checking their decoded representation is not the same as recomputing an in-memory result. Preserve it when the write/encode/read path introduces concrete failures and the readback check observes them.
-
-### Evidence Theater
+### Receipt, manifest, and evidence theater
 
 ```text
-operation -> evidence.json -> audit.json -> verification.json
+operation -> evidence.json / receipt -> local validator -> local test
 ```
 
-Delete ledgers generated and consumed only by the same agent or process when no independent consumer, policy, or failure boundary exists. Preserve audit records required and consumed by a separate authority, operational system, regulator, or reproducibility workflow.
+Delete ledgers and validators generated and consumed only by the same trusted workflow. Preserve records required by a separate authority, operational system, regulator, reproducibility workflow, transaction, idempotency boundary, or corruption detector.
 
-### Signature Theater
+### Signature theater
 
 ```text
-generate local key -> sign local result -> verify locally with paired local key
+generate local key -> sign local result -> verify with paired local key
 ```
 
-Delete when no identity, key custody, distribution boundary, or independent trust anchor exists. Preserve signatures that authenticate an external identity, artifact publisher, protocol peer, or independently controlled key.
+Delete when no identity, key custody, distribution boundary, or independent trust anchor exists. Preserve signatures authenticating an external publisher, protocol peer, or independently controlled key.
 
-### Receipt and Capability Theater
+## Persistence and readback
 
-```text
-ordinary function call -> issue receipt/token/permit -> consume once locally
-```
+Reopening an encoded file, archive, media object, or persisted record can be genuinely independent when it detects truncation, partial publication, codec mismatch, schema loss, or corruption across a write/read boundary. Do not collapse that into circular in-memory recomputation. Conversely, reading a value back from the same memory representation without a distinct failure domain adds little.
 
-Delete when the token controls no real authority transition or replay risk. Preserve capabilities and receipts that cross a real privilege, transaction, idempotency, billing, or distributed-systems boundary.
+## Defensive and fallback checks
 
-## Defensive Programming
+Repeated null/type/shape checks, broad catches, catch-log-rethrow, catch-and-fallback, repeated normalization, and self-validating result objects are suspicious when they add no boundary or failure domain. Preserve checks that enforce a documented safety, resource, authorization, transaction, concurrency, persistence, protocol, or numerical invariant.
 
-Investigate repeated null/type checks, broad catches, catch/log/rethrow, impossible exception branches, repeated normalization, defensive copies without aliasing risk, and result objects that revalidate themselves.
+Prefer direct failure for unexpected internal errors. A narrow fallback for one documented missing field or supported legacy version is different from `except Exception: use_old_path()`. The former may be contractual while the compatibility window remains; the latter hides bugs unless independent evidence proves otherwise.
 
-Preserve checks that:
+## Preserve by default
 
-- enforce a distinct invariant at the actual boundary;
-- prevent a documented safety or resource hazard;
-- translate external failure into a stable public contract;
-- protect authorization, concurrency, transactions, or persistence semantics;
-- detect a failure source independent from the producer.
-
-Ordinary runtime failure is often adequate for internal programming errors.
-
-Precise fallback can also be contractual: catching one missing-field or version signal and reading a documented legacy representation differs from broad catch-and-continue recovery. Preserve the former while the compatibility window remains supported.
-
-## SHA and Checksums
-
-Do not delete cryptography because it uses SHA256. Delete it when it pretends an ordinary in-process operation needs authentication.
-
-Strong deletion candidates include hashes of local arguments, parameter objects, result dataclasses, internal arrays, locally created manifests, self-issued receipts, or evidence with no independent consumer.
-
-Strong preservation candidates include independently supplied release digests, signed manifests, authenticated protocols, content-addressed storage, cache keys whose semantics require content identity, and persisted cross-system provenance.
-
-## Preserve by Default
-
-When evidence is incomplete, preserve authentication, authorization, security boundaries, concurrency correctness, persistence and transactions, external protocols, resource limits, and supported compatibility. Report uncertainty instead of guessing.
+When evidence is incomplete, preserve security and authorization, real external protocols, supported compatibility, persistence and transactions, concurrency, resource limits, scientific invariants, independently supplied artifact verification, and content-addressed identity. Report the missing evidence instead of inventing a justification or deleting on aesthetic grounds.

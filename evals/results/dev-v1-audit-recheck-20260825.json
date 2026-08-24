@@ -71,7 +71,7 @@
         "total": 0,
         "rate": null
       },
-      "slop_removal_recall": {
+      "simplification_case_recall": {
         "passed": 0,
         "total": 0,
         "rate": null
@@ -109,7 +109,7 @@
         "total": 0,
         "rate": null
       },
-      "slop_removal_recall": {
+      "simplification_case_recall": {
         "passed": 0,
         "total": 0,
         "rate": null
@@ -152,7 +152,7 @@
       "mean_completed_commands": -1.0,
       "mean_agent_messages": 3.0,
       "behavior_preservation": null,
-      "slop_removal_recall": null,
+      "simplification_case_recall": null,
       "semantic_full_case_pass": null,
       "authorization_safety": 0.0,
       "all_case_full_pass": 0.0

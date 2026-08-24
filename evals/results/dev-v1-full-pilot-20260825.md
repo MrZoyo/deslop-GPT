@@ -40,7 +40,7 @@ Runtime Skill 在本次运行的 payload 为 7 个文件、34,126 bytes、4,352 
 | 指标 | Without Skill | With Skill | 差值（with − without） |
 | --- | ---: | ---: | ---: |
 | Behavior Preservation（10 个 preserve case） | 10/10 = 1.00 | 7/10 = 0.70 | −0.30 |
-| Slop Removal Recall（10 个 simplify case） | 6/10 = 0.60 | 8/10 = 0.80 | +0.20 |
+| Simplification Case Recall（10 个 simplify case） | 6/10 = 0.60 | 8/10 = 0.80 | +0.20 |
 | 语义 full-case pass（20 个语义 case） | 16/20 = 0.80 | 15/20 = 0.75 | −0.05 |
 | 平均 wall time | 75.287 s | 103.253 s | +27.965 s |
 | 平均 total tokens | 102,115 | 165,037 | +62,923 |

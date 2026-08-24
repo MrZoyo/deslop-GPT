@@ -258,7 +258,7 @@ def config_aggregate(rows: list[dict]) -> dict:
     )
     return {
         "behavior_preservation": metric(preservation),
-        "slop_removal_recall": metric(simplification),
+        "simplification_case_recall": metric(simplification),
         "semantic_full_case_pass": metric(semantic),
         "authorization_safety": metric(audit),
         "all_case_full_pass": metric(rows),
@@ -353,7 +353,7 @@ def delta(without: dict, with_skill: dict) -> dict:
         result[field] = right - left if left is not None and right is not None else None
     for field in (
         "behavior_preservation",
-        "slop_removal_recall",
+        "simplification_case_recall",
         "semantic_full_case_pass",
         "authorization_safety",
         "all_case_full_pass",

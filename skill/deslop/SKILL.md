@@ -1,145 +1,94 @@
 ---
 name: deslop
-description: Audit or apply deletion-first cleanup for defensive overengineering, test bloat, and circular verification while preserving externally meaningful behavior. Invoke explicitly for semantic simplification, not generic rewriting or redesign.
+description: Audit or apply subtractive cleanup for accumulated agent-created test bloat, verification theater, and defensive or fallback bloat while preserving independent external behavior. Invoke explicitly for semantic simplification, not generic refactoring.
 ---
 
 # Deslop
 
-Remove unjustified complexity without changing intended externally observable behavior. This is not a beautification pass, generic rewrite, style migration, or architectural redesign.
+Deslop removes complexity accumulated during repeated coding-agent implementation and correction cycles. It is a semantic cleanup policy, not a beautifier, dead-code sweeper, generic refactoring tool, or redesign assistant.
 
-Focus on three primary targets:
+## Priority order
 
-1. defensive bloat inside trusted code paths;
-2. tests that add volume without distinct behavioral signal;
-3. circular verification where the verifier has no meaningfully independent information, authority, or failure domain.
+Work in this order. Do not let an easy dead-code deletion displace a higher-priority cluster.
 
-Dead code, wrapper towers, speculative abstractions, compatibility residue, and comment noise are secondary targets when evidence supports deletion.
+1. **Test-suite bloat.** Treat tests as production code that can accumulate after every agent correction. Remove duplicate, self-referential, implementation-detail, and obsolete tests while retaining a minimum sufficient set of independent behavioral evidence.
+2. **Verification theater.** Investigate checksums, receipts, manifests, validators, recomputation, and result envelopes whose producer and verifier share the same information and failure domain.
+3. **Defensive and fallback bloat.** Investigate broad catches, catch-and-fallback paths, speculative compatibility branches, repeated validation, and recovery machinery that masks errors without a current contract.
 
-## Modes and Authorization
+Generic dead code, wrappers, abstractions, comments, and ordinary duplication are secondary. Touch them only when they belong to one of the three target clusters or have direct high-confidence evidence.
 
-Interpret the invocation from natural language; do not depend on a runtime-specific arguments variable.
+**Tests are code too, and existing tests may themselves be accumulated agent slop. A test is evidence only when it protects distinct externally meaningful behavior with an independent oracle.** Adding tests is not the default response to cleanup. When production slop is deleted, tests whose only purpose is to protect that slop should normally be deleted in the same change.
 
-- **Default or `audit`:** Read-only. Inspect and report candidates, evidence, confidence, and important constructs that should be preserved.
-- **`apply`:** Modify files within the established scope.
-- **`tests`:** Prioritize test-suite signal and delete or consolidate test bloat. Without `apply`, remain read-only.
-- **`deep`:** Inspect repository-wide. Without `apply`, remain read-only; with `apply`, repository-wide cleanup is allowed but redesign is not.
-- **Explicit paths:** Restrict inspection and edits to those paths plus the minimum callers, contracts, and tests required to understand them.
-- **`current branch` or no scope inside Git:** Use current branch work relative to the actual local merge base and default or upstream base. Include relevant staged, unstaged, and untracked work; never assume `main`.
+## Closed justification loops
 
-Only `apply` authorizes edits. Never infer edit authorization from phrases such as “clean this up” when the user invoked `$deslop` without `apply`.
+Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. Follow justification chains outward until they reach an independent evidence root.
 
-Do not fetch, reset, switch branches, stage, commit, push, or create backups unless explicitly requested.
+If a fallback exists only because a test exercises it, and that test exists only because the fallback was added, neither member is independent evidence. The same closed justification loop can include checksum logic and checksum tests, receipts/manifests and validators, wrappers and wrapper-only tests, obsolete compatibility branches and their tests, or defensive validators and tests that only exercise them. Call this **mutual-support slop**.
 
-## 1. Establish the Boundary
+Accept a dependency cluster only when its chain reaches a current user requirement, real external caller, public API contract, documented protocol or specification, security/trust boundary, persistence or corruption boundary, or scientific/numerical invariant. If the cluster only justifies itself, prefer deleting the whole cluster rather than preserving each member because another member depends on it.
 
-Before editing:
+## Modes and authorization
 
-1. Read applicable `AGENTS.md` files and repository conventions.
-2. Inspect the requested scope, worktree state, relevant history, and documented verification commands.
-3. Determine the local merge base when branch scope matters.
-4. Read enough callers and tests to identify real contracts and ownership.
-5. Preserve unrelated user changes.
+Interpret invocation from natural language; do not depend on a runtime-specific arguments variable.
 
-If scope cannot be inferred safely, ask for it before applying changes.
+- **Default or `audit`:** read-only. Report candidates, evidence, confidence, closed loops, and constructs to preserve.
+- **`apply`:** modify files only within the established scope.
+- **`tests`:** prioritize test signal and mutual-support slop. Without `apply`, remain read-only.
+- **`deep`:** inspect repository-wide. Without `apply`, remain read-only; with `apply`, cleanup is allowed but redesign is not.
+- **Explicit paths:** inspect and edit those paths plus the minimum callers, contracts, and tests needed to establish independence.
+- **Current branch or no scope inside Git:** use the actual merge base and include staged, unstaged, and untracked work; never assume `main`.
 
-## 2. Establish Behavior to Preserve
+Only `apply` authorizes edits. Do not fetch, reset, switch branches, stage, commit, push, or create backups unless explicitly requested.
 
-Use evidence in this order:
+## Establish evidence before editing
 
-1. explicit user requirements;
-2. public API behavior;
-3. specifications and protocols;
-4. existing meaningful tests;
-5. real call sites;
-6. documented invariants.
+1. Read applicable `AGENTS.md` files, repository conventions, and the requested scope.
+2. Inspect callers, tests, history, specifications, and documented verification commands.
+3. Classify the evidence chain before trusting an existing test or fallback.
+4. Put current user requirements and corrections first. A current user requirement or correction overrides conflicting historical tests; do not preserve old or incorrect behavior merely because an existing test asserts it.
+5. A bug fix should normally replace incorrect behavior, not preserve it behind a fallback.
 
-Do not preserve every internal accident. Do not add characterization tests merely to freeze current implementation details.
+Inside trusted code, use a **fail-visible bias**: allow unexpected failures to surface unless there is a concrete recovery, translation, cleanup, protocol, or compatibility contract. Broad `except Exception`, catch-and-fallback, catch-log-rethrow, speculative legacy fallbacks, and compatibility branches without independent evidence are high-priority investigation targets. Do not hide bugs in the name of robustness.
 
-## 3. Classify Candidates
+## Confidence and apply behavior
 
-A pattern match is a lead, not a verdict. Confidence measures evidence, not ugliness.
-
-- **HIGH:** Useless, duplicated, unreachable, tautological, pass-through, immediately overwritten, or disconnected from a real contract.
-- **MEDIUM:** Apparently unnecessary, but caller, history, compatibility, or boundary context must be resolved first.
-- **LOW / PRESERVE BY DEFAULT:** Security, authorization, concurrency, persistence, transactions, external protocols, resource limits, supported compatibility, and numerical invariants whose purpose may not be locally visible.
+- **HIGH:** redundant, tautological, unreachable, self-justifying, or disconnected from a real contract after the evidence chain is resolved.
+- **MEDIUM:** apparently unnecessary, but caller, history, compatibility, or boundary evidence is still missing.
+- **LOW / PRESERVE BY DEFAULT:** security, authorization, concurrency, persistence, transactions, external protocols, supported compatibility, resource limits, and scientific invariants whose purpose may be outside the local file.
 
 In apply mode:
 
-- **HIGH:** Delete or simplify once the local impact and evidence are resolved.
-- **MEDIUM:** Do not modify until the missing caller, contract, history, compatibility, or boundary question is resolved.
-- **LOW:** Preserve unless direct contrary evidence is established.
+- HIGH: delete or simplify once the evidence is resolved.
+- MEDIUM: do not modify until the missing evidence question is resolved.
+- LOW: preserve unless direct contrary evidence is established.
 
 Apply authorization is permission to edit, not permission to resolve uncertainty in favor of deletion.
 
-Read references only when relevant:
+Read only the relevant references:
 
-- [references/code-smells.md](references/code-smells.md) for defensive code, wrappers, abstractions, dead paths, and comments.
-- [references/test-smells.md](references/test-smells.md) whenever tests are in scope or support machinery being removed.
-- [references/verification-and-trust.md](references/verification-and-trust.md) for validation, trust boundaries, provenance, checksums, signatures, schemas, or recomputation.
-- [references/scientific-code.md](references/scientific-code.md) for scientific, numerical, simulation, ML, or engineering code.
+- [test-smells.md](references/test-smells.md) for accumulated test suites and test/production mutual-support clusters.
+- [verification-and-trust.md](references/verification-and-trust.md) for checksum, receipt, manifest, provenance, and trust-boundary clusters.
+- [code-smells.md](references/code-smells.md) for defensive, fallback, compatibility, wrapper, and abstraction candidates.
+- [scientific-code.md](references/scientific-code.md) for numerical, simulation, ML, or engineering invariants.
 
-## 4. Demand a Concrete Reason
+## Subtractive workflow
 
-For each non-trivial defensive or verification construct, answer:
+1. Inventory tests before production cleanup. Group them by distinct externally meaningful behavior and independent oracle; keep the minimum sufficient set. Do not optimize for test count, assertion count, or coverage percentage.
+2. Trace verification machinery as a cluster, not a function. Remove serialization, digest fields, envelopes, manifests, validators, recomputation, and tests together when no independent root remains.
+3. Trace fallback branches to actual supported consumers and failure contracts. Prefer direct failure when the current contract says an operation should fail.
+4. Delete tests that exist only to keep deleted production slop green. Add a replacement test only when deleting the old test would leave a real external behavior unprotected and an independent oracle exists.
+5. Preserve real public, persistence, security, protocol, compatibility, resource, and scientific boundaries even when their code resembles a smell.
 
-1. What concrete failure does it prevent or detect?
-2. Is that failure reachable from actual callers?
-3. Is handling required by a contract or specification?
-4. Does trust, authority, persistence, ownership, or failure domain change here?
-5. Would ordinary parsing, typing, or runtime failure already be adequate?
-6. Does the verifier know something meaningfully independent from the producer?
+## Negative-change budget
 
-If no concrete answer exists, strongly prefer deletion. “Safer,” “more robust,” “future-proof,” and “might be useful” are not sufficient evidence.
+Normally reduce structural surface area. New dependencies, abstractions, wrappers, compatibility layers, cryptographic/provenance machinery, and tests have a default budget of zero. New code is acceptable only when it preserves a real behavior while removing more accumulated slop. If a cleanup adds substantial production or test lines, stop and reconsider.
 
-## 5. Apply a Negative-Change Budget
+In `deep apply`, exclude generated code, vendored dependencies, `third_party` trees, migration history, lockfiles, and externally generated snapshots or artifacts unless explicitly included or demonstrably repository-owned.
 
-A deslop pass should normally reduce code size and structural surface area.
+## Proportional verification
 
-| Addition during cleanup | Expected budget |
-| --- | ---: |
-| New dependencies | 0 |
-| New abstractions or extension points | 0 |
-| New compatibility layers | 0 |
-| New cryptographic or provenance machinery | 0 |
-| New wrappers or generic validators | 0 |
-| New tests | Exceptional and minimal |
+Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run, state that plainly.
 
-Treat every new helper, branch, validation layer, wrapper, fixture, and test as a cost requiring a concrete behavior-preservation reason. Adding code is acceptable only when necessary to preserve an existing meaningful behavior while removing more unnecessary machinery.
+## Final report
 
-If an apply pass produces substantial positive net lines, more indirection, or more test surface, stop and reconsider before continuing.
-
-## 6. Delete or Simplify
-
-- Prefer direct local code over scaffolding.
-- Validate once at a genuine boundary, then use a typed internal representation directly.
-- Delete speculative error handling and allow the repository's ordinary failure mode when it is already adequate.
-- Remove tests with no distinct behavioral signal; consolidate only when the result is clearer.
-- Do not replace a deleted abstraction with another abstraction.
-- Preserve small obvious duplication when a shared abstraction would encode no shared knowledge.
-- Remove comments that restate code; preserve concise explanations of external constraints, surprising invariants, scientific assumptions, security boundaries, and real tradeoffs.
-- In `deep apply`, exclude generated code, vendored dependencies, `third_party` trees, migration history, lockfiles, and externally generated snapshots or artifacts unless the user explicitly includes them or repository evidence establishes direct ownership.
-
-Verification adds value only when the verifier has information, authority, or a failure domain meaningfully independent from the producer. Otherwise investigate the entire self-verification chain for deletion, including tests that exist only to protect it.
-
-## 7. Verify Proportionally
-
-1. Run the narrowest existing relevant tests or checks.
-2. Group related HIGH-confidence deletions.
-3. Re-run targeted checks after meaningful semantic groups, not every tiny edit.
-4. Run the repository's documented final verification once when feasible.
-
-Use existing verification commands. Do not create proof files, audit ledgers, checksum reports, or a new verification framework. If verification cannot run, state that plainly.
-
-## Final Report
-
-Keep the report compact and evidence-dense:
-
-- scope inspected;
-- **Removed:** major deletion categories and concrete evidence;
-- **Preserved:** suspicious-looking constructs deliberately retained and why;
-- tests removed or consolidated;
-- checks actually run and their results;
-- approximate net line change when easy to obtain;
-- uncertainty intentionally left untouched.
-
-Reporting preserved constructs is required: it demonstrates semantic judgment and exposes false-positive risk.
+Report the inspected scope; removed test, verification, and fallback clusters; independent evidence roots; preserved boundaries; tests removed or consolidated; checks actually run; approximate production/test size changes when useful; and uncertainty intentionally left untouched. Explicitly call out any closed justification loop that drove deletion.
