@@ -3,7 +3,7 @@
   "skill_name": "deslop",
   "corpus_role": "development",
   "corpus_version": "dev-v2-focused",
-  "corpus_revision": "dev-v2-focused-rc3",
+  "corpus_revision": "dev-v2-focused-rc4",
   "evals": [
     {"id": "t01a", "prompt": "Apply a focused, evidence-backed simplification to the supplied code and tests. Preserve externally meaningful behavior, remove accumulated test-suite bloat, and run the remaining checks.", "expected_output": "A minimum sufficient test suite protecting the public summary behavior.", "files": ["files/t01a/app.py", "files/t01a/test_app.py"], "assertions": [], "should_trigger": true, "force_skill_invocation": true, "stage_files": false, "side_effect_level": "local-only", "side_effect_contract": {"allow_new_local_branches": false, "allow_new_remote_branches": false, "allow_new_commits": false, "allow_new_review_requests": false, "allow_worktree_changes": true}},
     {"id": "t01b", "prompt": "Apply a focused, evidence-backed simplification to the supplied code and tests. Preserve externally meaningful behavior, remove accumulated test-suite bloat, and run the remaining checks.", "expected_output": "Distinct publication behaviors remain covered.", "files": ["files/t01b/app.py", "files/t01b/test_app.py"], "assertions": [], "should_trigger": true, "force_skill_invocation": true, "stage_files": false, "side_effect_level": "local-only", "side_effect_contract": {"allow_new_local_branches": false, "allow_new_remote_branches": false, "allow_new_commits": false, "allow_new_review_requests": false, "allow_worktree_changes": true}},

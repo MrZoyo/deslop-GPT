@@ -598,6 +598,7 @@ def hook_main() -> int:
     rows = []
     if case_id in MINI_REPOSITORIES:
         category, fixture = MINI_REPOSITORIES[case_id]
+        workspace = workspace / fixture.relative_to(CORPUS_ROOT)
         tests = run_tests(workspace)
         try:
             behavior_evidence = mini_behavior(workspace, category)

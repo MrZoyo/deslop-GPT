@@ -43,7 +43,7 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
 
 The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, a category reduction decision, and the negative-change decision. A failed after-state is ineligible for reduction scoring.
 
-The case-by-case review is recorded in [`review.md`](review.md). The working revision is the `dev-v2-focused-rc3` candidate; it must be frozen before results from it are compared.
+The case-by-case review is recorded in [`review.md`](review.md). The frozen revision is `dev-v2-focused-rc4`; rc3 micro diagnostics remain separate.
 
 The three repositories are model-runnable through [`mini-evals.json`](mini-evals.json). The post-grade hook resolves each mini ID to its untouched fixture and calls `compare_mini_repositories()`; no second orchestration framework is used.
 

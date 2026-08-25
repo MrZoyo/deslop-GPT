@@ -88,7 +88,7 @@ No superiority claim is made without comparable repeated runs.
 
 ## Development corpora
 
-The active `dev-v2-focused-rc3` candidate is documented under [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample; every category also has an insufficient-cleanup calibration that proves a token deletion is not enough.
+The active `dev-v2-focused-rc4` corpus is documented under [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample; every category also has an insufficient-cleanup calibration that proves a token deletion is not enough.
 
 The broad 20-case [`dev-v1` archive](evals/archive/dev-v1/) is retained only for historical results and broad safety-regression reference. It contains generic cleanup cases that are intentionally not current tuning targets; active CI and model experiments do not run it.
 

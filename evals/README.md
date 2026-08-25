@@ -46,7 +46,7 @@ The focused validator checks:
 - three mini-repository behavior, reduction, and metric gates;
 - the 16-case micro manifest and 3-case mini-repository manifest.
 
-Do not run GPT A/B while this corpus is being changed. The current working revision is the `dev-v2-focused-rc3` candidate; freeze it before collecting comparable results.
+Do not run GPT A/B while this corpus is being changed. The current frozen revision is `dev-v2-focused-rc4`; do not combine it with rc3 results.
 
 ## Model run shapes after freeze
 

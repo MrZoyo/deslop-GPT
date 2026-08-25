@@ -1,6 +1,6 @@
-# `dev-v2-focused-rc3` pre-freeze review
+# `dev-v2-focused-rc4` freeze note
 
-Review revision: rc3 candidate prepared from `8d36fb5` after the rc2 maintainer review. Status: calibration-complete but not yet frozen; maintainer sign-off is required before the first model run.
+Review revision: rc4 retains the signed-off rc3 scoring contract and fixes only the mini-repository post-grade workspace path exposed by the first real run.
 
 ## Case-by-case review
 
@@ -47,4 +47,4 @@ The repository contains repeated validation, a catch around current parsing, a n
 - `dev-v1` is archived and is not an active tuning target;
 - no model A/B run has been performed for `dev-v2-focused`.
 
-Maintainer sign-off should confirm the adjudicated thresholds, four-line negative-growth tolerance, and separate names for the 16-case micro diagnostic and three-repository end-to-end experiment. Tag the reviewed commit as `dev-v2-focused-rc3`; do not mix results from rc2 or an uncommitted working tree.
+Do not mix rc3 micro results with rc4 mini-repository results or silently change the frozen grader after this path correction.

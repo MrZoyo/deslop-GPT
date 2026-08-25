@@ -16,7 +16,7 @@ EVALS = CORPUS / "evals.json"
 MINI_EVALS = CORPUS / "mini-evals.json"
 ADJUDICATION = CORPUS / "adjudication.json"
 MINI_CALIBRATION = CORPUS / "mini-repo-calibration"
-CORPUS_REVISION = "dev-v2-focused-rc3"
+CORPUS_REVISION = "dev-v2-focused-rc4"
 CASE_IDS = {"t01a", "t01b", "t02a", "t02b", "t03a", "t03b", "t04a", "t04b", "v01a", "v01b", "v02a", "v02b", "f01a", "f01b", "f02a", "f02b"}
 
 
@@ -65,7 +65,7 @@ def validate_manifest(evals: dict, mini_evals: dict, adjudication: dict) -> None
     if evals.get("corpus_revision") != CORPUS_REVISION:
         fail("unexpected focused corpus revision")
     if adjudication.get("corpus_revision") != CORPUS_REVISION:
-        fail("adjudication does not identify the rc3 revision")
+        fail("adjudication does not identify the rc4 revision")
     cases = evals.get("evals")
     if not isinstance(cases, list) or {case.get("id") for case in cases} != CASE_IDS:
         fail("focused eval ids do not match the 16-case taxonomy")
@@ -167,7 +167,7 @@ def validate_manifest(evals: dict, mini_evals: dict, adjudication: dict) -> None
     if mini_evals.get("skill_name") != "deslop":
         fail("focused mini suite must target deslop")
     if mini_evals.get("corpus_revision") != CORPUS_REVISION:
-        fail("focused mini suite does not identify the rc3 revision")
+        fail("focused mini suite does not identify the rc4 revision")
     mini_cases = mini_evals.get("evals")
     mini_by_id = {mini["id"]: mini for mini in adjudication["mini_repositories"]}
     if not isinstance(mini_cases, list) or {case.get("id") for case in mini_cases} != set(mini_by_id):
@@ -512,7 +512,7 @@ def main() -> None:
     validate_negative_change_gate(grader)
     validate_mini_repositories(grader, adjudication)
     print(
-        "Validated dev-v2-focused-rc3: 16 paired micro cases, 3 insufficient-cleanup "
+        "Validated dev-v2-focused-rc4: 16 paired micro cases, 3 insufficient-cleanup "
         "calibrations, negative-change gates, and 3 model-runnable mini repositories."
     )
 

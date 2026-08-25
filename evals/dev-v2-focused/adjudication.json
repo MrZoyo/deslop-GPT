@@ -2,7 +2,7 @@
   "schema": "deslop-adjudication-v2-focused",
   "corpus_role": "development",
   "corpus_version": "dev-v2-focused",
-  "corpus_revision": "dev-v2-focused-rc3",
+  "corpus_revision": "dev-v2-focused-rc4",
   "scope": {
     "test_bloat": 4,
     "verification_theater": 2,
