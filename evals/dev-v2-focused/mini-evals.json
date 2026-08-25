@@ -1,0 +1,45 @@
+{
+  "schema": "deslop-mini-evals-v2-focused",
+  "skill_name": "deslop",
+  "corpus_role": "development",
+  "corpus_version": "dev-v2-focused",
+  "corpus_revision": "dev-v2-focused-rc3",
+  "evals": [
+    {
+      "id": "test-bloat",
+      "prompt": "Apply a focused, evidence-backed cleanup to this miniature repository. Preserve its externally meaningful reporting behavior, substantially remove accumulated test-suite bloat, and run the remaining checks.",
+      "expected_output": "The public report contract remains with a substantially smaller, faster meaningful test suite.",
+      "files": ["mini-repos/test-bloat/README.md", "mini-repos/test-bloat/fixtures.py", "mini-repos/test-bloat/reporting.py", "mini-repos/test-bloat/test_regressions.py", "mini-repos/test-bloat/test_reporting.py", "mini-repos/test-bloat/test_types.py"],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {"allow_new_local_branches": false, "allow_new_remote_branches": false, "allow_new_commits": false, "allow_new_review_requests": false, "allow_worktree_changes": true}
+    },
+    {
+      "id": "verification-bloat",
+      "prompt": "Apply a focused, evidence-backed cleanup to this miniature repository. Remove the locally self-justifying verification cluster, preserve independent persisted-readback integrity behavior, and run the remaining checks.",
+      "expected_output": "Local receipt/checksum theater is removed while independently supplied digest verification still detects corruption.",
+      "files": ["mini-repos/verification-bloat/README.md", "mini-repos/verification-bloat/reporting.py", "mini-repos/verification-bloat/test_reporting.py"],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {"allow_new_local_branches": false, "allow_new_remote_branches": false, "allow_new_commits": false, "allow_new_review_requests": false, "allow_worktree_changes": true}
+    },
+    {
+      "id": "fallback-bloat",
+      "prompt": "Apply a focused, evidence-backed cleanup to this miniature repository. Remove broad catch-and-fallback accumulation, preserve the documented versioned protocol and atomic cleanup boundary, and run the remaining checks.",
+      "expected_output": "Unexpected current-format failures surface directly while supported versions and failed-write cleanup remain intact.",
+      "files": ["mini-repos/fallback-bloat/README.md", "mini-repos/fallback-bloat/loader.py", "mini-repos/fallback-bloat/test_loader.py"],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {"allow_new_local_branches": false, "allow_new_remote_branches": false, "allow_new_commits": false, "allow_new_review_requests": false, "allow_worktree_changes": true}
+    }
+  ]
+}

@@ -21,6 +21,53 @@ from pathlib import Path
 
 
 CORPUS_ROOT = Path(__file__).resolve().parent
+ADJUDICATION = json.loads((CORPUS_ROOT / "adjudication.json").read_text())
+MICRO_REDUCTION_TARGETS = ADJUDICATION["micro_reduction_targets"]
+MINI_REDUCTION_TARGETS = ADJUDICATION["mini_reduction_targets"]
+NEGATIVE_CHANGE_LIMITS = ADJUDICATION["negative_change_budget"]
+IGNORED_WORKSPACE_PARTS = {
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+}
+INSTALLED_SKILL_PREFIXES = {
+    "claude-code": (".claude", "skills", "deslop"),
+    "codex": (".agents", "skills", "deslop"),
+    "fake": (".fake", "skills", "deslop"),
+    "opencode": (".opencode", "skills", "deslop"),
+}
+ABSTRACTION_TOKENS = (
+    "adapter",
+    "factory",
+    "manager",
+    "protocol",
+    "provider",
+    "registry",
+    "validator",
+    "wrapper",
+)
+LOCAL_VERIFICATION_TOKENS = (
+    "envelope",
+    "proof",
+    "receipt",
+)
+HASH_CONSTRUCTORS = {
+    "blake2b",
+    "blake2s",
+    "md5",
+    "sha1",
+    "sha224",
+    "sha256",
+    "sha384",
+    "sha512",
+}
+MINI_REPOSITORIES = {
+    mini["id"]: (mini["category"], CORPUS_ROOT / mini["path"])
+    for mini in ADJUDICATION["mini_repositories"]
+}
 
 
 def require(condition: bool, message: str) -> None:
@@ -147,27 +194,31 @@ def case_contract(case_id: str, workspace: Path) -> str:
 
 
 def reduction_target(case_id: str, workspace: Path) -> str:
-    """Score the requested subtraction separately from behavior correctness."""
+    """Require a category-level target state, not an arbitrary one-line decrease."""
     if not case_id.endswith("a"):
         return "no deletion target for preservation case"
     before = source_metrics(CORPUS_ROOT / "files" / case_id)
     after = source_metrics(workspace)
     if case_id.startswith("t"):
-        reduced = after["test_loc"] < before["test_loc"] or after["test_count"] < before["test_count"]
-        require(reduced, "test surface did not decrease")
+        maximum = MICRO_REDUCTION_TARGETS["test_bloat"]["test_count_max"]
+        require(after["test_count"] <= maximum, "test-bloat target requires at most one sufficient test")
     elif case_id.startswith("v"):
-        reduced = (
-            after["checksum_mentions"] < before["checksum_mentions"]
-            or after["verification_mentions"] < before["verification_mentions"]
+        target = MICRO_REDUCTION_TARGETS["verification_theater"]
+        require(
+            after["checksum_mentions"] <= target["checksum_mentions_max"]
+            and after["local_verification_surface"] <= target["local_verification_surface_max"]
+            and after["local_verifier_functions"] <= target["local_verifier_functions_max"]
+            and after["hash_operations"] <= target["hash_operations_max"],
+            "local verification cluster remains",
         )
-        require(reduced, "verification machinery did not decrease")
     elif case_id.startswith("f"):
-        reduced = (
-            after["fallback_mentions"] < before["fallback_mentions"]
-            or after["try_blocks"] < before["try_blocks"]
-            or after["except_handlers"] < before["except_handlers"]
+        target = MICRO_REDUCTION_TARGETS["defensive_fallback_bloat"]
+        require(
+            after["branches"] <= target["branches_max"]
+            and after["try_blocks"] <= target["try_blocks_max"]
+            and after["except_handlers"] <= target["except_handlers_max"],
+            "fallback control-flow remains",
         )
-        require(reduced, "fallback/exception machinery did not decrease")
     else:
         raise KeyError(case_id)
     return json.dumps(
@@ -190,6 +241,26 @@ class _raises:
         return True
 
 
+def python_files(root: Path) -> dict[str, Path]:
+    installed_skill_prefix = None
+    if os.environ.get("ASE_WITH_SKILL") == "1":
+        installed_skill_prefix = INSTALLED_SKILL_PREFIXES.get(os.environ.get("ASE_AGENT", ""))
+    files = {}
+    for path in root.rglob("*.py"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root)
+        if any(part in IGNORED_WORKSPACE_PARTS for part in relative.parts):
+            continue
+        if (
+            installed_skill_prefix is not None
+            and relative.parts[: len(installed_skill_prefix)] == installed_skill_prefix
+        ):
+            continue
+        files[relative.as_posix()] = path
+    return files
+
+
 def source_metrics(root: Path) -> dict[str, int]:
     metrics = {
         "production_loc": 0,
@@ -200,42 +271,88 @@ def source_metrics(root: Path) -> dict[str, int]:
         "branches": 0,
         "try_blocks": 0,
         "except_handlers": 0,
+        "catch_fallback_handlers": 0,
+        "syntax_errors": 0,
         "checksum_mentions": 0,
         "verification_mentions": 0,
+        "local_verification_surface": 0,
+        "local_verifier_functions": 0,
+        "hash_operations": 0,
         "fallback_mentions": 0,
         "fixture_invocations": 0,
         "fallback_nodes": 0,
         "abstraction_nodes": 0,
     }
-    for path in sorted(root.rglob("*.py")):
+    local_verification_tokens = set()
+    for relative, path in sorted(python_files(root).items()):
         text = path.read_text()
         lines = sum(bool(line.strip()) for line in text.splitlines())
-        is_test = path.name.startswith("test_") or path.name.startswith("tests_")
+        relative_path = Path(relative)
+        is_test = (
+            relative_path.name.startswith("test_")
+            or relative_path.name.startswith("tests_")
+            or "tests" in relative_path.parts
+        )
         metrics["test_loc" if is_test else "production_loc"] += lines
-        if is_test:
-            metrics["test_count"] += sum(
-                1 for node in ast.walk(ast.parse(text))
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_")
-            )
         try:
             tree = ast.parse(text)
         except SyntaxError:
+            metrics["syntax_errors"] += 1
             continue
+        if is_test:
+            metrics["test_count"] += sum(
+                1
+                for node in ast.walk(tree)
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name.startswith("test_")
+            )
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 metrics["functions"] += 1
-                if not is_test and any(token in node.name.lower() for token in ("wrapper", "fallback", "adapter")):
+                arguments = [
+                    argument.arg
+                    for argument in (*node.args.posonlyargs, *node.args.args)
+                    if argument.arg not in {"self", "cls"}
+                ]
+                if (
+                    not is_test
+                    and any(token in node.name.lower() for token in ("validate", "verify"))
+                    and len(arguments) <= 1
+                ):
+                    metrics["local_verifier_functions"] += 1
+                if not is_test and any(token in node.name.lower() for token in ABSTRACTION_TOKENS):
                     metrics["abstraction_nodes"] += 1
             elif isinstance(node, ast.ClassDef):
                 metrics["classes"] += 1
                 metrics["abstraction_nodes"] += 1
-            elif isinstance(node, (ast.If, ast.IfExp, ast.For, ast.While, ast.Match)):
+            elif isinstance(node, (ast.If, ast.IfExp, ast.For, ast.AsyncFor, ast.While, ast.Match)):
                 metrics["branches"] += 1
             elif isinstance(node, (ast.Try, ast.TryStar)):
                 metrics["try_blocks"] += 1
             elif isinstance(node, ast.ExceptHandler):
                 metrics["except_handlers"] += 1
+                metrics["fallback_nodes"] += 1
+                if any(isinstance(descendant, ast.Return) for descendant in ast.walk(node)):
+                    metrics["catch_fallback_handlers"] += 1
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name):
+                    call_name = node.func.id.lower()
+                elif isinstance(node.func, ast.Attribute):
+                    call_name = node.func.attr.lower()
+                else:
+                    call_name = ""
+                hash_call = call_name in HASH_CONSTRUCTORS or (
+                    call_name == "new"
+                    and isinstance(node.func, ast.Attribute)
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id == "hashlib"
+                )
+                if hash_call:
+                    metrics["hash_operations"] += 1
         lowered = text.lower()
+        local_verification_tokens.update(
+            token for token in LOCAL_VERIFICATION_TOKENS if token in lowered
+        )
         metrics["checksum_mentions"] += lowered.count("sha256") + lowered.count("checksum")
         metrics["verification_mentions"] += lowered.count("receipt") + lowered.count("manifest") + lowered.count("validate")
         metrics["fallback_mentions"] += lowered.count("fallback") + lowered.count("legacy") + lowered.count("except")
@@ -246,10 +363,89 @@ def source_metrics(root: Path) -> dict[str, int]:
             and isinstance(node.func, ast.Name)
             and any(token in node.func.id.lower() for token in ("fixture", "dataset", "load_records", "expensive"))
         )
-        metrics["fallback_nodes"] += sum(
-            1 for node in ast.walk(tree) if isinstance(node, ast.ExceptHandler)
-        )
+    metrics["local_verification_surface"] = len(local_verification_tokens)
     return metrics
+
+
+def imported_modules(root: Path) -> set[str]:
+    modules = set()
+    for path in python_files(root).values():
+        try:
+            tree = ast.parse(path.read_text())
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                modules.update(alias.name.split(".", 1)[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                modules.add(node.module.split(".", 1)[0])
+    return modules
+
+
+def negative_change_budget(
+    fixture: Path,
+    workspace: Path,
+    category: str,
+) -> tuple[bool, str]:
+    before_files = python_files(fixture)
+    after_files = python_files(workspace)
+    new_python_files = sorted(set(after_files) - set(before_files))
+    deleted_python_files = sorted(set(before_files) - set(after_files))
+    new_dependencies = sorted(imported_modules(workspace) - imported_modules(fixture))
+    before = source_metrics(fixture)
+    after = source_metrics(workspace)
+    delta = {key: after[key] - before[key] for key in before}
+    positive_loc_growth = max(delta["production_loc"], 0) + max(delta["test_loc"], 0)
+    target_metrics = {
+        "test_bloat": ("test_count",),
+        "verification_theater": (
+            "checksum_mentions",
+            "local_verification_surface",
+            "local_verifier_functions",
+            "hash_operations",
+        ),
+        "defensive_fallback_bloat": (
+            "try_blocks",
+            "except_handlers",
+            "fallback_nodes",
+            "catch_fallback_handlers",
+        ),
+    }[category]
+    violations = []
+    if len(new_python_files) > NEGATIVE_CHANGE_LIMITS["new_python_files_max"]:
+        violations.append("new Python files")
+    if after["syntax_errors"] > NEGATIVE_CHANGE_LIMITS["syntax_errors_max"]:
+        violations.append("Python syntax errors")
+    if delta["test_count"] > NEGATIVE_CHANGE_LIMITS["test_count_growth_max"]:
+        violations.append("new tests")
+    if positive_loc_growth > NEGATIVE_CHANGE_LIMITS["positive_python_loc_growth_max"]:
+        violations.append("Python LOC growth")
+    if delta["abstraction_nodes"] > NEGATIVE_CHANGE_LIMITS["abstraction_growth_max"]:
+        violations.append("new wrappers or abstractions")
+    if len(new_dependencies) > NEGATIVE_CHANGE_LIMITS["new_dependencies_max"]:
+        violations.append("new dependencies")
+    if any(
+        delta[key] > NEGATIVE_CHANGE_LIMITS["category_target_growth_max"]
+        for key in target_metrics
+    ):
+        violations.append("new category-target machinery")
+    evidence = (
+        f"nonblank_python_line_delta={delta['production_loc'] + delta['test_loc']}; "
+        f"positive_python_loc_growth={positive_loc_growth}; "
+        f"new_python_files={new_python_files}; deleted_python_files={deleted_python_files}; "
+        f"new_dependencies={new_dependencies}; "
+        f"metric_delta={json.dumps(delta, sort_keys=True, separators=(',', ':'))}; "
+        f"violations={violations}"
+    )
+    return not violations, evidence
+
+
+def case_category(case_id: str) -> str:
+    return {
+        "t": "test_bloat",
+        "v": "verification_theater",
+        "f": "defensive_fallback_bloat",
+    }[case_id[0]]
 
 
 def mini_behavior(repo: Path, category: str) -> str:
@@ -294,7 +490,7 @@ def compare_mini_repositories(category: str, before: Path, after: Path) -> dict[
     delta["new_tests_added"] = max(delta["test_count"], 0)
     delta["new_wrappers_or_abstractions_added"] = max(delta["abstraction_nodes"], 0)
     delta["new_fallbacks_added"] = max(delta["fallback_nodes"], 0)
-    return {
+    comparison = {
         "behavior_gate": {"passed": True, "evidence": behavior},
         "eligible_for_reduction_scoring": True,
         "tests_before": before_tests,
@@ -303,6 +499,94 @@ def compare_mini_repositories(category: str, before: Path, after: Path) -> dict[
         "metrics_after": after_metrics,
         "metric_delta_after_minus_before": delta,
     }
+    try:
+        target_evidence = mini_reduction_target(category, before_metrics, after_metrics)
+        target_passed = True
+    except Exception as error:
+        target_passed = False
+        target_evidence = f"{type(error).__name__}: {error}"
+    budget_passed, budget_evidence = negative_change_budget(before, after, category)
+    comparison["reduction_target"] = {
+        "passed": target_passed,
+        "evidence": target_evidence,
+    }
+    comparison["negative_change_budget"] = {
+        "passed": budget_passed,
+        "evidence": budget_evidence,
+    }
+    return comparison
+
+
+def mini_reduction_target(
+    category: str,
+    before: dict[str, int],
+    after: dict[str, int],
+) -> str:
+    if category == "test_bloat":
+        target = MINI_REDUCTION_TARGETS[category]
+        require(
+            within_fraction(after["test_count"], before["test_count"], target["test_count_fraction_max"]),
+            "test count was not cut by at least half",
+        )
+        require(
+            within_fraction(after["test_loc"], before["test_loc"], target["test_loc_fraction_max"]),
+            "test LOC was not cut by at least half",
+        )
+        require(
+            within_fraction(
+                after["fixture_invocations"],
+                before["fixture_invocations"],
+                target["fixture_invocations_fraction_max"],
+            ),
+            "fixture invocations were not cut by at least half",
+        )
+    elif category == "verification_theater":
+        target = MINI_REDUCTION_TARGETS[category]
+        require(
+            after["local_verification_surface"] <= target["local_verification_surface_max"],
+            "local receipt/validator/checksum surface remains",
+        )
+        require(
+            after["local_verifier_functions"] <= target["local_verifier_functions_max"],
+            "single-input local verifier remains",
+        )
+        require(
+            after["hash_operations"] <= target["hash_operations_max"],
+            "self-generated hash operation remains outside the readback boundary",
+        )
+        require(
+            within_fraction(
+                after["checksum_mentions"],
+                before["checksum_mentions"],
+                target["checksum_mentions_fraction_max"],
+            ),
+            "checksum surface was not cut by at least half",
+        )
+    elif category == "defensive_fallback_bloat":
+        target = MINI_REDUCTION_TARGETS[category]
+        require(
+            (not target["try_blocks_must_decrease"] or after["try_blocks"] < before["try_blocks"])
+            and (
+                not target["except_handlers_must_decrease"]
+                or after["except_handlers"] < before["except_handlers"]
+            )
+            and after["try_blocks"] <= target["try_blocks_max"],
+            "parser catch/fallback layer remains",
+        )
+        require(
+            after["catch_fallback_handlers"] <= target["catch_fallback_handlers_max"],
+            "catch-and-return fallback remains",
+        )
+    else:
+        raise KeyError(category)
+    return json.dumps(
+        {"before": before, "after": after}, sort_keys=True, separators=(",", ":")
+    )
+
+
+def within_fraction(after: int, before: int, fraction: str) -> bool:
+    numerator, denominator = (int(part) for part in fraction.split("/", 1))
+    return after * denominator <= before * numerator
 
 
 def hook_main() -> int:
@@ -312,6 +596,55 @@ def hook_main() -> int:
         return 2
     workspace = Path(workspace_name)
     rows = []
+    if case_id in MINI_REPOSITORIES:
+        category, fixture = MINI_REPOSITORIES[case_id]
+        tests = run_tests(workspace)
+        try:
+            behavior_evidence = mini_behavior(workspace, category)
+            behavior_passed = True
+        except Exception as error:
+            behavior_passed = False
+            behavior_evidence = f"{type(error).__name__}: {error}"
+        rows.append(
+            {
+                "text": f"focused hidden behavior for {case_id}",
+                "passed": behavior_passed,
+                "evidence": behavior_evidence,
+            }
+        )
+        rows.append(
+            {
+                "text": f"focused remaining tests for {case_id}",
+                "passed": tests["passed"],
+                "evidence": json.dumps(tests, sort_keys=True),
+            }
+        )
+        if behavior_passed and tests["passed"]:
+            comparison = compare_mini_repositories(category, fixture, workspace)
+            target = comparison["reduction_target"]
+            budget = comparison["negative_change_budget"]
+        else:
+            ineligible = "ineligible until behavior and remaining-test gates pass"
+            target = {"passed": False, "evidence": ineligible}
+            budget_passed, budget_evidence = negative_change_budget(fixture, workspace, category)
+            budget = {"passed": budget_passed, "evidence": budget_evidence}
+        rows.append(
+            {
+                "text": f"focused reduction target for {case_id}",
+                "passed": target["passed"],
+                "evidence": target["evidence"],
+            }
+        )
+        rows.append(
+            {
+                "text": f"negative-change budget for {case_id}",
+                "passed": budget["passed"],
+                "evidence": budget["evidence"],
+            }
+        )
+        print(json.dumps(rows))
+        return 0
+
     try:
         evidence = case_contract(case_id, workspace)
         passed = True
@@ -322,13 +655,29 @@ def hook_main() -> int:
     tests = run_tests(workspace)
     rows.append({"text": f"focused remaining tests for {case_id}", "passed": tests["passed"], "evidence": json.dumps(tests, sort_keys=True)})
     if case_id.endswith("a"):
-        try:
-            reduction_evidence = reduction_target(case_id, workspace)
-            reduction_passed = True
-        except Exception as error:
+        if passed and tests["passed"]:
+            try:
+                reduction_evidence = reduction_target(case_id, workspace)
+                reduction_passed = True
+            except Exception as error:
+                reduction_passed = False
+                reduction_evidence = f"{type(error).__name__}: {error}"
+        else:
             reduction_passed = False
-            reduction_evidence = f"{type(error).__name__}: {error}"
+            reduction_evidence = "ineligible until behavior and remaining-test gates pass"
         rows.append({"text": f"focused reduction target for {case_id}", "passed": reduction_passed, "evidence": reduction_evidence})
+    budget_passed, budget_evidence = negative_change_budget(
+        CORPUS_ROOT / "files" / case_id,
+        workspace,
+        case_category(case_id),
+    )
+    rows.append(
+        {
+            "text": f"negative-change budget for {case_id}",
+            "passed": budget_passed,
+            "evidence": budget_evidence,
+        }
+    )
     print(json.dumps(rows))
     return 0
 

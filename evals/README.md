@@ -10,12 +10,14 @@ The 16 micro cases have same-prefix preservation counterexamples, golden/mutant 
 
 ## Hard-gate order
 
-Focused grading separates two questions:
+Focused grading separates four gates:
 
 1. **Behavior gate:** current/legacy protocol behavior, public output, persistence corruption detection, security/provenance boundaries, and atomic cleanup. It must not prescribe test function count, test names, helper shape, or a historical patch.
-2. **Reduction target:** test-surface, checksum/verification, or fallback/exception machinery actually decreased relative to the untouched fixture.
+2. **Remaining-test gate:** at least one discovered test remains and the suite passes.
+3. **Reduction target:** the after-state reaches the category threshold in adjudication; deleting one token or one duplicate is not sufficient.
+4. **Negative-change gate:** cleanup cannot add Python files, tests, dependencies, wrappers/abstractions, category machinery, syntax errors, or more than four positive nonblank Python lines.
 
-For mini repositories, the remaining test suite and hidden behavior gate must both pass before any reduction metrics are returned. A failed after-state returns `eligible_for_reduction_scoring: false` rather than a partial reduction score.
+For mini repositories, the remaining test suite and hidden behavior gate must both pass before any reduction metrics are eligible. A failed after-state receives no partial reduction score.
 
 `Simplification Case Recall` is case-level semantic recall, not a percentage of lines removed. Reduction magnitude is reported separately and only for eligible states.
 
@@ -27,6 +29,10 @@ python3 scripts/validate_focused_corpus.py
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
   evals/dev-v2-focused/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate \
+  evals/dev-v2-focused/mini-evals.json
 ```
 
 The focused validator checks:
@@ -34,14 +40,17 @@ The focused validator checks:
 - 16 paired IDs and the 4/2/2 target mix;
 - baseline tests and behavior polarity;
 - golden-after and destructive-mutant polarity;
+- insufficient-cleanup rejection in all three categories;
 - at least two alternate-valid states in each category;
-- three mini-repository behavior gates and reduction-metric fields.
+- every negative-change failure mode;
+- three mini-repository behavior, reduction, and metric gates;
+- the 16-case micro manifest and 3-case mini-repository manifest.
 
-Do not run GPT A/B while this corpus is being changed. The current reviewed revision is frozen as `dev-v2-focused-rc2`; treat any further grader correction as `rc3` rather than mixing scores.
+Do not run GPT A/B while this corpus is being changed. The current working revision is the `dev-v2-focused-rc3` candidate; freeze it before collecting comparable results.
 
-## Model run shape after freeze
+## Model run shapes after freeze
 
-Use the existing pinned wrapper and focused hook from the repository root:
+The first command is the **16-case focused micro-case A/B diagnostic**:
 
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
@@ -57,6 +66,25 @@ uv run --with agent-skill-eval==0.7.0 \
   --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py" \
   --workspace eval-workspace/deslop-dev-v2-focused
 ```
+
+The separate **three-repository end-to-end A/B** uses the same wrapper and hook:
+
+```bash
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py run \
+  --skill skill/deslop \
+  --evals evals/dev-v2-focused/mini-evals.json \
+  --agent codex \
+  --agent-model codex=<model> \
+  --reasoning-effort medium \
+  --runs 1 \
+  --concurrency 1 \
+  --baseline \
+  --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py" \
+  --workspace eval-workspace/deslop-dev-v2-focused-mini
+```
+
+The micro diagnostic does not measure whole-mini-repository cleanup. Keep the two result sets and names separate.
 
 No result from this command is publishable without the frozen revision, model/config metadata, raw per-case gates, and a separate held-out corpus.
 

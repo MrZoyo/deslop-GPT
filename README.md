@@ -88,7 +88,7 @@ No superiority claim is made without comparable repeated runs.
 
 ## Development corpora
 
-The active development layer is [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample and alternate-valid calibration.
+The active `dev-v2-focused-rc3` candidate is documented under [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample; every category also has an insufficient-cleanup calibration that proves a token deletion is not enough.
 
 The broad 20-case [`dev-v1` archive](evals/archive/dev-v1/) is retained only for historical results and broad safety-regression reference. It contains generic cleanup cases that are intentionally not current tuning targets; active CI and model experiments do not run it.
 
@@ -98,7 +98,7 @@ See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 
 ## Validate locally
 
-The active dependency-free validator checks the focused Skill/corpus structure, paired behavior polarity, alternate-valid states, mini-repository behavior gates, and reduction-metric eligibility:
+The active dependency-free validator checks the focused corpus structure, paired behavior polarity, alternate/insufficient states, negative-change gates, both manifests, and mini-repository reduction eligibility:
 
 ```bash
 python3 scripts/validate_focused_corpus.py
@@ -120,9 +120,12 @@ uv run --with agent-skill-eval==0.7.0 \
 
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
 ```
 
-Run a real Codex A/B evaluation with a deliberately pinned model and repeated trials:
+Run the 16-case focused micro-case A/B diagnostic with a deliberately pinned model and repeated trials:
 
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
@@ -137,6 +140,24 @@ uv run --with agent-skill-eval==0.7.0 \
   --baseline \
   --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"
 ```
+
+Run the separate three-repository end-to-end A/B with the same wrapper and post-grade hook:
+
+```bash
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py run \
+  --skill skill/deslop \
+  --evals evals/dev-v2-focused/mini-evals.json \
+  --agent codex \
+  --agent-model codex=<model> \
+  --reasoning-effort medium \
+  --runs 5 \
+  --concurrency 1 \
+  --baseline \
+  --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"
+```
+
+The first command is a **focused micro-case A/B diagnostic**. Only the second command measures whole-repository cleanup of the 26-test, checksum-cluster, and fallback-cluster fixtures. Do not combine their scores; the result exporter records the layer explicitly and rejects mixed-layer exports.
 
 Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations, and deterministically counterbalances A/B submission order by case and run parity. Run published benchmarks with concurrency 1 so submission order is execution order. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
 
@@ -171,10 +192,12 @@ skill/deslop/                    Pure runtime Skill payload
   agents/openai.yaml             UI metadata and explicit-only policy
   references/                    Focused test, trust, fallback, and scientific guidance
 evals/dev-v2-focused/            Active focused corpus and mini repos
+  evals.json                     16 focused micro cases
+  mini-evals.json                3 end-to-end miniature repositories
 evals/archive/dev-v1/            Retired broad safety corpus and historical results
 scripts/validate_focused_corpus.py  Focused corpus and mini-repo validation
 scripts/validate_dev_v1_archive.py Optional historical archive validation
-  scripts/run_agent_skill_eval.py  Pinned canonical-path compatibility wrapper
+scripts/run_agent_skill_eval.py    Pinned canonical-path compatibility wrapper
 ```
 
 Focused fixtures live under `evals/dev-v2-focused/files/`; the retired broad fixtures live under `evals/archive/dev-v1/files/`.

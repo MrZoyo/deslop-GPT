@@ -18,7 +18,9 @@ The case layer is deliberately not a generic dead-code or abstraction benchmark.
 
 ## Case calibration
 
-Each deletion case receives a `golden_after` overlay and each preservation case a `destructive_mutant` overlay. At least two `alternate_valid` states are maintained in every category. The hidden behavior gate never requires a test count, test name, helper shape, or historical patch. Reduction targets are checked separately after behavior and remaining tests. A valid golden may remove production and tests together when the tests only protected the removed slop.
+Each deletion case receives a `golden_after` overlay and each preservation case a `destructive_mutant` overlay. At least two `alternate_valid` states are maintained in every category. The hidden behavior gate never requires a test count, test name, helper shape, or historical patch. Reduction targets are checked separately after behavior and remaining tests: test-bloat micro cases must reach at most one sufficient test, local verification surfaces must reach zero, and catch/fallback micro cases must remove fallback control flow rather than merely rewrite the catch as a branch. One `insufficient_cleanup` state per category preserves behavior and removes some surface while deliberately failing that threshold.
+
+Every micro case also has a negative-change hard gate. It rejects new Python files or dependencies, added tests, syntax errors, new abstractions or category-target machinery, and more than four positive nonblank Python lines. The four-line allowance preserves the existing table-driven alternate-valid cases; it is not a general growth budget.
 
 ## End-to-end accumulated-slop layer
 
@@ -28,7 +30,7 @@ The three mini repositories model code after several agent correction cycles rat
 2. [`mini-repos/verification-bloat`](mini-repos/verification-bloat): a report writer surrounded by self-generated checksum, envelope, receipt, validator, and validator-only test machinery, plus an independent persisted readback contract that must remain.
 3. [`mini-repos/fallback-bloat`](mini-repos/fallback-bloat): a current parser wrapped in broad catch-and-fallback layers, repeated validation, and obsolete compatibility tests, alongside a documented legacy protocol and atomic cleanup contract that must remain.
 
-The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. Each repository has a known-good [`mini-repo-calibration/`](mini-repo-calibration/) `golden_after` state that must pass behavior and remaining-test gates while reducing the category-specific surface. It records production/test LOC, test count, test runtime when stable, expensive fixture invocations, functions/classes/branches, try/except count, checksum/verification machinery, new tests, and new wrappers/fallbacks. Metrics are not a success signal when a behavior gate fails.
+The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. Each repository has a known-good [`mini-repo-calibration/`](mini-repo-calibration/) `golden_after` state that must pass behavior, remaining-test, meaningful-reduction, and negative-change gates. Test count, test LOC, and fixture invocations must each fall by at least half in `test-bloat`; local self-verification must clear, checksum mentions must fall by at least half, and only the independent readback hash operation may remain in `verification-bloat`; the catch-and-return parser fallback must disappear while the atomic cleanup catch remains in `fallback-bloat`.
 
 Compare an untouched mini repository with an agent-produced copy only after the copy has passed its hidden behavior gate:
 
@@ -39,9 +41,11 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
   /path/to/cleaned/test-bloat
 ```
 
-The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, and explicit counts of newly added tests, wrappers, abstractions, and fallbacks. A failed after-state is ineligible for reduction scoring.
+The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, a category reduction decision, and the negative-change decision. A failed after-state is ineligible for reduction scoring.
 
-The case-by-case review is recorded in [`review.md`](review.md). The current `rc2` fixture/grader revision is frozen; maintainer sign-off is required before the first model run.
+The case-by-case review is recorded in [`review.md`](review.md). The working revision is the `dev-v2-focused-rc3` candidate; it must be frozen before results from it are compared.
+
+The three repositories are model-runnable through [`mini-evals.json`](mini-evals.json). The post-grade hook resolves each mini ID to its untouched fixture and calls `compare_mini_repositories()`; no second orchestration framework is used.
 
 ## Running the lightweight validator
 
@@ -51,7 +55,17 @@ The focused corpus has its own dependency-free validator so the historical `dev-
 python3 scripts/validate_focused_corpus.py
 ```
 
-This checks pair symmetry, category mix, neutral fixture boundaries, baseline tests, calibration polarity, and the three mini-repository behavior gates. It does not claim that a model has solved the corpus; model A/B runs should use the existing pinned wrapper with this manifest only after the fixtures and hidden gates are independently reviewed.
+This checks pair symmetry, category mix, neutral fixture boundaries, baseline tests, insufficient-cleanup polarity, every negative-change rule, both model manifests, and the three mini-repository gates. It does not claim that a model has solved the corpus.
+
+Validate both harness manifests after installing the pinned harness dependency:
+
+```bash
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
+```
 
 ## Interpretation
 
@@ -60,5 +74,7 @@ The purpose of this layer is to answer:
 > Can deslop substantially reduce accumulated test and defensive machinery without breaking meaningful behavior?
 
 It is not a line-deletion contest. `Simplification Case Recall` measures whether a case reaches its adjudicated simpler state; reduction magnitude is reported separately and only after hidden behavior gates pass.
+
+Results from [`evals.json`](evals.json) are a **16-case focused micro-case A/B diagnostic**. Results from [`mini-evals.json`](mini-evals.json) are the separate **three-repository end-to-end A/B**. The latter is the evidence about whole accumulated-slop cleanup; the two scores must not be combined or mislabeled.
 
 This change deliberately does not add a plugin package, a new dependency, a second A/B orchestration framework, a holdout corpus, or automatic model-result publishing. Those belong after the focused fixtures and hidden contracts survive review.

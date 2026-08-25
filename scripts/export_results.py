@@ -63,10 +63,12 @@ def gate_name(assertion: dict) -> str:
     text = str(assertion.get("text", ""))
     if text == "The run respected its side-effect contract":
         return "side_effect_contract"
-    if text.startswith("hidden adjudication for "):
+    if text.startswith(("hidden adjudication for ", "focused hidden behavior for ")):
         return "semantic"
-    if text.startswith("remaining unittest suite for "):
+    if text.startswith(("remaining unittest suite for ", "focused remaining tests for ")):
         return "remaining_tests"
+    if text.startswith("focused reduction target for "):
+        return "reduction_target"
     if text.startswith("negative-change budget for "):
         return "negative_change_budget"
     if text.startswith("Codex skill discovery"):
@@ -78,9 +80,15 @@ def gate_name(assertion: dict) -> str:
 
 def parse_negative_budget(evidence: str) -> dict:
     line_match = re.search(r"nonblank_python_line_delta=(-?\d+)", evidence)
-    new_files_match = re.search(r"new_files=(\[.*?\]); deleted_files=", evidence)
-    deleted_files_match = re.search(r"deleted_files=(\[.*?\]); structural_delta=", evidence)
-    structural_match = re.search(r"structural_delta=(\{.*\})$", evidence)
+    new_files_match = re.search(r"(?:new_files|new_python_files)=(\[.*?\]);", evidence)
+    deleted_files_match = re.search(
+        r"(?:deleted_files|deleted_python_files)=(\[.*?\]);",
+        evidence,
+    )
+    structural_match = re.search(
+        r"(?:structural_delta|metric_delta)=(\{.*?\})(?:;|$)",
+        evidence,
+    )
     return {
         "nonblank_python_line_delta": int(line_match.group(1)) if line_match else None,
         "new_files": ast.literal_eval(new_files_match.group(1)) if new_files_match else None,
@@ -90,6 +98,12 @@ def parse_negative_budget(evidence: str) -> dict:
 
 
 def parse_remaining_tests(evidence: str) -> dict:
+    try:
+        parsed = json.loads(evidence)
+    except json.JSONDecodeError:
+        parsed = None
+    if isinstance(parsed, dict) and isinstance(parsed.get("count"), int):
+        return {"count": parsed["count"]}
     count_match = re.search(r"tests=(\d+)", evidence)
     return {"count": int(count_match.group(1)) if count_match else None}
 
@@ -374,6 +388,19 @@ def git_commit() -> str:
     ).stdout.strip()
 
 
+def evaluation_layer(eval_ids: list[str], adjudication: dict) -> str:
+    selected = set(eval_ids)
+    micro_ids = {case["id"] for case in adjudication["cases"]}
+    mini_ids = {mini["id"] for mini in adjudication.get("mini_repositories", [])}
+    if selected and selected <= micro_ids:
+        if adjudication.get("corpus_version") == "dev-v1":
+            return "archived-dev-v1-diagnostic"
+        return "focused-micro-diagnostic"
+    if selected and selected <= mini_ids:
+        return "mini-repository-end-to-end"
+    raise ValueError("result export cannot mix focused micro and mini-repository layers")
+
+
 def main() -> None:
     arguments = parse_arguments()
     iteration_dir = arguments.iteration_dir.resolve()
@@ -382,6 +409,9 @@ def main() -> None:
     summary = load_json(iteration_dir / "summary.json")
     adjudication = load_json(arguments.adjudication)
     classifications = {case["id"]: case["expected"] for case in adjudication["cases"]}
+    classifications.update(
+        {mini["id"]: "simplify" for mini in adjudication.get("mini_repositories", [])}
+    )
     sequence_by_identity, actual_order = build_start_order(progress)
 
     runs = [
@@ -424,6 +454,8 @@ def main() -> None:
             or git_commit(),
             "dirty_at_run_start": repository_metadata.get("dirty"),
             "corpus": arguments.corpus,
+            "corpus_revision": adjudication.get("corpus_revision"),
+            "evaluation_layer": evaluation_layer(summary["eval_ids"], adjudication),
             "corpus_role": adjudication.get("corpus_role"),
             "cases": summary["eval_ids"],
         },

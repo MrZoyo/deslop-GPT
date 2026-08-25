@@ -28,3 +28,5 @@ jobs:
         run: |
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
