@@ -103,6 +103,12 @@ def validate_manifest(evals: dict, adjudication: dict) -> None:
 
     if len(indexed) != 16:
         fail("focused adjudication index is incomplete")
+    alternate_counts = {category: 0 for category in adjudication["scope"]}
+    for case in adjudication_cases:
+        if (CORPUS / "calibration" / case["id"] / "alternate_valid").is_dir():
+            alternate_counts[case["category"]] += 1
+    if any(count < 2 for count in alternate_counts.values()):
+        fail(f"each focused category needs at least two alternate_valid calibrations: {alternate_counts}")
 
 
 def validate_cases(grader, adjudication: dict) -> None:
@@ -115,9 +121,13 @@ def validate_cases(grader, adjudication: dict) -> None:
         except Exception:
             if case["expected"] == "preserve":
                 raise
-        else:
-            if case["expected"] == "simplify":
-                fail(f"{case_id}: simplify before-state already satisfies hidden target")
+        if case["expected"] == "simplify":
+            try:
+                grader.reduction_target(case_id, fixture)
+            except Exception:
+                pass
+            else:
+                fail(f"{case_id}: simplify before-state already satisfies reduction target")
 
         state = "golden_after" if case["expected"] == "simplify" else "destructive_mutant"
         with tempfile.TemporaryDirectory() as directory:
@@ -128,6 +138,10 @@ def validate_cases(grader, adjudication: dict) -> None:
                     grader.case_contract(case_id, calibrated)
                 except Exception as error:
                     fail(f"{case_id}: golden_after hidden gate failed: {error}")
+                try:
+                    grader.reduction_target(case_id, calibrated)
+                except Exception as error:
+                    fail(f"{case_id}: golden_after reduction target failed: {error}")
             else:
                 try:
                     grader.case_contract(case_id, calibrated)
@@ -135,6 +149,21 @@ def validate_cases(grader, adjudication: dict) -> None:
                     pass
                 else:
                     fail(f"{case_id}: destructive_mutant still passes hidden gate")
+
+        alternate = CORPUS / "calibration" / case_id / "alternate_valid"
+        if alternate.is_dir():
+            with tempfile.TemporaryDirectory() as directory:
+                alternate_workspace = materialize(case_id, "alternate_valid", Path(directory))
+                try:
+                    grader.case_contract(case_id, alternate_workspace)
+                except Exception as error:
+                    fail(f"{case_id}: alternate_valid behavior gate failed: {error}")
+                if case["expected"] == "simplify":
+                    try:
+                        grader.reduction_target(case_id, alternate_workspace)
+                    except Exception as error:
+                        fail(f"{case_id}: alternate_valid reduction target failed: {error}")
+                run_tests(grader, alternate_workspace, f"{case_id} alternate_valid")
 
 
 def validate_mini_repositories(grader, adjudication: dict) -> None:
@@ -150,7 +179,7 @@ def validate_mini_repositories(grader, adjudication: dict) -> None:
         except Exception as error:
             fail(f"{mini['id']}: hidden externally meaningful behavior gate failed: {error}")
         comparison = grader.compare_mini_repositories(mini["category"], repo, repo)
-        if not comparison["behavior_gate"]["passed"]:
+        if not comparison["behavior_gate"]["passed"] or not comparison["eligible_for_reduction_scoring"]:
             fail(f"{mini['id']}: comparison refused to evaluate after-state metrics")
         for key in ("production_loc", "test_loc", "test_count", "try_blocks", "checksum_mentions", "fallback_nodes"):
             if key not in comparison["metric_delta_after_minus_before"]:
@@ -164,6 +193,18 @@ def validate_mini_repositories(grader, adjudication: dict) -> None:
             fail("verification-bloat mini repository must contain a checksum cluster")
         if mini["category"] == "defensive_fallback_bloat" and metrics["fallback_mentions"] < 3:
             fail("fallback-bloat mini repository must contain fallback/compatibility machinery")
+
+    test_repo = CORPUS / "mini-repos" / "test-bloat"
+    with tempfile.TemporaryDirectory() as directory:
+        broken_after = Path(directory) / "broken-after"
+        shutil.copytree(test_repo, broken_after)
+        (broken_after / "test_reporting.py").write_text("import unittest\n\nclass Broken(unittest.TestCase):\n    def test_broken(self):\n        self.fail('broken')\n")
+        try:
+            grader.compare_mini_repositories("test_bloat", test_repo, broken_after)
+        except Exception:
+            pass
+        else:
+            fail("mini-repo comparison returned reduction eligibility after remaining tests failed")
 
 
 def main() -> None:

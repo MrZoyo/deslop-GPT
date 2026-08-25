@@ -18,7 +18,7 @@ The case layer is deliberately not a generic dead-code or abstraction benchmark.
 
 ## Case calibration
 
-Each deletion case is expected to receive a `golden_after` overlay and each preservation case a `destructive_mutant` overlay before model scoring is published. The hidden gate must establish behavior first; reduction metrics are secondary. A valid golden may remove production and tests together when the tests only protected the removed slop.
+Each deletion case receives a `golden_after` overlay and each preservation case a `destructive_mutant` overlay. At least two `alternate_valid` states are maintained in every category. The hidden behavior gate never requires a test count, test name, helper shape, or historical patch. Reduction targets are checked separately after behavior and remaining tests. A valid golden may remove production and tests together when the tests only protected the removed slop.
 
 ## End-to-end accumulated-slop layer
 
@@ -40,6 +40,8 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
 ```
 
 The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, and explicit counts of newly added tests, wrappers, abstractions, and fallbacks.
+
+The pre-freeze case-by-case review is recorded in [`review.md`](review.md). It is agent-reviewed but still requires maintainer sign-off before an `rc1` freeze.
 
 ## Running the lightweight validator
 

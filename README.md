@@ -88,39 +88,26 @@ No superiority claim is made without comparable repeated runs.
 
 ## Development corpora
 
-The public `dev-v1` corpus includes 20 de-identified Python fixtures derived from accepted changes and active contracts in two robotics data pipelines, plus one authorization case. These cases informed Skill and grader design; they are development data, not a held-out basis for public performance claims.
+The active development layer is [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample and alternate-valid calibration.
 
-| Class | Cases | Purpose |
-| --- | ---: | --- |
-| Confirmed boundary | 10 | Detect false-positive deletion |
-| Confirmed change | 10 | Measure simplification recall |
-| Authorization control | 1 | Confirm default invocation stays read-only |
-| Baseline contract tests | 37 | Confirm every fixture starts valid |
-| Core grader calibration states | 40 | Prove every oracle accepts a valid state and rejects an invalid state |
-| Alternate valid states | 3 | Reject historical-patch-only grading in representative cases |
+The broad 20-case [`dev-v1` archive](evals/archive/dev-v1/) is retained only for historical results and broad safety-regression reference. It contains generic cleanup cases that are intentionally not current tuning targets; active CI and model experiments do not run it.
 
-The pairs cover dead helpers versus public façades, redundant tests versus atomic publication, duplicated option definitions versus real format orchestration, contradictory recovery flags versus precise compatibility fallback, inferred transforms versus external geometry gates, forced defaults versus data-quality constraints, duplicate sanitizers versus credential redaction, fixture-tautological tests versus physical outcome rules, duplicated payloads versus frozen ledgers, and batch-wide identity paranoia versus persisted media validation.
-
-Case IDs and prompts are deliberately neutral. Ground-truth labels live in [`evals/adjudication.json`](evals/adjudication.json), which is not copied into the agent workspace. [`evals/grade_case.py`](evals/grade_case.py) applies hidden AST checks, independent behavior calls, fault injection, persistence corruption, remaining-test execution, authorization checks, and a recursive negative-change budget after the agent finishes. Each simplify case has a `golden_after` calibration overlay; each preserve case has a `destructive_mutant` overlay; representative simplify cases also have an `alternate_valid` implementation.
-
-`dev-v1` is retained as historical semantic-deletion safety data. It is not a generic cleanup target and must not be used as the sole tuning objective. The new [`dev-v2-focused`](evals/dev-v2-focused/README.md) development layer is restricted to test bloat (~50%), verification theater (~25%), and defensive/fallback bloat (~25%), with paired preservation counterexamples and three accumulated-slop mini repositories.
-
-No project-level performance score is published. Diagnostics under `evals/results/` are development evidence only; public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
+No project-level performance score is published. Historical diagnostics under `evals/archive/dev-v1/historical-results/` are development evidence only; public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
 See [`evals/README.md`](evals/README.md) for the protocol and metrics.
 
 ## Validate locally
 
-The dependency-free validator checks Skill structure, explicit-only policy, neutral prompts, corpus/adjudication agreement, confirmed evidence classes, the manifest-declared 20 fixtures and 37 baseline tests, bidirectional hidden-grader calibration, recursive negative-change enforcement, canonical Skill discovery metadata, and authorization safety:
-
-```bash
-python3 scripts/validate_corpus.py
-```
-
-Validate the focused accumulated-slop layer separately:
+The active dependency-free validator checks the focused Skill/corpus structure, paired behavior polarity, alternate-valid states, mini-repository behavior gates, and reduction-metric eligibility:
 
 ```bash
 python3 scripts/validate_focused_corpus.py
+```
+
+Optionally validate the retired broad safety archive:
+
+```bash
+python3 scripts/validate_dev_v1_archive.py  # optional historical check
 ```
 
 `agent-skill-eval 0.7.0` installs Codex skills into the legacy `.codex/skills` path. All Codex benchmark commands therefore go through the pinned compatibility wrapper, which switches only Codex to the [current canonical `.agents/skills` path](https://developers.openai.com/codex/skills). Validate the harness format through `uv`:
@@ -129,10 +116,10 @@ python3 scripts/validate_focused_corpus.py
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py self-test \
   --skill skill/deslop \
-  --evals evals/evals.json
+  --evals evals/dev-v2-focused/evals.json
 
 uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py validate evals/evals.json
+  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
 ```
 
 Run a real Codex A/B evaluation with a deliberately pinned model and repeated trials:
@@ -141,14 +128,14 @@ Run a real Codex A/B evaluation with a deliberately pinned model and repeated tr
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
   --skill skill/deslop \
-  --evals evals/evals.json \
+  --evals evals/dev-v2-focused/evals.json \
   --agent codex \
   --agent-model codex=<model> \
   --reasoning-effort medium \
   --runs 5 \
   --concurrency 1 \
   --baseline \
-  --post-grade-command "python3 evals/grade_case.py"
+  --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"
 ```
 
 Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations, and deterministically counterbalances A/B submission order by case and run parity. Run published benchmarks with concurrency 1 so submission order is execution order. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
@@ -183,18 +170,14 @@ skill/deslop/                    Pure runtime Skill payload
   SKILL.md                       Core workflow and authorization model
   agents/openai.yaml             UI metadata and explicit-only policy
   references/                    Focused test, trust, fallback, and scientific guidance
-evals/evals.json                 agent-skill-eval suite
-evals/adjudication.json          Labels, evidence class, and oracle source
-evals/calibration/               Positive goldens and destructive mutants
-evals/grade_case.py              Hidden post-grade contracts and budget checks
-evals/files/                     Neutral paired fixtures copied to agents
-evals/dev-v2-focused/            Focused corpus and accumulated-slop mini repos
-scripts/validate_corpus.py       Dependency-free static validation
+evals/dev-v2-focused/            Active focused corpus and mini repos
+evals/archive/dev-v1/            Retired broad safety corpus and historical results
 scripts/validate_focused_corpus.py  Focused corpus and mini-repo validation
-scripts/run_agent_skill_eval.py  Pinned canonical-path compatibility wrapper
+scripts/validate_dev_v1_archive.py Optional historical archive validation
+  scripts/run_agent_skill_eval.py  Pinned canonical-path compatibility wrapper
 ```
 
-Fixtures live under `evals/files/` rather than a top-level `fixtures/` directory because that is the native safe-path layout consumed by `agent-skill-eval`.
+Focused fixtures live under `evals/dev-v2-focused/files/`; the retired broad fixtures live under `evals/archive/dev-v1/files/`.
 
 ## Contributing
 

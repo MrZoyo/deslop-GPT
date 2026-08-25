@@ -11,10 +11,11 @@ from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
+ARCHIVE_ROOT = ROOT / "evals" / "archive" / "dev-v1"
 SKILL_ROOT = ROOT / "skill" / "deslop"
-EVALS_PATH = ROOT / "evals" / "evals.json"
-ADJUDICATION_PATH = ROOT / "evals" / "adjudication.json"
-CALIBRATION_ROOT = ROOT / "evals" / "calibration"
+EVALS_PATH = ARCHIVE_ROOT / "evals.json"
+ADJUDICATION_PATH = ARCHIVE_ROOT / "adjudication.json"
+CALIBRATION_ROOT = ARCHIVE_ROOT / "calibration"
 CASE_ID = re.compile(r"c(0[1-9]|10)[ab]")
 SIDE_EFFECT_CONTRACT_KEYS = {
     "allow_new_local_branches",
@@ -150,7 +151,7 @@ def validate_eval_case(case: dict[str, object], seen_ids: set[str]) -> None:
         fixture_path = PurePosixPath(file_name)
         if fixture_path.is_absolute() or ".." in fixture_path.parts:
             fail(f"{case_id}: unsafe fixture path {file_name}")
-        if not (ROOT / "evals" / file_name).is_file():
+        if not (ARCHIVE_ROOT / file_name).is_file():
             fail(f"{case_id}: missing fixture {file_name}")
         if "adjudication" in file_name or "grade_case" in file_name:
             fail(f"{case_id}: hidden adjudication leaked into the agent workspace")
@@ -210,7 +211,7 @@ def run_tests(workspace: Path, label: str) -> int:
 
 
 def run_baseline_tests() -> tuple[int, int]:
-    fixture_root = ROOT / "evals" / "files"
+    fixture_root = ARCHIVE_ROOT / "files"
     case_dirs = sorted(path for path in fixture_root.iterdir() if CASE_ID.fullmatch(path.name))
     total_tests = sum(run_tests(case_dir, f"baseline {case_dir.name}") for case_dir in case_dirs)
     return len(case_dirs), total_tests
@@ -235,7 +236,7 @@ def run_grader(
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     environment.update(extra_environment or {})
     result = subprocess.run(
-        [sys.executable, str(ROOT / "evals" / "grade_case.py")],
+        [sys.executable, str(ARCHIVE_ROOT / "grade_case.py")],
         env=environment,
         capture_output=True,
         text=True,
@@ -266,7 +267,7 @@ def materialize_calibration(case_id: str, expected: object, destination: Path) -
 
 
 def materialize_overlay(case_id: str, state_name: str, destination: Path) -> Path:
-    fixture = ROOT / "evals" / "files" / case_id
+    fixture = ARCHIVE_ROOT / "files" / case_id
     overlay = CALIBRATION_ROOT / case_id / state_name
     workspace = destination / case_id
     shutil.copytree(fixture, workspace)
@@ -280,7 +281,7 @@ def materialize_overlay(case_id: str, state_name: str, destination: Path) -> Pat
 
 def run_hidden_grader_calibration(adjudication: dict[str, dict[str, object]]) -> None:
     for case_id, case in sorted(adjudication.items()):
-        before_rows = run_grader(case_id, ROOT / "evals" / "files" / case_id)
+        before_rows = run_grader(case_id, ARCHIVE_ROOT / "files" / case_id)
         before_passed = bool(before_rows[0]["passed"])
         before_tests = bool(result_with_prefix(before_rows, "remaining unittest suite")["passed"])
         before_budget = bool(result_with_prefix(before_rows, "negative-change budget")["passed"])
@@ -358,7 +359,7 @@ def run_c01a_diagnostics_calibration() -> None:
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         workspaces = {
-            "before": ROOT / "evals" / "files" / "c01a",
+            "before": ARCHIVE_ROOT / "files" / "c01a",
             "golden_after": materialize_overlay("c01a", "golden_after", root),
         }
         for state, workspace in workspaces.items():
@@ -373,7 +374,7 @@ def run_c01a_diagnostics_calibration() -> None:
 
 
 def run_audit_calibration() -> None:
-    fixture = ROOT / "evals" / "files" / "c01a"
+    fixture = ARCHIVE_ROOT / "files" / "c01a"
     unchanged_rows = run_grader("mode-default-audit", fixture)
     if not unchanged_rows[0]["passed"]:
         fail("default audit hidden check does not pass on unchanged input")
@@ -394,7 +395,7 @@ def run_audit_calibration() -> None:
 
 
 def run_remaining_tests_calibration() -> None:
-    fixture = ROOT / "evals" / "files" / "c01b"
+    fixture = ARCHIVE_ROOT / "files" / "c01b"
     mutations = {
         "failing test": lambda workspace: (workspace / "test_app.py").write_text(
             "import unittest\n\n"
@@ -419,7 +420,7 @@ def run_remaining_tests_calibration() -> None:
 def run_negative_budget_calibration() -> None:
     with tempfile.TemporaryDirectory() as directory:
         workspace = Path(directory) / "c01b"
-        shutil.copytree(ROOT / "evals" / "files" / "c01b", workspace)
+        shutil.copytree(ARCHIVE_ROOT / "files" / "c01b", workspace)
         installed_skill = workspace / ".fake" / "skills" / "deslop" / "SKILL.md"
         installed_skill.parent.mkdir(parents=True)
         installed_skill.write_text("---\nname: deslop\ndescription: smoke fixture\n---\n")
@@ -453,7 +454,7 @@ def run_negative_budget_calibration() -> None:
 
     with tempfile.TemporaryDirectory() as directory:
         workspace = Path(directory) / "c01b"
-        shutil.copytree(ROOT / "evals" / "files" / "c01b", workspace)
+        shutil.copytree(ARCHIVE_ROOT / "files" / "c01b", workspace)
         (workspace / "test_app.py").write_text("def broken(:\n")
         rows = run_grader("c01b", workspace)
     budget = result_with_prefix(rows, "negative-change budget")
@@ -467,7 +468,7 @@ def run_skill_discovery_calibration() -> None:
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         workspace = root / "audit"
-        shutil.copytree(ROOT / "evals" / "files" / "c01a", workspace)
+        shutil.copytree(ARCHIVE_ROOT / "files" / "c01a", workspace)
         installed_skill = workspace / ".agents" / "skills" / "deslop"
         installed_skill.mkdir(parents=True)
         shutil.copytree(SKILL_ROOT, installed_skill, dirs_exist_ok=True)
@@ -552,7 +553,7 @@ def main() -> None:
     run_skill_discovery_calibration()
 
     print(
-        f"Validated {len(evals)} evals: {simplify_count} confirmed changes, "
+        f"Validated archived dev-v1: {len(evals)} evals: {simplify_count} confirmed changes, "
         f"{preserve_count} confirmed boundaries, 1 authorization control; "
         f"{fixture_count} fixtures and {test_count} baseline tests passed; "
         "hidden grader calibration passed 20/20 positive + 20/20 negative states; "

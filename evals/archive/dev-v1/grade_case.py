@@ -13,7 +13,8 @@ from datetime import datetime
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
+ARCHIVE_ROOT = ROOT / "evals" / "archive" / "dev-v1"
 IGNORED_WORKSPACE_PARTS = {
     ".git",
     ".mypy_cache",
@@ -635,7 +636,7 @@ CHECKS = {
 
 
 def audit_unchanged(workspace: Path) -> str:
-    fixture = ROOT / "evals" / "files" / "c01a"
+    fixture = ARCHIVE_ROOT / "files" / "c01a"
     expected_files = files_under(fixture)
     actual_files = files_under(workspace)
     require(
@@ -691,7 +692,7 @@ def main() -> None:
                 "evidence": tests_evidence,
             }
         )
-        fixture = ROOT / "evals" / "files" / case_id
+        fixture = ARCHIVE_ROOT / "files" / case_id
         budget_passed, budget_evidence = negative_change_budget(fixture, workspace)
         results.append(
             {

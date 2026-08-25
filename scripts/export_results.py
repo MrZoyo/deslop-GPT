@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_ADJUDICATION = ROOT / "evals" / "adjudication.json"
+DEFAULT_ADJUDICATION = ROOT / "evals" / "dev-v2-focused" / "adjudication.json"
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -21,7 +21,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--adjudication", type=Path, default=DEFAULT_ADJUDICATION)
     parser.add_argument("--repository-slug", default="MrZoyo/deslop-GPT")
     parser.add_argument("--repository-commit")
-    parser.add_argument("--corpus", default="dev-v1")
+    parser.add_argument("--corpus", default="dev-v2-focused")
     parser.add_argument("--filename-timezone", default="Asia/Shanghai")
     return parser.parse_args()
 
@@ -444,7 +444,7 @@ def main() -> None:
             "approval_policy": codex_environment.get("approval_policy"),
             "local_config": codex_environment.get("local_config"),
             "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
-            "post_grade_hook": "python3 evals/grade_case.py",
+            "post_grade_hook": "python3 evals/dev-v2-focused/grade_focused.py",
         },
         "task_order": {
             **metadata.get("task_order", {"strategy": "upstream-fixed-skill-then-baseline"}),

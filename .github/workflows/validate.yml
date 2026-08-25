@@ -16,8 +16,6 @@ jobs:
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
-      - name: Validate skill and fixtures
-        run: python3 scripts/validate_corpus.py
       - name: Validate focused accumulated-slop corpus
         run: python3 scripts/validate_focused_corpus.py
       - name: Validate harness wrapper
@@ -25,11 +23,7 @@ jobs:
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py self-test \
             --skill skill/deslop \
-            --evals evals/evals.json
-      - name: Validate agent-skill-eval manifest
-        run: |
-          uv run --with agent-skill-eval==0.7.0 \
-            python scripts/run_agent_skill_eval.py validate evals/evals.json
+            --evals evals/dev-v2-focused/evals.json
       - name: Validate focused eval manifest
         run: |
           uv run --with agent-skill-eval==0.7.0 \
