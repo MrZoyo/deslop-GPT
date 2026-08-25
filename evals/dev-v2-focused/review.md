@@ -1,6 +1,6 @@
 # `dev-v2-focused` pre-freeze review
 
-Review revision: focused corpus revision prepared after `d76175a` with mini-repo goldens and corrected before-state validation. Status: agent-reviewed and ready to freeze as `dev-v2-focused-rc2`; maintainer review is still required before the first model run.
+Review revision: focused corpus revision at `bd4a7d4` with mini-repo goldens and corrected before-state validation. Status: agent-reviewed and frozen as `dev-v2-focused-rc2`; maintainer review is still required before the first model run.
 
 ## Case-by-case review
 
