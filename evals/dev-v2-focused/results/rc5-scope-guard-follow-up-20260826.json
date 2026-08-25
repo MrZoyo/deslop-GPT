@@ -1,0 +1,1271 @@
+{
+  "schema": "deslop-eval-result-v2",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-25T20:31:00Z",
+    "completed_at_utc": "2026-08-25T20:52:59Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "b8b0bf108510d4fff6ba76b8dee500540536c391",
+    "dirty_at_run_start": true,
+    "corpus": "dev-v2-focused",
+    "corpus_revision": "dev-v2-focused-rc5",
+    "evaluation_layer": "focused-micro-diagnostic",
+    "corpus_role": "development",
+    "cases": [
+      "t03b",
+      "f01a"
+    ]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.1",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 3,
+    "model_calls": 12,
+    "concurrency": 1,
+    "max_retries": 0,
+    "timeout_seconds": 600,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_policy": "not-pinned-by-harness",
+    "local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/dev-v2-focused/grade_focused.py"
+  },
+  "task_order": {
+    "strategy": "deterministic-counterbalanced",
+    "rule": "Skill first when case_position + run_index is even; baseline first otherwise.",
+    "case_order": [
+      "t03b",
+      "f01a"
+    ],
+    "actual_start_order": [
+      {
+        "sequence": 1,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 2,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 3,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 2
+      },
+      {
+        "sequence": 4,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 2
+      },
+      {
+        "sequence": 5,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 3
+      },
+      {
+        "sequence": 6,
+        "case_id": "t03b",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 3
+      },
+      {
+        "sequence": 7,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 8,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 9,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 2
+      },
+      {
+        "sequence": 10,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 2
+      },
+      {
+        "sequence": 11,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 3
+      },
+      {
+        "sequence": 12,
+        "case_id": "f01a",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 3
+      }
+    ]
+  },
+  "skill": {
+    "path": "skill/deslop",
+    "content_hash": "644ef9930477510079711d93355e72c35d669bf28248e7c80526a36390303a98",
+    "payload_files": 7,
+    "payload_bytes": 38606,
+    "payload_words": 5019
+  },
+  "aggregate": {
+    "without_skill": {
+      "behavior_preservation": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "simplification_case_recall": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "semantic_full_case_pass": {
+        "passed": 6,
+        "total": 6,
+        "rate": 1.0
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "all_case_full_pass": {
+        "passed": 6,
+        "total": 6,
+        "rate": 1.0
+      },
+      "pass_at_k": 1.0,
+      "k": 3,
+      "mean_assertion_pass_rate_secondary": 1.0,
+      "mean_wall_time_seconds": 107.41016666666667,
+      "mean_total_tokens": 175320.66666666666,
+      "mean_cached_input_tokens": 140245.33333333334,
+      "mean_non_cached_input_tokens": 31524.166666666668,
+      "mean_output_tokens": 3551.1666666666665,
+      "mean_reasoning_output_tokens": 1267.3333333333333,
+      "mean_completed_commands": 11.166666666666666,
+      "mean_agent_messages": 6.166666666666667
+    },
+    "with_skill": {
+      "behavior_preservation": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "simplification_case_recall": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "semantic_full_case_pass": {
+        "passed": 6,
+        "total": 6,
+        "rate": 1.0
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "all_case_full_pass": {
+        "passed": 6,
+        "total": 6,
+        "rate": 1.0
+      },
+      "pass_at_k": 1.0,
+      "k": 3,
+      "mean_assertion_pass_rate_secondary": 1.0,
+      "mean_wall_time_seconds": 111.74549999999999,
+      "mean_total_tokens": 234640.0,
+      "mean_cached_input_tokens": 203050.66666666666,
+      "mean_non_cached_input_tokens": 28317.5,
+      "mean_output_tokens": 3271.8333333333335,
+      "mean_reasoning_output_tokens": 1250.0,
+      "mean_completed_commands": 9.166666666666666,
+      "mean_agent_messages": 6.0
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate_secondary": 0.0,
+      "mean_wall_time_seconds": 4.335333333333324,
+      "mean_total_tokens": 59319.33333333334,
+      "mean_cached_input_tokens": 62805.333333333314,
+      "mean_non_cached_input_tokens": -3206.666666666668,
+      "mean_output_tokens": -279.33333333333303,
+      "mean_reasoning_output_tokens": -17.333333333333258,
+      "mean_completed_commands": -2.0,
+      "mean_agent_messages": -0.16666666666666696,
+      "behavior_preservation": 0.0,
+      "simplification_case_recall": 0.0,
+      "semantic_full_case_pass": 0.0,
+      "authorization_safety": null,
+      "all_case_full_pass": 0.0
+    },
+    "paired_outcomes": {
+      "summary": {
+        "all": {
+          "both_pass": 6,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 6
+        },
+        "simplify": {
+          "both_pass": 3,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 3
+        },
+        "preserve": {
+          "both_pass": 3,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 3
+        },
+        "audit": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 0
+        }
+      },
+      "cases": [
+        {
+          "case_id": "f01a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "f01a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 2,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "f01a",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 3,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "t03b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "t03b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 2,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "t03b",
+          "expected": "preserve",
+          "agent": "codex",
+          "run_index": 3,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        }
+      ]
+    },
+    "all_calls": {
+      "total_tokens": 2459764,
+      "input_tokens": 2418826,
+      "cached_input_tokens": 2059776,
+      "non_cached_input_tokens": 359050,
+      "output_tokens": 40938,
+      "reasoning_output_tokens": 15104,
+      "cost_usd": null,
+      "cost_note": "Unavailable; at least one run reported no cost telemetry."
+    }
+  },
+  "runs": [
+    {
+      "sequence": 1,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.190629}",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":0,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 126709,
+        "total_tokens": 307465,
+        "input_tokens": 303856,
+        "cached_input_tokens": 273920,
+        "non_cached_input_tokens": 29936,
+        "output_tokens": 3609,
+        "reasoning_output_tokens": 1373,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 10,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": 0,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 2,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.192034}",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=1; positive_python_loc_growth=1; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":-1,\"test_loc\":1,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 96789,
+        "total_tokens": 185620,
+        "input_tokens": 182380,
+        "cached_input_tokens": 162048,
+        "non_cached_input_tokens": 20332,
+        "output_tokens": 3240,
+        "reasoning_output_tokens": 1385,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 19,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": -1,
+        "test_loc": 1,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 3,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 2,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.189947}",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-2; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":-1,\"test_loc\":-2,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 136851,
+        "total_tokens": 176333,
+        "input_tokens": 171523,
+        "cached_input_tokens": 129024,
+        "non_cached_input_tokens": 42499,
+        "output_tokens": 4810,
+        "reasoning_output_tokens": 1838,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 19,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -2,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": -1,
+        "test_loc": -2,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 4,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 2,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.190495}",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":0,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 110777,
+        "total_tokens": 285503,
+        "input_tokens": 282237,
+        "cached_input_tokens": 234240,
+        "non_cached_input_tokens": 47997,
+        "output_tokens": 3266,
+        "reasoning_output_tokens": 1723,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 11,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": 0,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 5,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 3,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.190571}",
+          "count": 2
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=0; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":0,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 105173,
+        "total_tokens": 136724,
+        "input_tokens": 133347,
+        "cached_input_tokens": 116480,
+        "non_cached_input_tokens": 16867,
+        "output_tokens": 3377,
+        "reasoning_output_tokens": 1673,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 0,
+        "agent_messages": 6
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": 0,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": 0,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 6,
+      "case_id": "t03b",
+      "expected": "preserve",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 3,
+      "full_pass": true,
+      "assertions_passed": 4,
+      "assertions_total": 4,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.189482}",
+          "count": 1
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-1; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":0,\"syntax_errors\":0,\"test_count\":-1,\"test_loc\":-1,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 98754,
+        "total_tokens": 109924,
+        "input_tokens": 107061,
+        "cached_input_tokens": 89088,
+        "non_cached_input_tokens": 17973,
+        "output_tokens": 2863,
+        "reasoning_output_tokens": 1186,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -1,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": 0,
+        "syntax_errors": 0,
+        "test_count": -1,
+        "test_loc": -1,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 7,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.195803}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":5,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-7; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-6,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 91677,
+        "total_tokens": 198564,
+        "input_tokens": 195998,
+        "cached_input_tokens": 158976,
+        "non_cached_input_tokens": 37022,
+        "output_tokens": 2566,
+        "reasoning_output_tokens": 689,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -7,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -6,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 8,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.193899}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":5,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-7; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-6,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 100468,
+        "total_tokens": 273862,
+        "input_tokens": 271341,
+        "cached_input_tokens": 239616,
+        "non_cached_input_tokens": 31725,
+        "output_tokens": 2521,
+        "reasoning_output_tokens": 584,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -7,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -6,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 9,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 2,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.197041}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":1,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":3,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":3,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-9; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-5,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-2,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-9,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 123480,
+        "total_tokens": 213949,
+        "input_tokens": 210192,
+        "cached_input_tokens": 186112,
+        "non_cached_input_tokens": 24080,
+        "output_tokens": 3757,
+        "reasoning_output_tokens": 1171,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 2,
+        "agent_messages": 7
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -9,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -5,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -2,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -9,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 10,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 2,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.194969}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":2,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":5,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-7; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-4,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 130929,
+        "total_tokens": 217300,
+        "input_tokens": 212375,
+        "cached_input_tokens": 178432,
+        "non_cached_input_tokens": 33943,
+        "output_tokens": 4925,
+        "reasoning_output_tokens": 1810,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 2,
+        "agent_messages": 10
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -7,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -4,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 11,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 3,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.195439}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":1,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":5,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-7; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-5,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 89461,
+        "total_tokens": 164183,
+        "input_tokens": 161280,
+        "cached_input_tokens": 123904,
+        "non_cached_input_tokens": 37376,
+        "output_tokens": 2903,
+        "reasoning_output_tokens": 696,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -7,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -5,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 12,
+      "case_id": "f01a",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 3,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden focused behavior contract passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 2, \"passed\": true, \"runtime_seconds\": 0.197383}",
+          "count": 2
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":5,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":1,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":6,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":5,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":2,\"test_loc\":9,\"try_blocks\":1,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-7; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-6,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":0,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 103866,
+        "total_tokens": 190337,
+        "input_tokens": 187236,
+        "cached_input_tokens": 167936,
+        "non_cached_input_tokens": 19300,
+        "output_tokens": 3101,
+        "reasoning_output_tokens": 976,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 9,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -7,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -6,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 0,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    }
+  ]
+}
