@@ -3,7 +3,7 @@
   "skill_name": "deslop",
   "corpus_role": "development",
   "corpus_version": "dev-v2-focused",
-  "corpus_revision": "dev-v2-focused-rc4",
+  "corpus_revision": "dev-v2-focused-rc5",
   "evals": [
     {
       "id": "test-bloat",

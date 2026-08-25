@@ -2,7 +2,7 @@
   "schema": "deslop-adjudication-v2-focused",
   "corpus_role": "development",
   "corpus_version": "dev-v2-focused",
-  "corpus_revision": "dev-v2-focused-rc4",
+  "corpus_revision": "dev-v2-focused-rc5",
   "scope": {
     "test_bloat": 4,
     "verification_theater": 2,
@@ -10,12 +10,12 @@
   },
   "micro_reduction_targets": {
     "test_bloat": {"test_count_max": 1},
-    "verification_theater": {"checksum_mentions_max": 0, "local_verification_surface_max": 0, "local_verifier_functions_max": 0, "hash_operations_max": 0},
+    "verification_theater": {"checksum_mentions_max": 0, "local_verifier_functions_max": 0, "hash_operations_max": 0},
     "defensive_fallback_bloat": {"branches_max": 0, "try_blocks_max": 0, "except_handlers_max": 0}
   },
   "mini_reduction_targets": {
     "test_bloat": {"test_count_fraction_max": "1/2", "test_loc_fraction_max": "1/2", "fixture_invocations_fraction_max": "1/2"},
-    "verification_theater": {"local_verification_surface_max": 0, "local_verifier_functions_max": 0, "hash_operations_max": 1, "checksum_mentions_fraction_max": "1/2"},
+    "verification_theater": {"local_verifier_functions_max": 0, "hash_operations_max": 1, "checksum_mentions_fraction_max": "1/2"},
     "defensive_fallback_bloat": {"try_blocks_max": 1, "catch_fallback_handlers_max": 0, "try_blocks_must_decrease": true, "except_handlers_must_decrease": true}
   },
   "negative_change_budget": {

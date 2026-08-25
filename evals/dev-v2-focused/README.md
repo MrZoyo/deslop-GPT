@@ -30,7 +30,7 @@ The three mini repositories model code after several agent correction cycles rat
 2. [`mini-repos/verification-bloat`](mini-repos/verification-bloat): a report writer surrounded by self-generated checksum, envelope, receipt, validator, and validator-only test machinery, plus an independent persisted readback contract that must remain.
 3. [`mini-repos/fallback-bloat`](mini-repos/fallback-bloat): a current parser wrapped in broad catch-and-fallback layers, repeated validation, and obsolete compatibility tests, alongside a documented legacy protocol and atomic cleanup contract that must remain.
 
-The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. Each repository has a known-good [`mini-repo-calibration/`](mini-repo-calibration/) `golden_after` state that must pass behavior, remaining-test, meaningful-reduction, and negative-change gates. Test count, test LOC, and fixture invocations must each fall by at least half in `test-bloat`; local self-verification must clear, checksum mentions must fall by at least half, and only the independent readback hash operation may remain in `verification-bloat`; the catch-and-return parser fallback must disappear while the atomic cleanup catch remains in `fallback-bloat`.
+The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. Each repository has a known-good [`mini-repo-calibration/`](mini-repo-calibration/) `golden_after` state that must pass behavior, remaining-test, meaningful-reduction, and negative-change gates. Test count, test LOC, and fixture invocations must each fall by at least half in `test-bloat`; local verifier functions must clear, checksum mentions must fall by at least half, and only the independent readback hash operation may remain in `verification-bloat`; the catch-and-return parser fallback must disappear while the atomic cleanup catch remains in `fallback-bloat`.
 
 Compare an untouched mini repository with an agent-produced copy only after the copy has passed its hidden behavior gate:
 
@@ -43,7 +43,7 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
 
 The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, a category reduction decision, and the negative-change decision. A failed after-state is ineligible for reduction scoring.
 
-The case-by-case review is recorded in [`review.md`](review.md). The frozen revision is `dev-v2-focused-rc4`; rc3 micro diagnostics remain separate.
+The case-by-case review is recorded in [`review.md`](review.md). The working revision is the `dev-v2-focused-rc5` candidate; published rc3 micro and rc4 mini pilots remain unchanged historical evidence.
 
 The three repositories are model-runnable through [`mini-evals.json`](mini-evals.json). The post-grade hook resolves each mini ID to its untouched fixture and calls `compare_mini_repositories()`; no second orchestration framework is used.
 

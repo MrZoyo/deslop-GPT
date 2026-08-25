@@ -17,11 +17,15 @@ Work in this order. Do not let an easy dead-code deletion displace a higher-prio
 
 Generic dead code, wrappers, abstractions, comments, and ordinary duplication are secondary. Touch them only when they belong to one of the three target clusters or have direct high-confidence evidence.
 
-**Tests are code too, and existing tests may themselves be accumulated agent slop. A test is evidence only when it protects distinct externally meaningful behavior with an independent oracle.** Adding tests is not the default response to cleanup. When production slop is deleted, tests whose only purpose is to protect that slop should normally be deleted in the same change.
+**Reduce test surface, not behavior surface.** Tests are code too and may themselves be accumulated agent slop, but behavior is not slop merely because a test observes it. Distinguish implementation-detail tests protecting internal machinery from tests asserting distinct externally observable behavior; the latter carry substantially more preservation weight. A public API's success result, rejection behavior, exception or error mode, edge-case semantics, and documented compatibility behavior are behavioral evidence even when an existing test is their clearest executable specification. Deleting or consolidating a test does not by itself authorize deleting the behavior it exercised. Prefer multiple redundant tests becoming one sufficient behavioral test, not deleting public behavior to make a smaller suite pass. Do not remove behavior such as `public_api([])` or `normalize_identifier("")` raising `ValueError`, a supported legacy protocol input, or a documented public edge case unless independent evidence establishes that the behavior itself is obsolete.
+
+Adding tests is not the default response to cleanup. When production slop is deleted, tests whose only purpose is to protect that slop should normally be deleted in the same change.
 
 ## Closed justification loops
 
 Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. Follow justification chains outward until they reach an independent evidence root.
+
+A production/test pair is mutual-support slop only when the production construct has no independently meaningful externally observable purpose. `public_api([]) -> ValueError` and `test_public_api_rejects_empty()` do not form a closed justification loop merely because one exercises the other. Internal checksum or receipt machinery and tests created only for that machinery can form such a loop, as can a speculative fallback and tests created only to exercise it.
 
 If a fallback exists only because a test exercises it, and that test exists only because the fallback was added, neither member is independent evidence. The same closed justification loop can include checksum logic and checksum tests, receipts/manifests and validators, wrappers and wrapper-only tests, obsolete compatibility branches and their tests, or defensive validators and tests that only exercise them. Call this **mutual-support slop**.
 

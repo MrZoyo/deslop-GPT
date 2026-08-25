@@ -1,6 +1,6 @@
-# `dev-v2-focused-rc4` freeze note
+# `dev-v2-focused-rc5` pre-freeze note
 
-Review revision: rc4 retains the signed-off rc3 scoring contract and fixes only the mini-repository post-grade workspace path exposed by the first real run.
+Review revision: rc5 is driven by published rc3 micro and rc4 mini model evidence. It narrows Skill behavior-preservation guidance after the `t01b`/`t03b` over-deletions, makes the `v01b` hidden contract independent of its pass-through writer, and deletes the lexical `envelope`/`receipt`/`proof` reduction gate that caused the verification mini false negative. It adds no grader layer, calibration type, dependency, or result machinery.
 
 ## Case-by-case review
 
@@ -15,7 +15,9 @@ Review revision: rc4 retains the signed-off rc3 scoring contract and fixes only 
 | `f01` | broad current-parser catch to obsolete line parser | explicit version 1 legacy protocol | table-driven version cases | malformed current input fails visibly |
 | `f02` | generic missing-name fallback | atomic write partial-file cleanup | `finally`-based cleanup implementation | recovery is preserved only where cleanup is concrete |
 
-The `a` case behavior contracts do not require a test count, test name, helper shape, checksum absence, or fallback implementation shape. Their separate adjudication thresholds require at most one sufficient test, zero local verification surface, or zero fallback control flow. The `b` case behavior contracts check externally meaningful outcomes only. `t03a`, `v01a`, and `f01a` each have an `insufficient_cleanup` state that preserves behavior and removes some target surface but must fail reduction.
+The `a` case behavior contracts do not require a test count, test name, helper shape, checksum absence, or fallback implementation shape. Their separate adjudication thresholds require at most one sufficient test, zero checksum/local-verifier/hash machinery, or zero fallback control flow. The `b` case behavior contracts check externally meaningful outcomes only. `t03a`, `v01a`, and `f01a` each have an `insufficient_cleanup` state that preserves behavior and removes some target surface but must fail reduction.
+
+`t02b` remains unchanged. Its only independent visible indication that `legacy_header` is supported is the existing test name and assertion; the implementation branch is not independent evidence, and hidden adjudication supplies no evidence to the agent. This is a fixture-evidence limitation, not yet evidence for another Skill rule. A small visible contract file can be considered separately after the targeted follow-up rather than silently changing this revision's fixture.
 
 All 16 micro cases also receive the same negative-change hard gate: no new Python files, dependencies, tests, abstractions, category machinery, or syntax errors, with at most four positive nonblank Python lines. The four-line allowance is calibrated by the existing table-driven preservation alternatives.
 
@@ -45,6 +47,6 @@ The repository contains repeated validation, a catch around current parsing, a n
 - `mini-evals.json` runs all three mini repositories through the existing wrapper and `compare_mini_repositories()` post-grade path;
 - at least two `alternate_valid` overlays exist in each category (`t02/t03`, `v01/v02`, `f01/f02` preservation variants);
 - `dev-v1` is archived and is not an active tuning target;
-- no model A/B run has been performed for `dev-v2-focused`.
+- published rc3 micro and rc4 mini pilots remain unchanged and are not rescored as rc5.
 
-Do not mix rc3 micro results with rc4 mini-repository results or silently change the frozen grader after this path correction.
+Freeze rc5 before a targeted follow-up. Do not combine its results with rc3 or rc4, and do not rewrite the historical result artifacts.

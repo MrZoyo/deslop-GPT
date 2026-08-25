@@ -49,11 +49,6 @@ ABSTRACTION_TOKENS = (
     "validator",
     "wrapper",
 )
-LOCAL_VERIFICATION_TOKENS = (
-    "envelope",
-    "proof",
-    "receipt",
-)
 HASH_CONSTRUCTORS = {
     "blake2b",
     "blake2s",
@@ -150,7 +145,7 @@ def case_contract(case_id: str, workspace: Path) -> str:
         expected = "26717ae4369d005dc210693d1d9256de56b5689078ed07922317ea56020a6486"
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "artifact.bin"
-            app.write_artifact(path, b"public-fixture")
+            path.write_bytes(b"public-fixture")
             require(app.verify_artifact(path, expected) == b"public-fixture", "external digest failed")
             path.write_bytes(b"tampered")
             with _raises(ValueError):
@@ -206,7 +201,6 @@ def reduction_target(case_id: str, workspace: Path) -> str:
         target = MICRO_REDUCTION_TARGETS["verification_theater"]
         require(
             after["checksum_mentions"] <= target["checksum_mentions_max"]
-            and after["local_verification_surface"] <= target["local_verification_surface_max"]
             and after["local_verifier_functions"] <= target["local_verifier_functions_max"]
             and after["hash_operations"] <= target["hash_operations_max"],
             "local verification cluster remains",
@@ -275,7 +269,6 @@ def source_metrics(root: Path) -> dict[str, int]:
         "syntax_errors": 0,
         "checksum_mentions": 0,
         "verification_mentions": 0,
-        "local_verification_surface": 0,
         "local_verifier_functions": 0,
         "hash_operations": 0,
         "fallback_mentions": 0,
@@ -283,7 +276,6 @@ def source_metrics(root: Path) -> dict[str, int]:
         "fallback_nodes": 0,
         "abstraction_nodes": 0,
     }
-    local_verification_tokens = set()
     for relative, path in sorted(python_files(root).items()):
         text = path.read_text()
         lines = sum(bool(line.strip()) for line in text.splitlines())
@@ -350,9 +342,6 @@ def source_metrics(root: Path) -> dict[str, int]:
                 if hash_call:
                     metrics["hash_operations"] += 1
         lowered = text.lower()
-        local_verification_tokens.update(
-            token for token in LOCAL_VERIFICATION_TOKENS if token in lowered
-        )
         metrics["checksum_mentions"] += lowered.count("sha256") + lowered.count("checksum")
         metrics["verification_mentions"] += lowered.count("receipt") + lowered.count("manifest") + lowered.count("validate")
         metrics["fallback_mentions"] += lowered.count("fallback") + lowered.count("legacy") + lowered.count("except")
@@ -363,7 +352,6 @@ def source_metrics(root: Path) -> dict[str, int]:
             and isinstance(node.func, ast.Name)
             and any(token in node.func.id.lower() for token in ("fixture", "dataset", "load_records", "expensive"))
         )
-    metrics["local_verification_surface"] = len(local_verification_tokens)
     return metrics
 
 
@@ -400,7 +388,6 @@ def negative_change_budget(
         "test_bloat": ("test_count",),
         "verification_theater": (
             "checksum_mentions",
-            "local_verification_surface",
             "local_verifier_functions",
             "hash_operations",
         ),
@@ -542,10 +529,6 @@ def mini_reduction_target(
         )
     elif category == "verification_theater":
         target = MINI_REDUCTION_TARGETS[category]
-        require(
-            after["local_verification_surface"] <= target["local_verification_surface_max"],
-            "local receipt/validator/checksum surface remains",
-        )
         require(
             after["local_verifier_functions"] <= target["local_verifier_functions_max"],
             "single-input local verifier remains",
