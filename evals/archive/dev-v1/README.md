@@ -26,4 +26,4 @@ python3 scripts/validate_dev_v1_archive.py
 
 It is deliberately not part of pull-request active CI. The active benchmark and validation entry point is [`../../dev-v2-focused/README.md`](../../dev-v2-focused/README.md).
 
-Historical source state is also preserved by the repository history and the `dev-v1-final` tag when that tag is created.
+Historical source state is also preserved by the repository history and the [`dev-v1-final` tag](https://github.com/MrZoyo/deslop-GPT/releases/tag/dev-v1-final).

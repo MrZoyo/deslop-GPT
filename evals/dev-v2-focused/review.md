@@ -1,6 +1,6 @@
 # `dev-v2-focused` pre-freeze review
 
-Review revision: focused corpus revision prepared after `d0e06c7` plus grader separation changes. Status: agent-reviewed and ready to freeze as `dev-v2-focused-rc1`; maintainer review is still required before the first model run.
+Review revision: focused corpus revision at `d76175a`. Status: agent-reviewed and frozen as `dev-v2-focused-rc1`; maintainer review is still required before the first model run.
 
 ## Case-by-case review
 
