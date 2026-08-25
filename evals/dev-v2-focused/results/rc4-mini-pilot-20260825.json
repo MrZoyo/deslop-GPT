@@ -1,0 +1,762 @@
+{
+  "schema": "deslop-eval-result-v2",
+  "status": "internal-development-diagnostic",
+  "public_performance_claim": false,
+  "run_window": {
+    "started_at_utc": "2026-08-25T14:06:15Z",
+    "completed_at_utc": "2026-08-25T14:19:37Z",
+    "filename_timezone": "Asia/Shanghai"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "54dca4e4bcaf53616ea93fed4428023ca99171d1",
+    "dirty_at_run_start": false,
+    "corpus": "dev-v2-focused-rc4",
+    "corpus_revision": "dev-v2-focused-rc4",
+    "evaluation_layer": "mini-repository-end-to-end",
+    "corpus_role": "development",
+    "cases": [
+      "test-bloat",
+      "verification-bloat",
+      "fallback-bloat"
+    ]
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent_cli": "codex-cli 0.149.1",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "runs_per_case_configuration": 1,
+    "model_calls": 6,
+    "concurrency": 1,
+    "max_retries": 0,
+    "timeout_seconds": 600,
+    "sandbox": "workspace-write",
+    "network": "not-explicitly-pinned-or-recorded",
+    "approval_policy": "not-pinned-by-harness",
+    "local_config": "inherited-except-model-and-reasoning",
+    "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+    "post_grade_hook": "python3 evals/dev-v2-focused/grade_focused.py"
+  },
+  "task_order": {
+    "strategy": "deterministic-counterbalanced",
+    "rule": "Skill first when case_position + run_index is even; baseline first otherwise.",
+    "case_order": [
+      "test-bloat",
+      "verification-bloat",
+      "fallback-bloat"
+    ],
+    "actual_start_order": [
+      {
+        "sequence": 1,
+        "case_id": "test-bloat",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 2,
+        "case_id": "test-bloat",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 3,
+        "case_id": "verification-bloat",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      },
+      {
+        "sequence": 4,
+        "case_id": "verification-bloat",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 5,
+        "case_id": "fallback-bloat",
+        "agent": "codex",
+        "with_skill": true,
+        "run_index": 1
+      },
+      {
+        "sequence": 6,
+        "case_id": "fallback-bloat",
+        "agent": "codex",
+        "with_skill": false,
+        "run_index": 1
+      }
+    ]
+  },
+  "skill": {
+    "path": "skill/deslop",
+    "content_hash": "37cf384a91e46e68c539e9f288d3e0a4074fb077a92248a9f86cb29c2b529754",
+    "payload_files": 7,
+    "payload_bytes": 37410,
+    "payload_words": 4855
+  },
+  "aggregate": {
+    "without_skill": {
+      "behavior_preservation": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "simplification_case_recall": {
+        "passed": 2,
+        "total": 3,
+        "rate": 0.6666666666666666
+      },
+      "semantic_full_case_pass": {
+        "passed": 2,
+        "total": 3,
+        "rate": 0.6666666666666666
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "all_case_full_pass": {
+        "passed": 2,
+        "total": 3,
+        "rate": 0.6666666666666666
+      },
+      "pass_at_k": 0.6666666666666666,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 0.9333333333333332,
+      "mean_wall_time_seconds": 114.12233333333334,
+      "mean_total_tokens": 146656.66666666666,
+      "mean_cached_input_tokens": 100522.66666666667,
+      "mean_non_cached_input_tokens": 43203.333333333336,
+      "mean_output_tokens": 2930.6666666666665,
+      "mean_reasoning_output_tokens": 605.3333333333334,
+      "mean_completed_commands": 5.666666666666667,
+      "mean_agent_messages": 5.0
+    },
+    "with_skill": {
+      "behavior_preservation": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "simplification_case_recall": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "semantic_full_case_pass": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "authorization_safety": {
+        "passed": 0,
+        "total": 0,
+        "rate": null
+      },
+      "all_case_full_pass": {
+        "passed": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "pass_at_k": 1.0,
+      "k": 1,
+      "mean_assertion_pass_rate_secondary": 1.0,
+      "mean_wall_time_seconds": 151.64366666666666,
+      "mean_total_tokens": 202557.33333333334,
+      "mean_cached_input_tokens": 165290.66666666666,
+      "mean_non_cached_input_tokens": 33219.333333333336,
+      "mean_output_tokens": 4047.3333333333335,
+      "mean_reasoning_output_tokens": 1193.3333333333333,
+      "mean_completed_commands": 8.666666666666666,
+      "mean_agent_messages": 6.666666666666667
+    },
+    "delta_with_minus_without": {
+      "mean_assertion_pass_rate_secondary": 0.06666666666666676,
+      "mean_wall_time_seconds": 37.52133333333332,
+      "mean_total_tokens": 55900.666666666686,
+      "mean_cached_input_tokens": 64767.999999999985,
+      "mean_non_cached_input_tokens": -9984.0,
+      "mean_output_tokens": 1116.666666666667,
+      "mean_reasoning_output_tokens": 587.9999999999999,
+      "mean_completed_commands": 2.999999999999999,
+      "mean_agent_messages": 1.666666666666667,
+      "behavior_preservation": null,
+      "simplification_case_recall": 0.33333333333333337,
+      "semantic_full_case_pass": 0.33333333333333337,
+      "authorization_safety": null,
+      "all_case_full_pass": 0.33333333333333337
+    },
+    "paired_outcomes": {
+      "summary": {
+        "all": {
+          "both_pass": 2,
+          "skill_improves": 1,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 3
+        },
+        "simplify": {
+          "both_pass": 2,
+          "skill_improves": 1,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 3
+        },
+        "preserve": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 0
+        },
+        "audit": {
+          "both_pass": 0,
+          "skill_improves": 0,
+          "skill_regresses": 0,
+          "both_fail": 0,
+          "total": 0
+        }
+      },
+      "cases": [
+        {
+          "case_id": "fallback-bloat",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "test-bloat",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": true,
+          "skill_pass": true,
+          "outcome": "both_pass"
+        },
+        {
+          "case_id": "verification-bloat",
+          "expected": "simplify",
+          "agent": "codex",
+          "run_index": 1,
+          "baseline_pass": false,
+          "skill_pass": true,
+          "outcome": "skill_improves"
+        }
+      ]
+    },
+    "all_calls": {
+      "total_tokens": 1047642,
+      "input_tokens": 1026708,
+      "cached_input_tokens": 797440,
+      "non_cached_input_tokens": 229268,
+      "output_tokens": 20934,
+      "reasoning_output_tokens": 5396,
+      "cost_usd": null,
+      "cost_note": "Unavailable; at least one run reported no cost telemetry."
+    }
+  },
+  "runs": [
+    {
+      "sequence": 1,
+      "case_id": "test-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.189909}",
+          "count": 1
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":2,\"branches\":1,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":2,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":13,\"syntax_errors\":0,\"test_count\":1,\"test_loc\":11,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":6,\"branches\":1,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":6,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":19,\"functions\":30,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":15,\"syntax_errors\":0,\"test_count\":26,\"test_loc\":73,\"try_blocks\":0,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-64; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=['fixtures.py', 'test_regressions.py', 'test_types.py']; new_dependencies=[]; metric_delta={\"abstraction_nodes\":-4,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":-4,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":-19,\"functions\":-26,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":-2,\"syntax_errors\":0,\"test_count\":-25,\"test_loc\":-62,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 123446,
+        "total_tokens": 197550,
+        "input_tokens": 193942,
+        "cached_input_tokens": 166656,
+        "non_cached_input_tokens": 27286,
+        "output_tokens": 3608,
+        "reasoning_output_tokens": 1113,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 6,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -64,
+        "new_files": [],
+        "deleted_files": [
+          "fixtures.py",
+          "test_regressions.py",
+          "test_types.py"
+        ]
+      },
+      "structural_delta": {
+        "abstraction_nodes": -4,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": -4,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": -19,
+        "functions": -26,
+        "hash_operations": 0,
+        "local_verification_surface": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -2,
+        "syntax_errors": 0,
+        "test_count": -25,
+        "test_loc": -62,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 2,
+      "case_id": "test-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.192277}",
+          "count": 1
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":2,\"branches\":1,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":2,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":4,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":13,\"syntax_errors\":0,\"test_count\":1,\"test_loc\":11,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":6,\"branches\":1,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":6,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":19,\"functions\":30,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":15,\"syntax_errors\":0,\"test_count\":26,\"test_loc\":73,\"try_blocks\":0,\"verification_mentions\":0}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-64; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=['fixtures.py', 'test_regressions.py', 'test_types.py']; new_dependencies=[]; metric_delta={\"abstraction_nodes\":-4,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":-4,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":-19,\"functions\":-26,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":-2,\"syntax_errors\":0,\"test_count\":-25,\"test_loc\":-62,\"try_blocks\":0,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 105688,
+        "total_tokens": 104454,
+        "input_tokens": 101795,
+        "cached_input_tokens": 80896,
+        "non_cached_input_tokens": 20899,
+        "output_tokens": 2659,
+        "reasoning_output_tokens": 538,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 4
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -64,
+        "new_files": [],
+        "deleted_files": [
+          "fixtures.py",
+          "test_regressions.py",
+          "test_types.py"
+        ]
+      },
+      "structural_delta": {
+        "abstraction_nodes": -4,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": 0,
+        "classes": -4,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": -19,
+        "functions": -26,
+        "hash_operations": 0,
+        "local_verification_surface": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -2,
+        "syntax_errors": 0,
+        "test_count": -25,
+        "test_loc": -62,
+        "try_blocks": 0,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 3,
+      "case_id": "verification-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": false,
+      "assertions_passed": 4,
+      "assertions_total": 5,
+      "assertion_pass_rate": 0.8,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.217605}",
+          "count": 1
+        },
+        "reduction_target": {
+          "passed": false,
+          "evidence": "AssertionError: local receipt/validator/checksum surface remains"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-14; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":-9,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":-3,\"hash_operations\":-2,\"local_verification_surface\":-1,\"local_verifier_functions\":-1,\"production_loc\":-5,\"syntax_errors\":0,\"test_count\":-2,\"test_loc\":-9,\"try_blocks\":0,\"verification_mentions\":-7}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 126933,
+        "total_tokens": 140365,
+        "input_tokens": 137304,
+        "cached_input_tokens": 75520,
+        "non_cached_input_tokens": 61784,
+        "output_tokens": 3061,
+        "reasoning_output_tokens": 610,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 5,
+        "completed_file_changes": 1,
+        "agent_messages": 5
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -14,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": -9,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": -3,
+        "hash_operations": -2,
+        "local_verification_surface": -1,
+        "local_verifier_functions": -1,
+        "production_loc": -5,
+        "syntax_errors": 0,
+        "test_count": -2,
+        "test_loc": -9,
+        "try_blocks": 0,
+        "verification_mentions": -7
+      }
+    },
+    {
+      "sequence": 4,
+      "case_id": "verification-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 1, \"passed\": true, \"runtime_seconds\": 0.218164}",
+          "count": 1
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":2,\"catch_fallback_handlers\":0,\"checksum_mentions\":3,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":3,\"hash_operations\":1,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":12,\"syntax_errors\":0,\"test_count\":1,\"test_loc\":16,\"try_blocks\":0,\"verification_mentions\":0},\"before\":{\"abstraction_nodes\":1,\"branches\":2,\"catch_fallback_handlers\":0,\"checksum_mentions\":12,\"classes\":1,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":6,\"hash_operations\":3,\"local_verification_surface\":2,\"local_verifier_functions\":1,\"production_loc\":18,\"syntax_errors\":0,\"test_count\":3,\"test_loc\":25,\"try_blocks\":0,\"verification_mentions\":7}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-15; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":0,\"catch_fallback_handlers\":0,\"checksum_mentions\":-9,\"classes\":0,\"except_handlers\":0,\"fallback_mentions\":0,\"fallback_nodes\":0,\"fixture_invocations\":0,\"functions\":-3,\"hash_operations\":-2,\"local_verification_surface\":-2,\"local_verifier_functions\":-1,\"production_loc\":-6,\"syntax_errors\":0,\"test_count\":-2,\"test_loc\":-9,\"try_blocks\":0,\"verification_mentions\":-7}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 162611,
+        "total_tokens": 210183,
+        "input_tokens": 206078,
+        "cached_input_tokens": 168960,
+        "non_cached_input_tokens": 37118,
+        "output_tokens": 4105,
+        "reasoning_output_tokens": 1031,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 7
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -15,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": 0,
+        "catch_fallback_handlers": 0,
+        "checksum_mentions": -9,
+        "classes": 0,
+        "except_handlers": 0,
+        "fallback_mentions": 0,
+        "fallback_nodes": 0,
+        "fixture_invocations": 0,
+        "functions": -3,
+        "hash_operations": -2,
+        "local_verification_surface": -2,
+        "local_verifier_functions": -1,
+        "production_loc": -6,
+        "syntax_errors": 0,
+        "test_count": -2,
+        "test_loc": -9,
+        "try_blocks": 0,
+        "verification_mentions": -7
+      }
+    },
+    {
+      "sequence": 5,
+      "case_id": "fallback-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": true,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 4, \"passed\": true, \"runtime_seconds\": 0.214605}",
+          "count": 4
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":4,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":3,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":9,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":1,\"production_loc\":23,\"syntax_errors\":0,\"test_count\":4,\"test_loc\":22,\"try_blocks\":1,\"verification_mentions\":4},\"before\":{\"abstraction_nodes\":1,\"branches\":5,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":2,\"fallback_mentions\":10,\"fallback_nodes\":2,\"fixture_invocations\":0,\"functions\":12,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":1,\"production_loc\":32,\"syntax_errors\":0,\"test_count\":5,\"test_loc\":24,\"try_blocks\":2,\"verification_mentions\":4}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-11; positive_python_loc_growth=0; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-7,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-3,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":-9,\"syntax_errors\":0,\"test_count\":-1,\"test_loc\":-2,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 168874,
+        "total_tokens": 199939,
+        "input_tokens": 195510,
+        "cached_input_tokens": 160256,
+        "non_cached_input_tokens": 35254,
+        "output_tokens": 4429,
+        "reasoning_output_tokens": 1436,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 13,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -11,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -7,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -3,
+        "hash_operations": 0,
+        "local_verification_surface": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -9,
+        "syntax_errors": 0,
+        "test_count": -1,
+        "test_loc": -2,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    },
+    {
+      "sequence": 6,
+      "case_id": "fallback-bloat",
+      "expected": "simplify",
+      "agent": "codex",
+      "with_skill": false,
+      "run_index": 1,
+      "full_pass": true,
+      "assertions_passed": 5,
+      "assertions_total": 5,
+      "assertion_pass_rate": 1.0,
+      "gates": {
+        "side_effect_contract": {
+          "passed": true,
+          "evidence": "ok"
+        },
+        "semantic": {
+          "passed": true,
+          "evidence": "hidden mini-repository behavior gate passed"
+        },
+        "remaining_tests": {
+          "passed": true,
+          "evidence": "{\"count\": 5, \"passed\": true, \"runtime_seconds\": 0.214677}",
+          "count": 5
+        },
+        "reduction_target": {
+          "passed": true,
+          "evidence": "{\"after\":{\"abstraction_nodes\":1,\"branches\":4,\"catch_fallback_handlers\":0,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":1,\"fallback_mentions\":4,\"fallback_nodes\":1,\"fixture_invocations\":0,\"functions\":11,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":1,\"production_loc\":25,\"syntax_errors\":0,\"test_count\":5,\"test_loc\":25,\"try_blocks\":1,\"verification_mentions\":4},\"before\":{\"abstraction_nodes\":1,\"branches\":5,\"catch_fallback_handlers\":1,\"checksum_mentions\":0,\"classes\":1,\"except_handlers\":2,\"fallback_mentions\":10,\"fallback_nodes\":2,\"fixture_invocations\":0,\"functions\":12,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":1,\"production_loc\":32,\"syntax_errors\":0,\"test_count\":5,\"test_loc\":24,\"try_blocks\":2,\"verification_mentions\":4}}"
+        },
+        "negative_change_budget": {
+          "passed": true,
+          "evidence": "nonblank_python_line_delta=-6; positive_python_loc_growth=1; new_python_files=[]; deleted_python_files=[]; new_dependencies=[]; metric_delta={\"abstraction_nodes\":0,\"branches\":-1,\"catch_fallback_handlers\":-1,\"checksum_mentions\":0,\"classes\":0,\"except_handlers\":-1,\"fallback_mentions\":-6,\"fallback_nodes\":-1,\"fixture_invocations\":0,\"functions\":-1,\"hash_operations\":0,\"local_verification_surface\":0,\"local_verifier_functions\":0,\"production_loc\":-7,\"syntax_errors\":0,\"test_count\":0,\"test_loc\":1,\"try_blocks\":-1,\"verification_mentions\":0}; violations=[]"
+        }
+      },
+      "timing": {
+        "duration_ms": 109746,
+        "total_tokens": 195151,
+        "input_tokens": 192079,
+        "cached_input_tokens": 145152,
+        "non_cached_input_tokens": 46927,
+        "output_tokens": 3072,
+        "reasoning_output_tokens": 668,
+        "cost_usd": null,
+        "retries": 0,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "trajectory": {
+        "completed_turns": 1,
+        "completed_commands": 7,
+        "completed_file_changes": 1,
+        "agent_messages": 6
+      },
+      "negative_change_budget": {
+        "passed": true,
+        "nonblank_python_line_delta": -6,
+        "new_files": [],
+        "deleted_files": []
+      },
+      "structural_delta": {
+        "abstraction_nodes": 0,
+        "branches": -1,
+        "catch_fallback_handlers": -1,
+        "checksum_mentions": 0,
+        "classes": 0,
+        "except_handlers": -1,
+        "fallback_mentions": -6,
+        "fallback_nodes": -1,
+        "fixture_invocations": 0,
+        "functions": -1,
+        "hash_operations": 0,
+        "local_verification_surface": 0,
+        "local_verifier_functions": 0,
+        "production_loc": -7,
+        "syntax_errors": 0,
+        "test_count": 0,
+        "test_loc": 1,
+        "try_blocks": -1,
+        "verification_mentions": 0
+      }
+    }
+  ]
+}
