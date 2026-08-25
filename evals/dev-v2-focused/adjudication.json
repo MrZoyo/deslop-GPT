@@ -26,8 +26,8 @@
     {"id": "f02b", "pair": "f02", "category": "defensive_fallback_bloat", "expected": "preserve", "root": "atomic cleanup boundary"}
   ],
   "mini_repositories": [
-    {"id": "test-bloat", "category": "test_bloat", "path": "mini-repos/test-bloat", "behavior_gate": "grade_mini_test_bloat"},
-    {"id": "verification-bloat", "category": "verification_theater", "path": "mini-repos/verification-bloat", "behavior_gate": "grade_mini_verification_bloat"},
-    {"id": "fallback-bloat", "category": "defensive_fallback_bloat", "path": "mini-repos/fallback-bloat", "behavior_gate": "grade_mini_fallback_bloat"}
+    {"id": "test-bloat", "category": "test_bloat", "path": "mini-repos/test-bloat", "behavior_gate": "mini_behavior(test_bloat)"},
+    {"id": "verification-bloat", "category": "verification_theater", "path": "mini-repos/verification-bloat", "behavior_gate": "mini_behavior(verification_theater)"},
+    {"id": "fallback-bloat", "category": "defensive_fallback_bloat", "path": "mini-repos/fallback-bloat", "behavior_gate": "mini_behavior(defensive_fallback_bloat)"}
   ]
 }

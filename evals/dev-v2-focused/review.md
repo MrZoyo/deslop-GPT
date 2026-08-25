@@ -1,6 +1,6 @@
 # `dev-v2-focused` pre-freeze review
 
-Review revision: focused corpus revision at `d76175a`. Status: agent-reviewed and frozen as `dev-v2-focused-rc1`; maintainer review is still required before the first model run.
+Review revision: focused corpus revision prepared after `d76175a` with mini-repo goldens and corrected before-state validation. Status: agent-reviewed and ready to freeze as `dev-v2-focused-rc2`; maintainer review is still required before the first model run.
 
 ## Case-by-case review
 
@@ -21,7 +21,7 @@ The `a` case behavior contracts do not require a test count, test name, helper s
 
 ### `test-bloat`
 
-The repository has a public report output, a stronger end-to-end assertion, and accumulated count/type/None/length/private-helper tests. The hidden gate checks the published summary, while metrics can report test LOC/count/runtime reduction. No private helper is treated as a behavior root.
+The repository has a public report output, a stronger end-to-end assertion, and three simulated correction cycles adding count/type/None/length/private-helper/regression tests across four test classes/files. Repeated calls to deterministic `load_records_fixture()` make fixture invocation count observable without timing sleeps. The hidden gate checks the published summary, while metrics can report test LOC/count/runtime reduction. No private helper is treated as a behavior root.
 
 ### `verification-bloat`
 
@@ -35,8 +35,9 @@ The repository contains repeated validation, a catch around current parsing, a n
 
 - behavior gate and reduction target are separate assertions;
 - remaining tests must pass before mini-repo reduction metrics become eligible;
+- each mini-repo has a known-good `golden_after` calibration with category-specific metric reduction;
 - at least two `alternate_valid` overlays exist in each category (`t02/t03`, `v01/v02`, `f01/f02` preservation variants);
 - `dev-v1` is archived and is not an active tuning target;
 - no model A/B run has been performed for `dev-v2-focused`.
 
-Maintainer sign-off should explicitly answer whether each fixture resembles accumulated agent edits rather than a keyword toy, and whether each independent root is credible. The `dev-v2-focused-rc1` freeze tag records this exact fixture/grader revision; any correction after sign-off must become `rc2` rather than silently changing the corpus.
+Maintainer sign-off should explicitly answer whether each fixture resembles accumulated agent edits rather than a keyword toy, and whether each independent root is credible. The `dev-v2-focused-rc2` freeze tag records this exact fixture/grader revision; any correction after sign-off must become `rc3` rather than silently changing the corpus.

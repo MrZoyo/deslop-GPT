@@ -13,4 +13,6 @@ def load_items(text: str) -> list[object]:
     try:
         return parse_current(text)
     except Exception:
-        return parse_legacy(text)
+        if text.startswith("legacy:"):
+            return parse_legacy(text.removeprefix("legacy:"))
+        raise

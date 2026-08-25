@@ -28,7 +28,7 @@ The three mini repositories model code after several agent correction cycles rat
 2. [`mini-repos/verification-bloat`](mini-repos/verification-bloat): a report writer surrounded by self-generated checksum, envelope, receipt, validator, and validator-only test machinery, plus an independent persisted readback contract that must remain.
 3. [`mini-repos/fallback-bloat`](mini-repos/fallback-bloat): a current parser wrapped in broad catch-and-fallback layers, repeated validation, and obsolete compatibility tests, alongside a documented legacy protocol and atomic cleanup contract that must remain.
 
-The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. It records production/test LOC, test count, test runtime when stable, expensive fixture invocations, functions/classes/branches, try/except count, checksum/verification machinery, new tests, and new wrappers/fallbacks. Metrics are not a success signal when a behavior gate fails.
+The hidden mini-repo grader in [`grade_focused.py`](grade_focused.py) evaluates externally meaningful behavior before reduction. Each repository has a known-good [`mini-repo-calibration/`](mini-repo-calibration/) `golden_after` state that must pass behavior and remaining-test gates while reducing the category-specific surface. It records production/test LOC, test count, test runtime when stable, expensive fixture invocations, functions/classes/branches, try/except count, checksum/verification machinery, new tests, and new wrappers/fallbacks. Metrics are not a success signal when a behavior gate fails.
 
 Compare an untouched mini repository with an agent-produced copy only after the copy has passed its hidden behavior gate:
 
@@ -39,9 +39,9 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
   /path/to/cleaned/test-bloat
 ```
 
-The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, and explicit counts of newly added tests, wrappers, abstractions, and fallbacks.
+The comparison emits before/after production and test LOC, test count/runtime, fixture invocations, structural deltas, checksum/verification/fallback mentions, and explicit counts of newly added tests, wrappers, abstractions, and fallbacks. A failed after-state is ineligible for reduction scoring.
 
-The pre-freeze case-by-case review is recorded in [`review.md`](review.md). It is agent-reviewed but still requires maintainer sign-off before an `rc1` freeze.
+The case-by-case review is recorded in [`review.md`](review.md). The current `rc2` fixture/grader revision is frozen; maintainer sign-off is required before the first model run.
 
 ## Running the lightweight validator
 

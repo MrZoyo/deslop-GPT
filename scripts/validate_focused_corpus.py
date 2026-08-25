@@ -14,6 +14,7 @@ from pathlib import Path, PurePosixPath
 CORPUS = Path(__file__).resolve().parents[1] / "evals" / "dev-v2-focused"
 EVALS = CORPUS / "evals.json"
 ADJUDICATION = CORPUS / "adjudication.json"
+MINI_CALIBRATION = CORPUS / "mini-repo-calibration"
 CASE_IDS = {"t01a", "t01b", "t02a", "t02b", "t03a", "t03b", "t04a", "t04b", "v01a", "v01b", "v02a", "v02b", "f01a", "f01b", "f02a", "f02b"}
 
 
@@ -118,9 +119,8 @@ def validate_cases(grader, adjudication: dict) -> None:
         run_tests(grader, fixture, f"{case_id} before")
         try:
             grader.case_contract(case_id, fixture)
-        except Exception:
-            if case["expected"] == "preserve":
-                raise
+        except Exception as error:
+            fail(f"{case_id}: before-state behavior gate failed: {error}")
         if case["expected"] == "simplify":
             try:
                 grader.reduction_target(case_id, fixture)
@@ -193,6 +193,30 @@ def validate_mini_repositories(grader, adjudication: dict) -> None:
             fail("verification-bloat mini repository must contain a checksum cluster")
         if mini["category"] == "defensive_fallback_bloat" and metrics["fallback_mentions"] < 3:
             fail("fallback-bloat mini repository must contain fallback/compatibility machinery")
+
+        golden = MINI_CALIBRATION / mini["id"] / "golden_after"
+        if not golden.is_dir():
+            fail(f"{mini['id']}: missing known-good golden_after mini repository")
+        golden_tests = grader.run_tests(golden)
+        if not golden_tests["passed"]:
+            fail(f"{mini['id']}: golden_after tests failed: {golden_tests}")
+        try:
+            grader.mini_behavior(golden, mini["category"])
+        except Exception as error:
+            fail(f"{mini['id']}: golden_after behavior gate failed: {error}")
+        comparison = grader.compare_mini_repositories(mini["category"], repo, golden)
+        if not comparison["eligible_for_reduction_scoring"]:
+            fail(f"{mini['id']}: golden_after is not reduction-eligible")
+        delta = comparison["metric_delta_after_minus_before"]
+        if mini["category"] == "test_bloat":
+            if not (delta["test_loc"] < 0 and delta["test_count"] < 0):
+                fail(f"{mini['id']}: golden_after did not reduce test surface: {delta}")
+        elif mini["category"] == "verification_theater":
+            if not (delta["checksum_mentions"] < 0 or delta["verification_mentions"] < 0):
+                fail(f"{mini['id']}: golden_after did not reduce verification machinery: {delta}")
+        elif mini["category"] == "defensive_fallback_bloat":
+            if not (delta["fallback_nodes"] < 0 or delta["try_blocks"] < 0 or delta["fallback_mentions"] < 0):
+                fail(f"{mini['id']}: golden_after did not reduce fallback machinery: {delta}")
 
     test_repo = CORPUS / "mini-repos" / "test-bloat"
     with tempfile.TemporaryDirectory() as directory:

@@ -37,7 +37,7 @@ The focused validator checks:
 - at least two alternate-valid states in each category;
 - three mini-repository behavior gates and reduction-metric fields.
 
-Do not run GPT A/B while this corpus is being changed. Freeze a reviewed revision first (for example `dev-v2-focused-rc1`), then treat any grader correction as a new revision rather than mixing scores.
+Do not run GPT A/B while this corpus is being changed. The current reviewed revision is frozen as `dev-v2-focused-rc2`; treat any further grader correction as `rc3` rather than mixing scores.
 
 ## Model run shape after freeze
 
