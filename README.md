@@ -38,7 +38,7 @@ The percentages below are design priorities, not measured prevalence.
 
 Generic dead code, wrappers, abstractions, and comments are secondary. They matter only when they belong to one of these clusters or have direct high-confidence deletion evidence.
 
-## Remove less code. Preserve more meaning.
+## Subtract machinery. Preserve behavior.
 
 | Remove | Preserve |
 | --- | --- |
@@ -52,27 +52,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Install with Codex Skill Installer
+### Install v0.1.0 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.1.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
-
-The bundled installer may use its legacy `$CODEX_HOME/skills` destination; use the symlink method above when the canonical `$HOME/.agents/skills` path matters.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged path is the latest released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
 
 ### Invoke it explicitly
 
@@ -122,7 +120,7 @@ The example is schematic; it does not represent a benchmark fixture or performan
 - **Fail-visible bias:** unexpected internal failures should surface unless a concrete recovery or translation contract exists.
 - **Subtraction without redesign:** dependencies, abstractions, wrappers, compatibility layers, and replacement scaffolding have a default budget of zero.
 
-The full decision model is documented in [Design](docs/design.md). The frozen runtime [`SKILL.md`](skill/deslop/SKILL.md) remains authoritative for agent behavior.
+The full decision model is documented in [Design](docs/design.md). The self-contained runtime [`SKILL.md`](skill/deslop/SKILL.md) remains authoritative for agent behavior.
 
 ## Safety model
 
@@ -162,7 +160,7 @@ Future cases can be added without becoming Skill-tuning inputs; see [Field Trial
 ## Repository structure
 
 ```text
-skill/deslop/                    Frozen runtime Skill payload
+skill/deslop/                    Self-contained runtime Skill payload
 docs/                            User, design, evidence, and development guides
 evals/dev-v2-focused/            Active focused development evaluation
 evals/real-world/                Manually adjudicated real-world evidence
@@ -173,7 +171,7 @@ assets/                          README and project presentation assets
 
 ## Project status and contributing
 
-The project does not yet use semantic versioning and makes no `stable` or `production-ready` claim. The runtime Skill and evaluation evidence are versioned by Git history; benchmark candidates have their own evaluation tags.
+Public releases use semantic versioning, beginning with v0.1.0. A `0.x` release is usable but still evolving; it is not a `stable`, `production-ready`, or 1.0-quality claim. Immutable Git tags identify released runtime and distribution states. Benchmark candidates retain their separate evaluation tags.
 
 The most useful contribution is an evidence-backed case with a nearby preservation counterexample and an independent behavioral oracle—not an isolated snippet that merely looks verbose. Read [Development](docs/development.md) before proposing a Skill policy or evaluation change.
 

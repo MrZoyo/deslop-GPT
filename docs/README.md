@@ -10,7 +10,7 @@ Choose the shortest path that matches what you want to do:
 | Inspect real-world case-study methodology | [Field Trials](field-trials.md) |
 | Validate, contribute to, or release the repository | [Development](development.md) |
 
-The top-level [README](../README.md) is the public overview. Detailed benchmark mechanics remain canonical under [`evals/`](../evals/README.md), and the frozen runtime [`SKILL.md`](../skill/deslop/SKILL.md) remains authoritative for agent behavior.
+The top-level [README](../README.md) is the public overview. Detailed benchmark mechanics remain canonical under [`evals/`](../evals/README.md), and the self-contained runtime [`SKILL.md`](../skill/deslop/SKILL.md) remains authoritative for agent behavior.
 
 ## Documentation boundaries
 

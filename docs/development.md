@@ -87,13 +87,15 @@ Follow [Field Trials](field-trials.md). Capture the exact public tree with Git-n
 
 ## Release readiness
 
+Public project releases use semantic versioning beginning with v0.1.0. A `0.x` release is usable but still evolving. Annotated Git tags are immutable release identities. Any future Plugin manifest must use the same version without the leading `v`. Benchmark revision tags remain separate from project releases.
+
 Before a public-facing release commit:
 
 - run CI-equivalent validation;
 - verify `skill/`, active evaluation, and frozen inputs against their starting tree identities;
 - inspect the full diff and repository status;
 - confirm installation guidance against current official Codex documentation;
-- avoid version, stability, adoption, precision, or production claims without a defined policy and evidence;
-- create a version tag only when the project has adopted an unambiguous versioning convention.
+- avoid stability, adoption, precision, or production claims without a defined policy and evidence;
+- keep any distribution metadata aligned with the intended Git release tag.
 
-The repository currently has evaluation revision tags but no project semantic-version convention. Do not infer a product version from a benchmark tag.
+Do not infer a product version from a benchmark tag or move a published release tag.

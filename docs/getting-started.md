@@ -4,26 +4,26 @@
 
 ## Install
 
-### Codex Skill Installer
+### Released standalone Skill: v0.1.0
 
 OpenAI's [Codex Skills documentation](https://developers.openai.com/codex/skills/) documents `$skill-installer` for curated skills and skills from other repositories. Invoke it with this repository URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
 ```
 
 The installable payload is only [`skill/deslop/`](../skill/deslop/), not the evaluation corpus or project documentation.
 
-The bundled installer may use its legacy `$CODEX_HOME/skills` destination. Use the symlink method below when the canonical `$HOME/.agents/skills` path matters.
+The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
 ### Canonical user path with a reviewable checkout
 
 Codex discovers personal Skills under `$HOME/.agents/skills` and follows symlinked Skill directories. Clone the project outside the discovery tree, then link only the runtime payload:
 
 ```bash
-git clone https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.1.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 ```
@@ -31,6 +31,10 @@ ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 Run the `ln` command only when the destination does not already exist. Codex normally detects Skill changes automatically; restart Codex if the Skill does not appear.
 
 This is an independent community Skill. Compatibility does not imply affiliation with or endorsement by OpenAI.
+
+### Development branch
+
+The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.1.0 path when reproducibility matters.
 
 ## Invocation modes
 
@@ -95,13 +99,7 @@ Apply only the HIGH finding after confirming the evidence chain. Preserve or inv
 
 ## Update and remove
 
-For the symlink installation, update the checkout without replacing the link:
-
-```bash
-git -C "$HOME/.local/share/deslop-GPT" pull --ff-only
-```
-
-If installed through `$skill-installer`, use the installer again and follow its current update prompt. To remove the Skill, remove only the managed or symlinked `deslop` directory from the location where it was installed; keep or delete the separate source checkout according to your own workflow.
+For a pinned symlink installation, review a newer release and check out its immutable tag; the link does not need to change. If installed through `$skill-installer`, invoke it again with the newer tagged URL and follow its current update prompt. To remove the Skill, remove only the managed or symlinked `deslop` directory from the location where it was installed; keep or delete the separate source checkout according to your own workflow.
 
 ## Next steps
 
