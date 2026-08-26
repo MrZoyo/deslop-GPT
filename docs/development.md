@@ -6,7 +6,7 @@ This repository separates runtime policy, active evaluation, historical evidence
 
 | Path | Responsibility |
 | --- | --- |
-| [`skill/deslop/`](../skill/deslop/) | Self-contained runtime Skill payload |
+| [`skills/deslop/`](../skills/deslop/) | Self-contained runtime Skill payload |
 | [`docs/`](./) | User, design, evidence, and contributor documentation |
 | [`evals/dev-v2-focused/`](../evals/dev-v2-focused/) | Active focused development evaluation and graders |
 | [`evals/real-world/`](../evals/real-world/) | Manually adjudicated, frozen real-world evidence |
@@ -34,7 +34,7 @@ python3 scripts/validate_focused_corpus.py
 
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py self-test \
-  --skill skill/deslop \
+  --skill skills/deslop \
   --evals evals/dev-v2-focused/evals.json
 
 uv run --with agent-skill-eval==0.7.0 \
@@ -92,7 +92,7 @@ Public project releases use semantic versioning beginning with v0.1.0. A `0.x` r
 Before a public-facing release commit:
 
 - run CI-equivalent validation;
-- verify `skill/`, active evaluation, and frozen inputs against their starting tree identities;
+- verify `skills/`, active evaluation, and frozen inputs against their starting tree identities;
 - inspect the full diff and repository status;
 - confirm installation guidance against current official Codex documentation;
 - avoid stability, adoption, precision, or production claims without a defined policy and evidence;

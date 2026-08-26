@@ -22,7 +22,7 @@ jobs:
         run: |
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py self-test \
-            --skill skill/deslop \
+            --skill skills/deslop \
             --evals evals/dev-v2-focused/evals.json
       - name: Validate focused eval manifest
         run: |

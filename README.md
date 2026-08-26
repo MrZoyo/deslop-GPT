@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml"><img src="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml/badge.svg" alt="Validate workflow"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f.svg?style=flat-square" alt="MIT license"></a>
-  <a href="skill/deslop/"><img src="https://img.shields.io/badge/Agent%20Skill-Codex--compatible-0969da.svg?style=flat-square" alt="Codex-compatible Agent Skill"></a>
+  <a href="skills/deslop/"><img src="https://img.shields.io/badge/Agent%20Skill-Codex--compatible-0969da.svg?style=flat-square" alt="Codex-compatible Agent Skill"></a>
   <a href="#safety-model"><img src="https://img.shields.io/badge/default-read--only-6e7781.svg?style=flat-square" alt="Read-only by default"></a>
   <a href="evals/real-world/cluster-gpu-monitor/README.md"><img src="https://img.shields.io/badge/field%20trial-manually%20adjudicated-8250df.svg?style=flat-square" alt="Manually adjudicated field trial"></a>
 </p>
@@ -70,7 +70,7 @@ mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged path is the latest released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged path is the latest released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
 
 ### Invoke it explicitly
 
@@ -120,11 +120,11 @@ The example is schematic; it does not represent a benchmark fixture or performan
 - **Fail-visible bias:** unexpected internal failures should surface unless a concrete recovery or translation contract exists.
 - **Subtraction without redesign:** dependencies, abstractions, wrappers, compatibility layers, and replacement scaffolding have a default budget of zero.
 
-The full decision model is documented in [Design](docs/design.md). The self-contained runtime [`SKILL.md`](skill/deslop/SKILL.md) remains authoritative for agent behavior.
+The full decision model is documented in [Design](docs/design.md). The self-contained runtime [`SKILL.md`](skills/deslop/SKILL.md) remains authoritative for agent behavior.
 
 ## Safety model
 
-Invocation is explicit: [`allow_implicit_invocation: false`](skill/deslop/agents/openai.yaml). Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
+Invocation is explicit: [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml). Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
 
 Apply authorization permits scoped edits; it does not resolve uncertainty in favor of deletion. See [Getting Started](docs/getting-started.md) for the review sequence and [Design](docs/design.md) for confidence classes and preserved boundaries.
 
@@ -160,7 +160,7 @@ Future cases can be added without becoming Skill-tuning inputs; see [Field Trial
 ## Repository structure
 
 ```text
-skill/deslop/                    Self-contained runtime Skill payload
+skills/deslop/                   Self-contained runtime Skill payload
 docs/                            User, design, evidence, and development guides
 evals/dev-v2-focused/            Active focused development evaluation
 evals/real-world/                Manually adjudicated real-world evidence

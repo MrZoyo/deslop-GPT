@@ -12,7 +12,7 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE_ROOT = ROOT / "evals" / "archive" / "dev-v1"
-SKILL_ROOT = ROOT / "skill" / "deslop"
+SKILL_ROOT = ROOT / "skills" / "deslop"
 EVALS_PATH = ARCHIVE_ROOT / "evals.json"
 ADJUDICATION_PATH = ARCHIVE_ROOT / "adjudication.json"
 CALIBRATION_ROOT = ARCHIVE_ROOT / "calibration"
@@ -67,7 +67,7 @@ def validate_skill() -> None:
 
     openai_yaml = (SKILL_ROOT / "agents" / "openai.yaml").read_text()
     if "allow_implicit_invocation: false" not in openai_yaml:
-        fail("skill/deslop/agents/openai.yaml must disable implicit invocation")
+        fail("skills/deslop/agents/openai.yaml must disable implicit invocation")
 
     expected_payload = {
         "SKILL.md",

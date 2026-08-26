@@ -11,7 +11,7 @@ The parts of the case have deliberately different roles:
 | [`input/`](input/) | Model-visible target repository, frozen at the exact public pre-cleanup tree. |
 | [`reference/adjudication.md`](reference/adjudication.md) | Human review record. It is reference-only and must not be exposed during an evaluation. |
 | [`reference/batch1.patch`](reference/batch1.patch) and [`reference/batch2.patch`](reference/batch2.patch) | Git-generated reviewed changes. They are reference evidence, not golden patches that a future agent must reproduce exactly. |
-| [`../../../skill/deslop/`](../../../skill/deslop/) | Runtime Skill payload. It is outside this case and was not changed or tuned from this field trial. |
+| [`../../../skills/deslop/`](../../../skills/deslop/) | Runtime Skill payload. It is outside this case and was not changed or tuned from this field trial. |
 
 The cleanup happened in two reviewed batches. Some findings were applied, while others were deliberately preserved after evidence review because their contracts remained ambiguous or a sound replacement would have required substantial new test infrastructure.
 

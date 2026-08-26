@@ -59,7 +59,7 @@ The first command is the **16-case focused micro-case A/B diagnostic**:
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
-  --skill skill/deslop \
+  --skill skills/deslop \
   --evals evals/dev-v2-focused/evals.json \
   --agent codex \
   --agent-model codex=<model> \
@@ -76,7 +76,7 @@ The separate **three-repository end-to-end A/B** uses the same wrapper and hook:
 ```bash
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py run \
-  --skill skill/deslop \
+  --skill skills/deslop \
   --evals evals/dev-v2-focused/mini-evals.json \
   --agent codex \
   --agent-model codex=<model> \

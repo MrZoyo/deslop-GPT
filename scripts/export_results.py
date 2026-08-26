@@ -483,7 +483,7 @@ def main() -> None:
             "actual_start_order": actual_order,
         },
         "skill": {
-            "path": "skill/deslop",
+            "path": "skills/deslop",
             "content_hash": metadata["skill_hash"],
             "payload_files": skill_size["files"],
             "payload_bytes": skill_size["bytes"],

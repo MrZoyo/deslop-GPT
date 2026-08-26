@@ -14,7 +14,7 @@ Install the Skill from:
 https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
 ```
 
-The installable payload is only [`skill/deslop/`](../skill/deslop/), not the evaluation corpus or project documentation.
+The v0.1.0 installable payload is only [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop), not the evaluation corpus or project documentation.
 
 The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
@@ -34,7 +34,9 @@ This is an independent community Skill. Compatibility does not imply affiliation
 
 ### Development branch
 
-The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.1.0 path when reproducibility matters.
+The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.1.0 path when reproducibility matters.
+
+The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path. Released v0.1.0 users can remain pinned to its immutable tag.
 
 ## Invocation modes
 
