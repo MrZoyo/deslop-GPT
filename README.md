@@ -1,57 +1,68 @@
-# deslop
+<p align="center">
+  <img src="assets/deslop-banner.svg" alt="deslop — deletion-first cleanup for agent-maintained codebases" width="100%">
+</p>
 
-**A deletion-first Agent Skill for removing accumulated agent-created test bloat, verification theater, and defensive/fallback bloat from agent-maintained codebases.**
+<h1 align="center">deslop</h1>
 
-`deslop` is a semantic cleanup policy, not a generic code humanizer. It asks what concrete contract or failure a construct serves, deletes machinery with no defensible answer, and explicitly records suspicious-looking code it chose to preserve.
+<p align="center">
+  <strong>A deletion-first Agent Skill for agent-maintained codebases</strong>
+</p>
 
-Its three primary targets, in priority order, are:
+<p align="center">
+  Evidence-backed cleanup that reduces accumulated machinery while preserving real behavior.
+</p>
 
-```text
-Test-suite bloat (~50%)
-Verification theater (~25%)
-Defensive/fallback bloat (~25%)
-```
+<p align="center">
+  <a href="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml"><img src="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml/badge.svg" alt="Validate workflow"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f.svg?style=flat-square" alt="MIT license"></a>
+  <a href="skill/deslop/"><img src="https://img.shields.io/badge/Agent%20Skill-Codex--compatible-0969da.svg?style=flat-square" alt="Codex-compatible Agent Skill"></a>
+  <a href="#safety-model"><img src="https://img.shields.io/badge/default-read--only-6e7781.svg?style=flat-square" alt="Read-only by default"></a>
+  <a href="evals/real-world/cluster-gpu-monitor/README.md"><img src="https://img.shields.io/badge/field%20trial-manually%20adjudicated-8250df.svg?style=flat-square" alt="Manually adjudicated field trial"></a>
+</p>
 
-Generic dead code, wrapper towers, speculative abstractions, compatibility residue, and low-information comments are secondary targets. They are in scope only when they belong to one of the three focused clusters.
+`deslop` audits and, when explicitly authorized, removes complexity accumulated through repeated coding-agent implementation and correction cycles. Those cycles often leave overlapping regression tests, producer-verifies-producer checks, and fallback layers that hide failures instead of handling a current contract.
 
-## Why this exists
+This is semantic subtraction, not source beautification. `deslop` is not a formatter, style humanizer, test-count minimizer, blanket ban on defensive code, or automatic permission to edit a repository. It follows justification chains to independent evidence and preserves behavior whose contract remains real or uncertain.
 
-Deletion-oriented agents often fail in opposite directions:
+> **Reduce test surface, not behavior surface.**
 
-- they preserve obvious bloat because deletion feels risky;
-- they match a smell mechanically and remove a real boundary or invariant;
-- they delete production code, then add more tests and scaffolding than they removed;
-- they treat locally generated hashes, schemas, receipts, and evidence as meaningful verification.
+## What it targets
 
-`deslop` is designed around false-positive resistance and closed justification loops. A verifier is useful only when it has information, authority, or a failure domain meaningfully independent from the producer. A test is useful only when it protects distinct behavior with a meaningful oracle. Production code does not justify a test merely because the test exercises it, and a test does not justify production code merely because the production code exists.
+The percentages below are design priorities, not measured prevalence.
 
-## Safety model
+| Priority | Target | Question |
+| ---: | --- | --- |
+| ~50% | **Test-suite bloat** | Does each test protect distinct external behavior with an independent oracle? |
+| ~25% | **Verification theater** | Can the verifier fail independently from the producer, or do both share the same information and failure domain? |
+| ~25% | **Defensive / fallback bloat** | Does the recovery path implement a current contract, or merely mask an unexpected internal error? |
 
-The public Skill is conservative about starting and aggressive about subtracting once authorized:
+Generic dead code, wrappers, abstractions, and comments are secondary. They matter only when they belong to one of these clusters or have direct high-confidence deletion evidence.
 
-| Invocation | Behavior |
+## Remove less code. Preserve more meaning.
+
+| Remove | Preserve |
 | --- | --- |
-| `$deslop` | Read-only audit |
-| `$deslop audit` | Read-only audit |
-| `$deslop apply` | Apply a scoped cleanup |
-| `$deslop tests apply` | Focus on test-suite signal |
-| `$deslop current branch apply` | Clean the branch relative to its actual merge base |
-| `$deslop deep` | Repository-wide audit |
-| `$deslop deep apply` | Repository-wide cleanup without redesign |
+| Self-justifying or duplicate tests | Distinct success, rejection, error, and edge-case behavior |
+| Checksums, receipts, or validators with no independent consumer | Persistence and corruption checks across a real failure boundary |
+| Speculative or obsolete fallback chains | Supported compatibility and documented protocol behavior |
+| Repeated defenses inside trusted call graphs | Real handling at external and untrusted boundaries |
+| Wrapper/test clusters with no independent purpose | Security, transactions, concurrency, resource, and scientific invariants |
 
-Implicit invocation is disabled in [`skill/deslop/agents/openai.yaml`](skill/deslop/agents/openai.yaml). The Skill never interprets an ordinary request as permission for destructive cleanup.
+Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, supported callers, persisted formats, and numerical constraints are preserved by default when evidence is incomplete.
 
-## Install
+## Quick Start
 
-The runtime Skill is the self-contained [`skill/deslop/`](skill/deslop/) directory. Ask `$skill-installer` to install this GitHub directory:
+### Install with Codex Skill Installer
+
+Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
+$skill-installer
+Install the Skill from:
 https://github.com/MrZoyo/deslop-GPT/tree/main/skill/deslop
 ```
 
-Current [OpenAI Skill documentation](https://developers.openai.com/codex/skills) uses `$HOME/.agents/skills` as the canonical user discovery path. The bundled `$skill-installer` may still copy into its legacy `$CODEX_HOME/skills` destination; use the symlink method below when the canonical path itself matters.
-
-For local development, clone the repository outside the Skill discovery tree and symlink only the runtime directory. [OpenAI's Skill documentation](https://developers.openai.com/codex/build-skills) confirms that Codex follows symlinked Skill folders:
+For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
 git clone https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
@@ -59,161 +70,112 @@ mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Update that checkout with `git -C "$HOME/.local/share/deslop-GPT" pull --ff-only`. Codex detects Skill changes automatically; restart Codex if an update does not appear.
+Codex supports symlinked Skill directories and detects changes automatically. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
 
-## What makes it different
+The bundled installer may use its legacy `$CODEX_HOME/skills` destination; use the symlink method above when the canonical `$HOME/.agents/skills` path matters.
 
-This project does not claim to be the first AI-code cleaner. Its narrower focus is:
+### Invoke it explicitly
 
-1. accumulated test-suite bloat as the first cleanup target;
-2. circular verification beyond SHA, including schema, recomputation, evidence, signatures, and receipts;
-3. defensive and fallback accumulation that masks current errors;
-4. scientific and numerical false-positive avoidance;
-5. a production-derived adversarial corpus pairing every deletion target with a preservation case;
-6. behavior preservation as the first evaluation metric.
+| Invocation | Effect |
+| --- | --- |
+| `$deslop` | Read-only audit of the established scope |
+| `$deslop audit` | Explicit read-only audit |
+| `$deslop apply` | Apply reviewed cleanup within scope |
+| `$deslop tests apply` | Prioritize test signal and mutual-support test/code clusters |
+| `$deslop current branch apply` | Clean current work relative to its actual merge base |
+| `$deslop deep` | Repository-wide read-only audit |
+| `$deslop deep apply` | Repository-wide cleanup without redesign |
 
-Related projects include:
+Only `apply` authorizes edits. Staging, commits, pushes, branch changes, resets, and fetching still require separate permission.
 
-- [LeonardNJU/code-humanizer](https://github.com/LeonardNJU/code-humanizer)
-- [agent-sh/deslop](https://github.com/agent-sh/deslop)
-- [dabit3/deslop](https://github.com/dabit3/deslop)
-- [oh-my-claudecode/ai-slop-cleaner](https://github.com/Yeachan-Heo/oh-my-claudecode/tree/main/skills/ai-slop-cleaner)
+## Example workflow
 
-Evaluation tools that influenced this repository:
-
-- [tardigrde/agent-skill-eval](https://github.com/tardigrde/agent-skill-eval)
-- [TiesPetersen/SkillBenchmark](https://github.com/TiesPetersen/SkillBenchmark)
-
-No superiority claim is made without comparable repeated runs.
-
-## Development corpora
-
-The active `dev-v2-focused-rc5` candidate is documented under [`dev-v2-focused`](evals/dev-v2-focused/README.md): 4 test-bloat pairs, 2 verification-theater pairs, 2 defensive/fallback pairs, and three accumulated-slop mini repositories. Every deletion case has a preservation counterexample; every category also has an insufficient-cleanup calibration that proves a token deletion is not enough.
-
-The broad 20-case [`dev-v1` archive](evals/archive/dev-v1/) is retained only for historical results and broad safety-regression reference. It contains generic cleanup cases that are intentionally not current tuning targets; active CI and model experiments do not run it.
-
-A manually adjudicated [real-world `cluster-gpu-monitor` field trial](evals/real-world/cluster-gpu-monitor/README.md) is preserved as historical evidence, separate from the active benchmark. It is not a controlled A/B comparison or evidence of general superiority.
-
-No project-level performance score is published. Historical diagnostics under `evals/archive/dev-v1/historical-results/` are development evidence only; public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
-
-See [`evals/README.md`](evals/README.md) for the protocol and metrics.
-
-## Validate locally
-
-The active dependency-free validator checks the focused corpus structure, paired behavior polarity, alternate/insufficient states, negative-change gates, both manifests, and mini-repository reduction eligibility:
-
-```bash
-python3 scripts/validate_focused_corpus.py
-```
-
-Optionally validate the retired broad safety archive:
-
-```bash
-python3 scripts/validate_dev_v1_archive.py  # optional historical check
-```
-
-`agent-skill-eval 0.7.0` installs Codex skills into the legacy `.codex/skills` path. All Codex benchmark commands therefore go through the pinned compatibility wrapper, which switches only Codex to the [current canonical `.agents/skills` path](https://developers.openai.com/codex/skills). Validate the harness format through `uv`:
-
-```bash
-uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py self-test \
-  --skill skill/deslop \
-  --evals evals/dev-v2-focused/evals.json
-
-uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
-
-uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
-```
-
-Run the 16-case focused micro-case A/B diagnostic with a deliberately pinned model and repeated trials:
-
-```bash
-uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py run \
-  --skill skill/deslop \
-  --evals evals/dev-v2-focused/evals.json \
-  --agent codex \
-  --agent-model codex=<model> \
-  --reasoning-effort medium \
-  --runs 5 \
-  --concurrency 1 \
-  --baseline \
-  --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"
-```
-
-Run the separate three-repository end-to-end A/B with the same wrapper and post-grade hook:
-
-```bash
-uv run --with agent-skill-eval==0.7.0 \
-  python scripts/run_agent_skill_eval.py run \
-  --skill skill/deslop \
-  --evals evals/dev-v2-focused/mini-evals.json \
-  --agent codex \
-  --agent-model codex=<model> \
-  --reasoning-effort medium \
-  --runs 5 \
-  --concurrency 1 \
-  --baseline \
-  --post-grade-command "python3 evals/dev-v2-focused/grade_focused.py"
-```
-
-The first command is a **focused micro-case A/B diagnostic**. Only the second command measures whole-repository cleanup of the 26-test, checksum-cluster, and fallback-cluster fixtures. Do not combine their scores; the result exporter records the layer explicitly and rejects mixed-layer exports.
-
-Before any `run`, the wrapper verifies that `skill/deslop` matches the suite/frontmatter name, refuses ambient canonical, legacy, or admin `deslop` Skill paths that could contaminate the without-Skill baseline, installs the pure runtime directory into a temporary `.agents/skills/deslop`, and verifies its content hash. It also fixes 0.7.0 worktree side-effect comparison to use pre/post status differences rather than treating pre-existing fixture and Skill status as agent mutations, and deterministically counterbalances A/B submission order by case and run parity. Run published benchmarks with concurrency 1 so submission order is execution order. Run benchmarks from a clean user profile or container; the wrapper never moves user files. The required post-grade hook records successful path/hash verification under `skill_discovery` in `run_meta.json` without adding a scored assertion; discovery failure remains a hard-fail assertion. A run that bypasses the wrapper or hook must not be published as a benchmark result.
-
-Record the model, reasoning effort, Codex version, harness version, run count, token cost, and wall time with every published result.
-
-## Evaluation priorities
-
-Metrics are ordered deliberately:
-
-### A. Semantic decision quality
-
-1. **Behavior Preservation Rate** — proportion of preservation cases that pass hidden contracts.
-2. **Simplification Case Recall** — proportion of deletion cases that reach the adjudicated simpler state and pass hidden contracts. This is case-level semantic recall, not a percentage of lines removed.
-
-### B. Reduction magnitude and cost
-
-3. **Test reduction** — test LOC, test count, deterministic test runtime, and expensive fixture/invocation counts.
-4. **Verification/fallback reduction** — checksum, receipt, manifest, validator, try/except, compatibility, and fallback machinery removed.
-5. **Cleanup-induced additions** — new tests, wrappers, abstractions, dependencies, branches, and production/test LOC.
-
-Reduction magnitude is evaluated only after hidden behavior gates pass. Raw LOC deletion is not success.
-
-A large deletion with a low preservation rate is failure. A cleanup that grows the codebase with new scaffolding is also failure.
-
-Harness mean assertion pass rate is retained only as a within-version diagnostic. Adding another safety gate changes that mean without changing model behavior, so project-level comparisons use the case-level metrics above.
-
-## Repository layout
+Start with evidence, not edits:
 
 ```text
-skill/deslop/                    Pure runtime Skill payload
-  SKILL.md                       Core workflow and authorization model
-  agents/openai.yaml             UI metadata and explicit-only policy
-  references/                    Focused test, trust, fallback, and scientific guidance
-evals/dev-v2-focused/            Active focused corpus and mini repos
-  evals.json                     16 focused micro cases
-  mini-evals.json                3 end-to-end miniature repositories
-evals/archive/dev-v1/            Retired broad safety corpus and historical results
-scripts/validate_focused_corpus.py  Focused corpus and mini-repo validation
-scripts/validate_dev_v1_archive.py Optional historical archive validation
-scripts/run_agent_skill_eval.py    Pinned canonical-path compatibility wrapper
+$deslop deep
+
+HIGH
+- two fallback layers handle the same internal parse failure;
+  current callers and history show no supported legacy input
+- a local receipt is produced and verified by the same workflow;
+  no external consumer or persisted trust boundary exists
+
+PRESERVE
+- a persisted readback detects truncated output across a write/read boundary
+- a compatibility branch is required by a documented external protocol
 ```
 
-Focused fixtures live under `evals/dev-v2-focused/files/`; the retired broad fixtures live under `evals/archive/dev-v1/files/`.
+Review each evidence chain and preservation decision. Apply only the supported scope:
 
-## Contributing
+```text
+$deslop deep apply
+```
 
-The most valuable contribution is a small paired case with adjudicated evidence:
+The example is schematic; it does not represent a benchmark fixture or performance claim.
 
-- one fixture where a construct should be removed;
-- one nearby counterexample where it must be preserved;
-- an independent behavioral oracle;
-- deterministic assertions that expose both over-preservation and over-deletion.
+## How deslop decides
 
-Current-project smells without historical or contract evidence belong in an audit candidate pool, not the scored corpus. Avoid adding a rule without a false-positive case.
+- **Independent evidence roots:** current requirements, real callers, public contracts, protocols, trust boundaries, persistence boundaries, or scientific invariants.
+- **Closed justification loops:** production code and tests do not become necessary merely by justifying each other.
+- **Production/test asymmetry:** redundant test evidence can be removed without deleting the behavior it observes.
+- **Fail-visible bias:** unexpected internal failures should surface unless a concrete recovery or translation contract exists.
+- **Subtraction without redesign:** dependencies, abstractions, wrappers, compatibility layers, and replacement scaffolding have a default budget of zero.
+
+The full decision model is documented in [Design](docs/design.md). The frozen runtime [`SKILL.md`](skill/deslop/SKILL.md) remains authoritative for agent behavior.
+
+## Safety model
+
+Invocation is explicit: [`allow_implicit_invocation: false`](skill/deslop/agents/openai.yaml). Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
+
+Apply authorization permits scoped edits; it does not resolve uncertainty in favor of deletion. See [Getting Started](docs/getting-started.md) for the review sequence and [Design](docs/design.md) for confidence classes and preserved boundaries.
+
+## Evidence
+
+### Focused development evaluation
+
+[`dev-v2-focused`](evals/dev-v2-focused/README.md) tests preservation and simplification decisions across paired micro cases and three end-to-end miniature repositories. Behavior gates run before reduction metrics. Micro and mini-repository results remain separate, and the repository publishes no project-level performance score.
+
+See [Evaluation](docs/evaluation.md) for interpretation limits and [`evals/README.md`](evals/README.md) for the canonical protocol.
+
+### Real-world field trials
+
+| Case | Method | Status |
+| --- | --- | --- |
+| [`cluster-gpu-monitor`](evals/real-world/cluster-gpu-monitor/README.md) | Real repository; read-only audit, human adjudication, then two reviewed cleanup batches | Frozen historical evidence |
+
+The first field trial records both accepted cleanups and deliberate preservation decisions with public before/after provenance. It had no independent baseline run from the same frozen state, so it is not a controlled A/B comparison and does not establish general superiority, 100% precision, or production-proven correctness.
+
+Future cases can be added without becoming Skill-tuning inputs; see [Field Trials](docs/field-trials.md).
+
+## Documentation
+
+| Document | Purpose |
+| --- | --- |
+| [Documentation index](docs/README.md) | Choose a user, design, evidence, or development path |
+| [Getting Started](docs/getting-started.md) | Installation, invocation modes, scopes, updates, and safe workflows |
+| [Design](docs/design.md) | Evidence roots, closed loops, preservation, and subtraction principles |
+| [Evaluation](docs/evaluation.md) | Focused corpus, hard gates, run discipline, and interpretation limits |
+| [Field Trials](docs/field-trials.md) | Real-world methodology, provenance, isolation, and case registry |
+| [Development](docs/development.md) | Repository layout, validation, contribution, and release boundaries |
+
+## Repository structure
+
+```text
+skill/deslop/                    Frozen runtime Skill payload
+docs/                            User, design, evidence, and development guides
+evals/dev-v2-focused/            Active focused development evaluation
+evals/real-world/                Manually adjudicated real-world evidence
+evals/archive/                   Retired historical evaluation material
+scripts/                         Validation and evaluation tooling
+assets/                          README and project presentation assets
+```
+
+## Project status and contributing
+
+The project does not yet use semantic versioning and makes no `stable` or `production-ready` claim. The runtime Skill and evaluation evidence are versioned by Git history; benchmark candidates have their own evaluation tags.
+
+The most useful contribution is an evidence-backed case with a nearby preservation counterexample and an independent behavioral oracle—not an isolated snippet that merely looks verbose. Read [Development](docs/development.md) before proposing a Skill policy or evaluation change.
 
 ## License
 

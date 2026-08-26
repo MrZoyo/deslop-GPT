@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">deslop</title>
+  <desc id="desc">A dark code-diff banner with a subtraction mark and the text Deletion-first cleanup for agent-maintained codebases.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1117"/>
+      <stop offset="1" stop-color="#111820"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#30363d" stroke-width="1" opacity=".22"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="360" rx="24" fill="url(#background)"/>
+  <rect width="1200" height="360" rx="24" fill="url(#grid)"/>
+
+  <g opacity=".2">
+    <rect x="40" y="106" width="72" height="8" rx="4" fill="#ff7b72"/>
+    <rect x="62" y="126" width="50" height="8" rx="4" fill="#ff7b72"/>
+    <rect x="1088" y="92" width="72" height="8" rx="4" fill="#ff7b72"/>
+    <rect x="1108" y="112" width="52" height="8" rx="4" fill="#7ee787"/>
+    <rect x="1064" y="132" width="96" height="8" rx="4" fill="#58a6ff"/>
+  </g>
+
+  <g transform="translate(116 72)">
+    <rect width="216" height="216" rx="28" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+    <path d="M50 62H166M50 108H166M50 154H166" stroke="#8b949e" stroke-width="12" stroke-linecap="round" opacity=".32"/>
+    <path d="M50 62H118M50 108H146" stroke="#ff7b72" stroke-width="12" stroke-linecap="round"/>
+    <path d="M50 154H132" stroke="#7ee787" stroke-width="12" stroke-linecap="round"/>
+    <path d="M145 108H178" stroke="#ff7b72" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="170" cy="154" r="6" fill="#58a6ff"/>
+  </g>
+
+  <g font-family="monospace">
+    <text x="386" y="151" fill="#f0f6fc" font-size="72" font-weight="700">deslop</text>
+    <text x="391" y="194" fill="#b1bac4" font-size="20">Deletion-first cleanup for agent-maintained codebases</text>
+    <path d="M391 222H1020" stroke="#30363d" stroke-width="2"/>
+    <text x="391" y="260" fill="#8b949e" font-size="16">AUDIT  -&gt;  EVIDENCE  -&gt;  SUBTRACT</text>
+    <text x="391" y="292" fill="#7ee787" font-size="15">reduce test surface</text>
+    <text x="571" y="292" fill="#8b949e" font-size="15">/</text>
+    <text x="595" y="292" fill="#58a6ff" font-size="15">preserve behavior surface</text>
+  </g>
+  <rect x="1" y="1" width="1198" height="358" rx="23" fill="none" stroke="#30363d" stroke-width="2"/>
+</svg>
