@@ -99,3 +99,9 @@ Before a public-facing release commit:
 - keep any distribution metadata aligned with the intended Git release tag.
 
 Do not infer a product version from a benchmark tag or move a published release tag.
+
+## Plugin compatibility note
+
+Plugin packaging is intentionally withheld from v0.2.0. The tested host was Codex CLI 0.149.1. Plugin Creator validation accepted a temporary Skills-only manifest with `skills: "./skills/"`; local marketplace discovery, installation, and cache creation also succeeded. The cache contained `skills/deslop/SKILL.md`, but a fresh app-server with the ambient standalone Skill removed and `skills/list(forceReload=true)` returned no registered `deslop` Skill. The current blocker is therefore Plugin-to-host Skill registration, not the canonical runtime layout or standalone Skill validity.
+
+The earlier singular `./skill/` path failed Plugin Creator's static path check. The plural `./skills/` path passes that check, so `skills/deslop/` remains the preferred canonical layout for a future thin Plugin packaging change once host registration works. No Plugin manifest or marketplace is shipped in v0.2.0.

@@ -52,25 +52,29 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Install v0.1.0 as a standalone Skill
+### Install v0.2.0 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.2.0/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.1.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.2.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
-ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged path is the latest released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for updates, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for v0.1.0 migration, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
+
+### Plugin status
+
+v0.2.0 uses the canonical `skills/deslop/` layout and is structurally ready for future skills-only Plugin packaging. Plugin distribution is not included in this release. In testing with Codex CLI 0.149.1, a valid Skills-only Plugin could be discovered, installed, and cached, but its bundled `deslop` Skill was not registered in the host available-skills catalog. Standalone Skill installation is the supported distribution method for v0.2.0; see the [Plugin compatibility note](docs/development.md#plugin-compatibility-note) for the concise diagnostic.
 
 ### Invoke it explicitly
 

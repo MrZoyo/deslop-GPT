@@ -4,17 +4,17 @@
 
 ## Install
 
-### Released standalone Skill: v0.1.0
+### Released standalone Skill: v0.2.0
 
 OpenAI's [Codex Skills documentation](https://developers.openai.com/codex/skills/) documents `$skill-installer` for curated skills and skills from other repositories. Invoke it with this repository URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.2.0/skills/deslop
 ```
 
-The v0.1.0 installable payload is only [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop), not the evaluation corpus or project documentation.
+The v0.2.0 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. The immutable v0.1.0 payload remains at [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop).
 
 The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
@@ -23,20 +23,55 @@ The currently bundled `$skill-installer` manages downloaded Skills in an install
 Codex discovers personal Skills under `$HOME/.agents/skills` and follows symlinked Skill directories. Clone the project outside the discovery tree, then link only the runtime payload:
 
 ```bash
-git clone --branch v0.1.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.2.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
-ln -s "$HOME/.local/share/deslop-GPT/skill/deslop" "$HOME/.agents/skills/deslop"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
 Run the `ln` command only when the destination does not already exist. Codex normally detects Skill changes automatically; restart Codex if the Skill does not appear.
 
 This is an independent community Skill. Compatibility does not imply affiliation with or endorsement by OpenAI.
 
+### Upgrade from v0.1.0
+
+The installer does not automatically follow a Git directory rename. Reinstall from:
+
+```text
+https://github.com/MrZoyo/deslop-GPT/tree/v0.2.0/skills/deslop
+```
+
+The old v0.1.0 path was:
+
+```text
+https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
+```
+
+If a source checkout is linked into Codex, first inspect the existing destination:
+
+```bash
+test -L "$HOME/.agents/skills/deslop"
+readlink "$HOME/.agents/skills/deslop"
+```
+
+Only when that output confirms the expected v0.1.0 symlink to `~/.local/share/deslop-GPT/skill/deslop`, remove the symlink itself and recreate it for v0.2.0:
+
+```bash
+unlink "$HOME/.agents/skills/deslop"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" \
+  "$HOME/.agents/skills/deslop"
+```
+
+If the destination is a real directory or points somewhere else, stop and review it instead of removing it. v0.1.0 remains supported as immutable history at its original tagged path.
+
 ### Development branch
 
-The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.1.0 path when reproducibility matters.
+The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.2.0 path when reproducibility matters.
 
-The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path. Released v0.1.0 users can remain pinned to its immutable tag.
+The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path.
+
+### Plugin status
+
+The `skills/deslop/` layout is ready for a future Plugin packaging commit, but Plugin distribution is withheld from v0.2.0. In the tested Codex CLI 0.149.1 environment, Plugin installation and caching succeeded while native registration of the bundled Skill did not. Standalone installation above is the supported release path.
 
 ## Invocation modes
 
