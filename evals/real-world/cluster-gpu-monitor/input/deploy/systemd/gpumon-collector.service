@@ -1,0 +1,18 @@
+[Unit]
+Description=gpumon collector (SSH 轮询采集 GPU 占用)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=__CODE_ROOT__
+Environment=GPUMON_ROOT=__STATE_ROOT__
+ExecStart=__CODE_ROOT__/.venv/bin/gpumon collect
+Restart=always
+RestartSec=5
+MemoryHigh=384M
+MemoryMax=512M
+TasksMax=128
+
+[Install]
+WantedBy=default.target

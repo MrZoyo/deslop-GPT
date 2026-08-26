@@ -1,0 +1,71 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081 # v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      # 配置校验：example 清单必须能通过校验，否则新用户照文档走第一步就失败。
+      # config-check 需要 config/inventory.yaml 存在，故先从 example 复制一份。
+      - name: Validate example config
+        run: |
+          cp config/inventory.example.yaml config/inventory.yaml
+          cp config/settings.example.toml config/settings.toml
+          uv run gpumon config-check
+
+      - name: Run tests
+        run: uv run pytest -q
+
+      # 前端没有构建步骤，用 node --check 兜住语法错误（改 JS 时最容易翻车的地方）
+      - name: Syntax-check frontend JS
+        run: |
+          for f in web/js/*.js; do node --check "$f"; done
+          node tests/frontend_security.js
+
+      - name: Shell script syntax
+        run: |
+          bash -n src/gpumon/collector/remote_probe.sh
+          bash -n scripts/probe_one.sh
+          bash -n scripts/verify_e2e.sh
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Validate Compose model
+        env:
+          GPUMON_SSH_DIR: /tmp/gpumon-ssh
+        run: |
+          mkdir -p "$GPUMON_SSH_DIR"
+          docker compose config --quiet
+
+      - name: Build container image
+        run: docker build --tag cluster-gpu-monitor:test .
+
+      - name: Smoke-test image contents
+        run: |
+          docker run --rm --entrypoint python cluster-gpu-monitor:test -c \
+            "from gpumon.api.app import create_app; assert create_app().routes[-1].name == 'static'"
+          docker run --rm --entrypoint ssh cluster-gpu-monitor:test -V

@@ -1,0 +1,148 @@
+# ============================================================================
+# cluster-gpu-monitor —— Caddy 反向代理 + HTTP Basic Auth 模板
+#
+# 用法：复制为 /etc/caddy/Caddyfile，替换 <占位符>，只保留你要用的那一种入口，然后
+#   sudo bash -c 'set -a; . /etc/gpumon/caddy.env; set +a; caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile'
+#   sudo systemctl restart caddy
+#
+# 前提：后端 `gpumon web` 只监听 127.0.0.1:8848（config/settings.toml 的 [web] host）。
+#       所有外部流量都从这里进，TLS 和鉴权都在这里做，后端端口不对公网放行。
+#
+# 口令 hash 从 EnvironmentFile 注入，本文件永不出现明文：
+#   caddy hash-password                   # 按隐藏提示输入并确认，不把明文放进 argv
+#   # /etc/gpumon/caddy.env  (chmod 600，不入库)
+#   GPUMON_BASIC_HASH='$2a$14$...'      <- 必须单引号，bcrypt hash 里的 $ 会被 shell 展开
+#   DUCKDNS_TOKEN='<你的 token>'        <- 仅方式 B 需要
+#   # /etc/systemd/system/caddy.service.d/override.conf
+#   [Service]
+#   EnvironmentFile=/etc/gpumon/caddy.env
+#
+# 指令名：Caddy >= 2.8 用 basic_auth；2.7 及更早写 basicauth。
+# 详细取舍与踩坑见 docs/DEPLOYMENT.md。
+# ============================================================================
+
+
+# ---------------------------------------------------------------------------
+# 全局选项（必须放在文件最前面）
+#
+# admin off：本项目使用静态配置和受控 restart，不开放本地管理 API。
+# default_sni：浏览器用 IP 直连时不发 SNI，Caddy 找不到匹配站点会直接拒握手。
+# 启用方式 C 时取消下一行注释，让无 SNI 连接默认落到 <SERVER_IP> 站点。
+# ---------------------------------------------------------------------------
+{
+#	default_sni <SERVER_IP>
+	admin off
+}
+
+
+# ---------------------------------------------------------------------------
+# 所有入口共用的浏览器安全头。
+#
+# style-src 暂时保留 'unsafe-inline'：ECharts tooltip 和现有组件会生成行内样式；
+# script-src 不允许 inline/eval。HSTS 只应加到可信域名入口，不能用于自签 IP 入口。
+# ---------------------------------------------------------------------------
+(gpumon_security_headers) {
+	header {
+		Content-Security-Policy "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+		X-Frame-Options "DENY"
+	}
+
+	# 页面和 API 含实时/用户数据，禁止浏览器及共享代理落盘缓存。
+	@gpumon_no_store path / /index.html /api/*
+	header @gpumon_no_store Cache-Control "no-store"
+}
+
+
+# ---------------------------------------------------------------------------
+# 方式 A（推荐）：有域名，且公网入站 80/443 可达
+#
+# Caddy 自动申请并自动续期 Let's Encrypt 证书（HTTP-01 / TLS-ALPN-01），
+# 绿锁零配置。这就是全部配置，没有更简的写法了。
+# ---------------------------------------------------------------------------
+<YOUR_DOMAIN> {
+	import gpumon_security_headers
+	header Strict-Transport-Security "max-age=31536000"
+
+	basic_auth {
+		# 用户名随意（如 team）；第二个字段是口令 hash，来自环境变量
+		team {$GPUMON_BASIC_HASH}
+	}
+
+	reverse_proxy 127.0.0.1:8848
+
+	# fail2ban 靠这个文件里的 401 记录封爆破 IP
+	log {
+		output file /var/log/caddy/gpumon.log
+	}
+
+	# 可选：仪表盘接口返回的是 JSON，开压缩能明显减小传输量
+	# encode zstd gzip
+}
+
+
+# ---------------------------------------------------------------------------
+# 方式 B：有域名，但入站 80/443 被机房 / 运营商 / 云安全组封了
+#
+# 关键点：改用 DNS-01 挑战。它通过在 DNS 里写一条 TXT 记录来证明域名归属，
+# 全程只需要出站访问 DNS 商 API，**不需要任何入站端口可达**。
+# 于是对外可以只开一个非标端口（下例 8443），80/443 封着也能签下可信证书。
+#
+# 需要带对应 DNS 商插件的 Caddy 二进制（下例 duckdns）：
+#   xcaddy build --with github.com/caddy-dns/duckdns
+# 换别的 DNS 商就换插件名（cloudflare / alidns / tencentcloud ...）。
+# ---------------------------------------------------------------------------
+#<YOUR_SUBDOMAIN>.duckdns.org:8443 {
+#	import gpumon_security_headers
+#	header Strict-Transport-Security "max-age=31536000"
+#
+#	tls {
+#		dns duckdns {env.DUCKDNS_TOKEN}
+#		# 显式指定解析器，避开本机 DNS 缓存导致的 TXT 记录校验失败
+#		resolvers 1.1.1.1 8.8.8.8
+#	}
+#
+#	basic_auth {
+#		team {$GPUMON_BASIC_HASH}
+#	}
+#
+#	reverse_proxy 127.0.0.1:8848
+#
+#	log {
+#		output file /var/log/caddy/gpumon.log
+#	}
+#}
+
+
+# ---------------------------------------------------------------------------
+# 方式 C（保底入口）：IP 直连 + 自签证书
+#
+# 什么时候需要它：
+#   1. 压根没有域名，也不想注册；
+#   2. 有域名但域名本身被按 SNI 阻断 —— 典型表现是 TCP 能连通、
+#      TLS 握手阶段被 RST（curl 报 connection reset during handshake）。
+#      浏览器按 IP 访问时不发 SNI，中间设备就没有可匹配的域名，能绕过这类阻断。
+#
+# 代价：证书由 Caddy 内置 CA 签发，浏览器首次访问会告警（点"继续"即可），
+#       但链路仍是完整的 TLS 加密，口令不会明文过网。
+#
+# 可以和方式 A/B 并存：能正常访问域名的人走绿锁入口，其余人走这个 IP 入口。
+# 启用本段时记得把文件最上面的 default_sni 那一行也取消注释。
+# ---------------------------------------------------------------------------
+#https://<SERVER_IP>:8443 {
+#	tls internal
+#	import gpumon_security_headers
+#	# 自签 IP 入口不能加 HSTS，否则浏览器可能记住一个无法自动信任的证书入口。
+#
+#	basic_auth {
+#		team {$GPUMON_BASIC_HASH}
+#	}
+#
+#	reverse_proxy 127.0.0.1:8848
+#
+#	log {
+#		output file /var/log/caddy/gpumon.log
+#	}
+#}

@@ -1,0 +1,14 @@
+[Unit]
+Description=gpumon web (FastAPI 监控网页，仅监听 127.0.0.1)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=__CODE_ROOT__
+Environment=GPUMON_ROOT=__STATE_ROOT__
+ExecStart=__CODE_ROOT__/.venv/bin/gpumon web
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

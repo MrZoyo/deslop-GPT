@@ -1,0 +1,11 @@
+[Unit]
+Description=gpumon database backup timer (daily at 4am)
+
+[Timer]
+# 凌晨 4:00（服务器本地时区）
+OnCalendar=*-*-* 04:00:00
+# 如果错过了（机器关机/重启），启动后 10 分钟内补一次
+Persistent=true
+
+[Install]
+WantedBy=timers.target

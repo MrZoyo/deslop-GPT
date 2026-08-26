@@ -1,0 +1,58 @@
+diff --git a/src/gpumon/models.py b/src/gpumon/models.py
+index c093bd5dfea6a1d5d89ae6897cf32f75b44af114..c73e088b497e8e843402f87b6ed466758691f009 100644
+--- a/src/gpumon/models.py
++++ b/src/gpumon/models.py
+@@ -131,10 +131,7 @@ class ClusterCfg(ConfigModel):
+     hosts: list[HostCfg] = Field(default_factory=list, max_length=4096)
+ 
+     def resolved_badges(self, library: dict[str, BadgeCfg] | None = None) -> list[BadgeCfg]:
+-        """最终标签序列：badges 里的字符串按标签库查表展开，内联项原样保留。
+-
+-        查不到的 key 会被跳过（load_inventory 已在启动时校验过，正常运行不会出现）。
+-        """
++        """最终标签序列：badges 里的字符串按标签库查表展开，内联项原样保留。"""
+         return _expand_badges(self.badges, library)
+ 
+ 
+@@ -145,9 +142,7 @@ def _expand_badges(items: list[ConfigKey | BadgeCfg],
+     out: list[BadgeCfg] = []
+     for it in items:
+         if isinstance(it, str):
+-            found = lib.get(it)
+-            if found is not None:
+-                out.append(found)
++            out.append(lib[it])
+         else:
+             out.append(it)
+     return out
+diff --git a/web/js/app.js b/web/js/app.js
+index e1107d2946b26fbfe6625cbec64466c63fd2fb40..426825f4741bc280814ffc802779ddadee7d824f 100644
+--- a/web/js/app.js
++++ b/web/js/app.js
+@@ -1,6 +1,6 @@
+ // 应用入口：全局状态、hash 路由、顶栏时间窗切换、健康灯、自动刷新、图表尺寸管理。
+ window.GM = (function () {
+-  const state = { meta: { windows: ["12h", "24h", "48h", "72h", "1w", "2w", "1m"] }, window: "24h", theme: "dark" };
++  const state = { meta: null, window: "24h", theme: "dark" };
+   let charts = [];        // 当前视图的 ECharts 实例，切换视图前统一 dispose
+   let refreshTimer = null;
+ 
+@@ -177,7 +177,17 @@ window.GM = (function () {
+     I18n.init();
+     state.theme = localStorage.getItem("gpumon.theme") === "light" ? "light" : "dark";
+     applyTheme();
+-    try { state.meta = await API.meta(); } catch (e) {}
++    try {
++      state.meta = await API.meta();
++    } catch (e) {
++      const root = document.getElementById("view");
++      root.appendChild(UI.el("div", { class: "panel" }, [
++        UI.el("h3", {}, [I18n.t('load_failed')]),
++        UI.el("div", { class: "note" }, [I18n.t('service_unreachable')]),
++      ]));
++      console.error(e);
++      return;
++    }
+     // 把"算力域 → 色带"映射交给 Palette，之后所有身份色都按 inventory 配置走
+     UI.Palette.setGroups(state.meta.capacity_groups);
+     // 恢复保存的时间窗，默认 24h

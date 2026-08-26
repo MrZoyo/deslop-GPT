@@ -1,0 +1,82 @@
+name: deploy demo to pages
+
+# 演示站是"每次构建重新生成"的：数据由脚本造，不入库。
+# 这样仓库里不会躺着一个几百 MB 的 sqlite，也不会有过期快照。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "src/gpumon/**"
+      - "scripts/demo_fixtures.py"
+      - "scripts/gen_demo_db.py"
+      - "scripts/export_static_demo.py"
+      - ".github/workflows/demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同时只跑一个部署，后来的取消前面的（避免两次 push 互相覆盖）
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081 # v5
+        with:
+          enable-cache: true
+
+      - run: uv python install 3.12
+      - run: uv sync --extra dev
+
+      # 演示内容自检（卡数合计、key 唯一性、色带合法性等）
+      - name: Validate demo fixtures
+        run: uv run python scripts/demo_fixtures.py
+
+      # 3 天历史足够让 12h/24h/48h/72h 四个窗都有曲线；
+      # 更长的窗会显示"数据积累中"，这在演示站上是可接受的，
+      # 换成默认 35 天则要造数千万行、库上 GB，CI 里不值当。
+      - name: Generate demo database
+        run: |
+          uv run python scripts/gen_demo_db.py \
+            --scale large --days 3 \
+            --db data/demo.db --inventory config/inventory.demo.yaml --force
+
+      - name: Export static site
+        run: |
+          uv run python scripts/export_static_demo.py \
+            --db data/demo.db --inventory config/inventory.demo.yaml \
+            --settings config/settings.example.toml \
+            --out dist/demo --force
+
+      - name: Report size
+        run: |
+          echo "站点体积：$(du -sh dist/demo | cut -f1)"
+          echo "文件数：$(find dist/demo -type f | wc -l)"
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: dist/demo
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

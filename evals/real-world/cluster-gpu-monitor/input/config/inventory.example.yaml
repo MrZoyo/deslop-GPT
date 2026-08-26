@@ -1,0 +1,165 @@
+# ============================================================================
+# 机器清单示例。复制为 inventory.yaml 后改成你的真实机器（inventory.yaml 不入库）。
+#   cp config/inventory.example.yaml config/inventory.yaml
+#
+# 层级固定为三层：算力域(capacity_group) → 集群(cluster) → 服务器(host)。
+# 只要按这个层级填，网页/统计表/排行/配色全部自适应，无需改代码。
+#
+# 加机器：在对应集群的 hosts 下加一条；加集群：在 clusters 下加一块。
+# 改完重启采集器即可（自动 upsert 拓扑、首轮发现 GPU）。
+#
+# 字段说明：
+#   key         稳定标识，历史数据按它关联，一旦上线请勿修改
+#   ssh_alias   ~/.ssh/config 里的别名，采集器用它 SSH
+#               - 直连机器：直接写该机器的别名
+#               - 跨网段/内网机器：在 ~/.ssh/config 里用 ProxyJump 声明跳板
+#               迁到别的部署机时只改这个，key 不变 → 历史曲线连续
+#   display_name  网页显示名，可以随便改，不影响数据
+#   gpu_count   期望卡数，用于"断卡/掉线"检测（缺省取 defaults.gpu_count）
+#   vendor      主机级 GPU 厂商。已知且固定时建议写 nvidia / amd；留空会在每轮远端
+#               自动探测，NVIDIA 主机会额外执行一次 nvidia-smi -L
+#   capacity_group  算力域，用于网页分组展示；留空则落到 defaults 的兜底域
+#   status      active（默认） / planned / retired
+#               planned = 待接入占位（网页显示占位卡）；
+#               retired = 已退役（采集器不再探测、网页不再显示，DB 行与历史保留供对账）
+#   note        集群备注显示在总览/集群页；主机备注在 planned 占位行悬停显示
+#   多语言文案  badge 的 text/tooltip、算力域 description、集群/主机 note
+#               可写普通字符串，也可写 { zh: "中文", en: "English" }。
+#               当前界面语言缺失时，按 YAML 顺序使用第一条已有翻译。
+#   badges      自定义标签，可挂多枚，网页显示在算力域标题与集群卡片标题上。
+#               两种写法可以混用：
+#                 - 写 badge_library 里的 key（字符串）→ 复用同一枚标签
+#                 - 内联 { text（必填）, mark（前缀符号）, tooltip（悬停说明）,
+#                          tone（cyan/gold/green/violet/neutral，缺省 cyan） }
+#               超过 3 枚会折叠成 "+N"，悬停展开
+#   badge_library  标签库：把「自建」「液冷」这类要在多处出现的标签定义一次，
+#               之后各处只写 key。改库里的文案/tooltip，所有引用处一起变。
+#   meta        主机级自由元数据，透传到网页。约定字段：
+#                 gpu_model     卡型号，待接入占位卡上显示（正常在线机器的型号来自采集）
+# ============================================================================
+version: 1
+
+defaults:
+  gpu_count: 8
+  poll_interval_s: 30
+  # 集群没写 capacity_group 时落到这个域（名字可改成你习惯的说法）
+  fallback_group_key: default
+  fallback_group_name: "未分组"
+
+# 标签库：这里定义一次，下面算力域/集群的 badges 写 key 就能复用。
+# 想改「自建」的说明文案？改这一处，所有挂了它的地方一起变。
+badge_library:
+  - key: self-built
+    text:
+      zh: "自建"                  # 中文放第一项，也就是缺少目标语言时的回退文案
+      en: "Self-built"
+    mark: "◆"
+    tone: cyan
+    tooltip:
+      zh: "本地自行装机，账号自助申请"
+      en: "Built locally; request access through the self-service flow"
+  - key: infiniband
+    text: "InfiniBand"
+    tone: green
+  - key: liquid-cooling
+    text: "液冷"
+    tone: violet
+    tooltip: "水管走在天花板上，抬头请注意"
+  - key: configured-by-ops
+    text: "运维组 配置"
+    mark: "◆"
+    tone: cyan
+    tooltip: "由运维组进行初始化配置"
+
+# 算力域。palette 可选，指定该域的色系；留空则按 sort_order 自动轮转分配。
+# 内置色带：lime / violet / azure / amber / rose / teal / indigo / slate
+# 超过 8 个域时自动生成新色相，不会撞成灰色。
+capacity_groups:
+  - key: own
+    name: "自有算力"
+    sort_order: 1
+    palette: lime
+    description:
+      zh: "自购自管"
+      en: "Owned and managed in-house"
+    badges: [self-built]         # 算力域也能挂标签，写法与集群一致
+  - key: rented
+    name: "租用算力"
+    sort_order: 2
+    palette: violet
+  - key: partner
+    name: "合作算力"
+    sort_order: 3
+    palette: azure
+
+clusters:
+  # 完整示例：带标签的双机集群
+  - key: cluster-a
+    name: "A 集群（双机示例）"
+    sort_order: 1
+    capacity_group: own
+    # 复用标签库里的两枚（推荐写法）
+    badges: [self-built, infiniband]
+    hosts:
+      - key: a-1
+        ssh_alias: my-a-1
+        display_name: "A-1"
+        vendor: nvidia
+      - key: a-2
+        ssh_alias: my-a-2
+        display_name: "A-2"
+        vendor: nvidia
+
+  # 精简示例：只写必填字段，其余取默认值（status=active，gpu_count=8）。
+  # 这里故意省略 vendor，演示未知厂商时的每轮自动探测。
+  - key: cluster-b
+    name: "B 集群（精简示例）"
+    sort_order: 2
+    capacity_group: own
+    hosts:
+      - key: b-1
+        ssh_alias: my-b-1
+        display_name: "B-1"
+
+  # AMD 集群示例：已知厂商时显式填写，跳过每轮自动探测
+  - key: cluster-amd
+    name: "C 集群（AMD 示例）"
+    sort_order: 3
+    capacity_group: own
+    # 只此一处用到的标签，直接内联，不必进库；库引用和内联可以混写
+    badges:
+      - { text: "ROCm", tone: gold, tooltip: "AMD Instinct，需用 ROCm 版框架" }
+    hosts:
+      - key: c-1
+        ssh_alias: my-c-1
+        display_name: "C-1"
+        vendor: amd
+
+  # "谁装的机"也是一枚普通标签：定义进库，各集群引用
+  - key: cluster-d
+    name: "D 集群（租用单机示例）"
+    sort_order: 4
+    capacity_group: rented
+    badges: [configured-by-ops]
+    hosts:
+      - key: d-1
+        ssh_alias: my-d-1
+        display_name: "D-1"
+
+  # 待接入集群示例：status=planned，网页显示占位卡
+  - key: partner-planned
+    name: "合作方待接入集群"
+    sort_order: 101
+    capacity_group: partner
+    status: planned
+    note:
+      zh: "拿到 SSH 权限后在 hosts 下添加设备"
+      en: "Once SSH access is approved, add the device under hosts"
+    hosts:
+      # 待接入占位：需写 gpu_model，网页才能显示"8 张 NVIDIA H100"
+      - key: partner-1
+        ssh_alias: partner-1-placeholder
+        display_name: "待接入-1"
+        status: planned
+        gpu_count: 8
+        meta: { gpu_model: "NVIDIA H100 80GB HBM3" }

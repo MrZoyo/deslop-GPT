@@ -1,0 +1,132 @@
+name: gpumon
+
+x-gpumon-service: &gpumon-service
+  build:
+    context: .
+    args:
+      APP_UID: "${GPUMON_UID:-1000}"
+      APP_GID: "${GPUMON_GID:-1000}"
+  image: "${GPUMON_IMAGE:-cluster-gpu-monitor:local}"
+  init: true
+  read_only: true
+  restart: unless-stopped
+  environment:
+    GPUMON_ROOT: /state
+    HOME: /home/gpumon
+    PYTHONDONTWRITEBYTECODE: "1"
+    PYTHONUNBUFFERED: "1"
+  cap_drop:
+    - ALL
+  security_opt:
+    - "no-new-privileges:true"
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,nodev,size=16m
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: "3"
+
+services:
+  collector:
+    <<: *gpumon-service
+    command:
+      - collect
+    mem_limit: 512m
+    pids_limit: 128
+    volumes:
+      - type: bind
+        source: "${GPUMON_CONFIG_DIR:-./config}"
+        target: /state/config
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${GPUMON_DATA_DIR:-./data}"
+        target: /state/data
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${GPUMON_SSH_DIR:?set GPUMON_SSH_DIR in .env}"
+        target: /home/gpumon/.ssh
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      - collector-egress
+
+  web:
+    <<: *gpumon-service
+    command:
+      - web
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8848"
+    mem_limit: 384m
+    pids_limit: 64
+    depends_on:
+      collector:
+        condition: service_started
+    volumes:
+      - type: bind
+        source: "${GPUMON_CONFIG_DIR:-./config}"
+        target: /state/config
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${GPUMON_DATA_DIR:-./data}"
+        target: /state/data
+        read_only: true
+        bind:
+          create_host_path: false
+    ports:
+      - target: 8848
+        published: "${GPUMON_WEB_PORT:-8848}"
+        host_ip: "${GPUMON_WEB_BIND:-127.0.0.1}"
+        protocol: tcp
+    networks:
+      - web-internal
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import json, urllib.request;
+          response = urllib.request.urlopen('http://127.0.0.1:8848/api/live', timeout=2);
+          assert json.load(response) == {'ok': True, 'status': 'alive'}
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+
+  backup:
+    <<: *gpumon-service
+    command:
+      - backup
+    profiles:
+      - maintenance
+    restart: "no"
+    mem_limit: 384m
+    pids_limit: 32
+    volumes:
+      - type: bind
+        source: "${GPUMON_CONFIG_DIR:-./config}"
+        target: /state/config
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: "${GPUMON_DATA_DIR:-./data}"
+        target: /state/data
+        bind:
+          create_host_path: false
+    network_mode: none
+
+networks:
+  collector-egress:
+  web-internal:
+    internal: true

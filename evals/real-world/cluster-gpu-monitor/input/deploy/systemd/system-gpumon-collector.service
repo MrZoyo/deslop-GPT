@@ -1,0 +1,21 @@
+[Unit]
+Description=gpumon collector (system 级，阶段二跳板机)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+Group=__GROUP__
+WorkingDirectory=__ROOT__/current
+Environment=GPUMON_ROOT=__ROOT__
+ExecStart=__ROOT__/current/.venv/bin/gpumon collect
+Restart=always
+RestartSec=5
+UMask=0027
+MemoryHigh=384M
+MemoryMax=512M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

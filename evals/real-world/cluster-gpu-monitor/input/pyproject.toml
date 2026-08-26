@@ -1,0 +1,38 @@
+[project]
+name = "cluster-gpu-monitor"
+version = "0.3.2"
+description = "Self-hosted GPU cluster monitoring with long-term utilization history, per-user accounting and idle-GPU detection. Agentless (SSH + nvidia-smi/rocm-smi), no scheduler required."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+keywords = ["gpu", "monitoring", "nvidia", "amd", "rocm", "cluster", "dashboard", "utilization"]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pyyaml>=6.0",
+    "pydantic>=2.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/MrZoyo/cluster-gpu-monitor"
+Issues = "https://github.com/MrZoyo/cluster-gpu-monitor/issues"
+
+[project.scripts]
+gpumon = "gpumon.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gpumon"]
+# schema.sql / remote_probe.sh 等非 .py 资源随包走；运行时用 __file__ 同目录定位。
+# artifacts 是 glob，文件暂缺也不报错。
+artifacts = ["**/*.sql", "**/*.sh"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

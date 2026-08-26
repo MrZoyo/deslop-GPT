@@ -1,0 +1,237 @@
+diff --git a/scripts/export_static_demo.py b/scripts/export_static_demo.py
+index 7503bc0b952354c8fcef3a1c094d89c4e852ea94..fd9d864081388c271b12188660a6d8f84d96e7ce 100644
+--- a/scripts/export_static_demo.py
++++ b/scripts/export_static_demo.py
+@@ -209,9 +209,7 @@ def main(argv: list[str] | None = None) -> int:
+             if h.get("id") is not None:
+                 host_ids.append(h["id"])
+             for g in h.get("gpus", []):
+-                # /api/topology 的卡行来自 gpu_card 表，主键列叫 id；
+-                # /api/overview 里同一张卡叫 gpu_id。两边都兼容，别假设只有一种。
+-                gid = g.get("gpu_id", g.get("id"))
++                gid = g.get("id")
+                 if gid is not None:
+                     gpu_ids.append(gid)
+ 
+diff --git a/src/gpumon/api/routes.py b/src/gpumon/api/routes.py
+index 157ff1e5eed0465e8606d3599ff6ad4a8304cc7d..6d3911b50230ee1081300f557efaf088094b9ed3 100644
+--- a/src/gpumon/api/routes.py
++++ b/src/gpumon/api/routes.py
+@@ -523,29 +523,20 @@ def users_ranking(window: str = Query("24h")):
+     """全局用户占用排行：同 username 跨设备聚合，按设备拆分 gpu_hours（堆叠条用）。
+     退役机器(status=retired)彻底移除，其 GPU·h 不计入合计。"""
+     window = valid_window(window)
+-    retired = _retired_inventory_host_keys()
++    excluded = tuple(sorted(_retired_inventory_host_keys()))
+     limit = load_settings().web.ranking_user_limit
+-    data = _get_users_ranking(
+-        get_store(), window, tuple(sorted(retired)), limit
+-    )
++    data = _get_users_ranking(get_store(), window, excluded, limit)
+ 
+-    # 过滤 retired 机器，并补充 capacity_group
++    # Store 已排除退役机器；路由只补充 UI 所需的 capacity_group。
+     _, cluster_meta, _ = _inventory_ui_meta()
+     data["machines"] = [
+         {**m, "capacity_group": cluster_meta.get(m["cluster_key"], {}).get("capacity_group")}
+         for m in data["machines"]
+-        if m["key"] not in retired
+     ]
+ 
+-    # 过滤每个用户的 by_machine，重算 total
+     for u in data["users"]:
+-        u["by_machine"] = {k: v for k, v in u["by_machine"].items() if k not in retired}
+-        u["total"] = round(sum(u["by_machine"].values()), 1)
+         u["username"] = mask_username(u["username"])
+ 
+-    # 移除 total=0 的用户（所有使用量都在退役机器上）
+-    data["users"] = [u for u in data["users"] if u["total"] > 0]
+-
+     return data
+ 
+ 
+diff --git a/src/gpumon/collector/parse.py b/src/gpumon/collector/parse.py
+index 29cbfca5ac0873a7840ef654faa52f3bc27e3fdf..76f393e85ed6de590677878b546b80de58e91998 100644
+--- a/src/gpumon/collector/parse.py
++++ b/src/gpumon/collector/parse.py
+@@ -159,9 +159,11 @@ def _parse_probe(host_key: str, raw: str) -> ProbeResult:
+     if cpu1 and cpu2:
+         host.cpu_util_pct = _cpu_util(cpu1[0], cpu2[0])
+ 
+-    # 厂商：远端 ##VENDOR 段给出。老版本探测脚本没有该段 → 按 nvidia 处理（向后兼容）。
++    # 厂商：远端探测完成自动识别后，通过 ##VENDOR 段明确给出。
+     vendor_lines = sec.get("VENDOR", [])
+-    vendor = (vendor_lines[0].strip().lower() if vendor_lines else "") or "nvidia"
++    vendor = vendor_lines[0].strip().lower() if vendor_lines else ""
++    if vendor not in {"nvidia", "amd", "none"}:
++        raise ProbeDataError("VENDOR 段缺失、为空或值不受支持")
+ 
+     # GPU + 进程：按厂商分派。AMD 走 parse_amd（JSON），NVIDIA 走下面的 CSV。
+     if vendor == "amd":
+diff --git a/src/gpumon/collector/run.py b/src/gpumon/collector/run.py
+index e29dc71f4649f1bf23303cdcbc7916fb1e92ba28..93745b605a41fc243d1f168bc5910d4a6d2b8c3f 100644
+--- a/src/gpumon/collector/run.py
++++ b/src/gpumon/collector/run.py
+@@ -75,20 +75,8 @@ async def _probe_all(host_filter: str | None = None) -> tuple[int, list[ProbeRes
+             return budget.apply(result)
+ 
+     tasks = [one(k, a, v) for k, a, v in host_specs]
+-    results = await asyncio.gather(*tasks, return_exceptions=True)
+-    # gather 的异常兜底（probe 内部已尽量自包，这里再防一层）
+-    clean: list[ProbeResult] = []
+-    host_keys = [k for k, _, _ in host_specs]
+-    for key, r in zip(host_keys, results):
+-        if isinstance(r, ProbeResult):
+-            clean.append(r)
+-        else:
+-            clean.append(ProbeResult(
+-                host_key=key,
+-                ok=False,
+-                error=f"任务异常: {r}"[:512],
+-            ))
+-    return ts, clean
++    results = await asyncio.gather(*tasks)
++    return ts, results
+ 
+ 
+ def _summary(ts: int, results: list[ProbeResult]) -> str:
+@@ -133,10 +121,7 @@ def run_forever() -> int:
+         nonlocal next_tick, last_roll5m, last_roll1h, last_cleanup
+         while True:
+             ts, results = await _probe_all()
+-            try:
+-                store.record_round(ts, results)
+-            except Exception as e:  # 写库异常不应杀死采集循环
+-                print(f"写库失败: {e}")
++            store.record_round(ts, results)
+ 
+             now_m = time.monotonic()
+             if now_m - last_roll5m >= 60:
+diff --git a/src/gpumon/collector/ssh.py b/src/gpumon/collector/ssh.py
+index ba81e08e7aa5b27aa0751fdd5387098a44cd6f39..e3785e491c70e343205ce4184341b390a20b5e35 100644
+--- a/src/gpumon/collector/ssh.py
++++ b/src/gpumon/collector/ssh.py
+@@ -128,7 +128,7 @@ def _ssh_opts() -> list[str]:
+ 
+ 
+ async def probe(host_key: str, ssh_alias: str, vendor: str | None = None) -> ProbeResult:
+-    """采集一台主机；任何失败都收敛成 ok=False 的 ProbeResult，绝不抛给上层。
++    """采集一台主机；预期的 SSH 与远端数据失败收敛成 ok=False。
+ 
+     vendor 来自 inventory（可选）：给了就跳过远端自动探测，异构机房里更稳。
+     """
+@@ -163,7 +163,4 @@ async def probe(host_key: str, ssh_alias: str, vendor: str | None = None) -> Pro
+         msg = (err.decode(errors="replace").strip() or f"ssh 返回码 {proc.returncode}")
+         return _failed(host_key, msg[:500])
+ 
+-    try:
+-        return parse_probe(host_key, out.decode(errors="replace"))
+-    except Exception as e:
+-        return _failed(host_key, f"解析失败: {e}")
++    return parse_probe(host_key, out.decode(errors="replace"))
+diff --git a/tests/fixtures/probe_sample.txt b/tests/fixtures/probe_sample.txt
+index a80a75404e57dabe7f5d8ea54f9066174002897e..11abe3f33ae107533e0cddbbbaf04f7a05e3a247 100644
+--- a/tests/fixtures/probe_sample.txt
++++ b/tests/fixtures/probe_sample.txt
+@@ -11,6 +11,8 @@ MemAvailable:   1048576 kB
+ cpu  100 0 50 1000 20 0 5 0 0 0
+ ##CPU2
+ cpu  200 0 100 1700 30 0 10 0 0 0
++##VENDOR
++nvidia
+ ##GPU
+ 0, GPU-aaa, NVIDIA H800, 100, 40, 81000, 81559, 65, 350.50
+ 1, GPU-bbb, NVIDIA H800, 0, 0, 1, 81559, 30, [N/A]
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index eacfaa8ce8396d889d9e8438a639bd051f2e0891..0e78a664b71882655b8768ac7f187ee3ab911354 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -19,6 +19,17 @@ def test_parse_basic():
+     assert r.host.mem_used_mib == 1024
+ 
+ 
++def test_parse_requires_supported_vendor_section():
++    variants = [
++        FIXTURE.replace("##VENDOR\nnvidia\n", ""),
++        FIXTURE.replace("##VENDOR\nnvidia\n", "##VENDOR\n"),
++        FIXTURE.replace("##VENDOR\nnvidia\n", "##VENDOR\nintel\n"),
++    ]
++    for raw in variants:
++        r = parse_probe("hx", raw)
++        assert not r.ok and "VENDOR" in r.error
++
++
+ def test_parse_cpu_util():
+     # idle_a=1020 tot_a=1175 ; idle_b=1730 tot_b=2040 ; util=100*(1-710/865)=17.9
+     r = parse_probe("hx", FIXTURE)
+diff --git a/tests/test_parse_amd.py b/tests/test_parse_amd.py
+index 86254ede082c9eb4ddb48a1871d739e9a5aa17b3..e53626e311d734120dbb2cd507b289b6aa1ee844 100644
+--- a/tests/test_parse_amd.py
++++ b/tests/test_parse_amd.py
+@@ -292,25 +292,3 @@ def test_parse_probe_vendor_none_is_ok_with_zero_gpus():
+     assert r.vendor == "none"
+     assert r.gpus == []
+     assert r.procs == []
+-
+-
+-def test_parse_probe_without_vendor_section_defaults_nvidia():
+-    """向后兼容：老探测脚本没有 ##VENDOR 段时按 NVIDIA 解析。"""
+-    text = "\n".join([
+-        "##META", "1700000000", "oldnode", "64",
+-        "##LOADAVG", "1.0 1.0 1.0 1/1 1",
+-        "##MEMINFO", "MemTotal:       1048576 kB", "MemAvailable:    524288 kB",
+-        "##CPU1", "cpu  1 0 1 10 0 0 0 0",
+-        "##CPU2", "cpu  2 0 2 20 0 0 0 0",
+-        "##GPU", "0, GPU-abc, NVIDIA H100, 75, 30, 40960, 81559, 62, 350.5",
+-        "##APPS", "GPU-abc, 999, 40000",
+-        "##PSMAP", "999 carol python3",
+-        "##END",
+-    ])
+-    r = parse_probe("nv-1", text)
+-    assert r.ok
+-    assert r.vendor == "nvidia"
+-    assert len(r.gpus) == 1
+-    assert r.gpus[0].vendor == "nvidia"
+-    assert r.gpus[0].util_gpu == 75
+-    assert r.procs[0].username == "carol"
+diff --git a/web/js/i18n.js b/web/js/i18n.js
+index 79dd7accadaab63c36db3d13a9e318f76c7e3d1b..bdd8efb7d7e5e690f5a09c1584b29dc59b2eb364 100644
+--- a/web/js/i18n.js
++++ b/web/js/i18n.js
+@@ -167,7 +167,6 @@ window.I18n = {
+       'ranking_detail_expanded': '明细 · 按算力域 / 集群分组（GPU·小时，跨设备）',
+       'ranking_detail_collapsed': '明细 · 按算力域 / 集群汇总（GPU·小时）',
+       'ranking_collapsed_note': '机器较多（{n} 台），已按集群合并列以免横向溢出；点右上角可展开到单机。',
+-      'ranking_other': '其他',
+ 
+       // Demo Banner
+       'demo_banner_title': '演示站点',
+@@ -339,7 +338,6 @@ window.I18n = {
+       'ranking_detail_expanded': 'Detail · Grouped by Capacity / Cluster (GPU·hours, cross-device)',
+       'ranking_detail_collapsed': 'Detail · Aggregated by Capacity / Cluster (GPU·hours)',
+       'ranking_collapsed_note': 'Many machines ({n} hosts), collapsed by cluster to avoid overflow. Click button above to expand to per-host.',
+-      'ranking_other': 'Other',
+ 
+       // Demo Banner
+       'demo_banner_title': 'Demo Site',
+diff --git a/web/js/ranking.js b/web/js/ranking.js
+index ba83c225590694b5202ba8d63f877ce15fa12eb3..b526d460e02eabee1148ed7268bb2296b8af2d0c 100644
+--- a/web/js/ranking.js
++++ b/web/js/ranking.js
+@@ -46,16 +46,6 @@ window.Views.ranking = (function () {
+         });
+       });
+     });
+-    // topology 缺失的机器（防御）补末尾。正常情况下不会走到——后端已按 inventory
+-    // 过滤掉退役机器；这里只兜"DB 有、清单已删"的极端情况。
+-    machines.forEach((m) => {
+-      if (order.some((o) => o.key === m.key)) return;
+-      order.push({ key: m.key, name: m.name, color: Palette.groupAccent("_other"),
+-        groupKey: "_other", groupName: I18n.t('ranking_other'), clusterKey: "_other",
+-        clusterName: I18n.t('ranking_other'), clusterColor: Palette.groupAccent("_other"),
+-        firstInGroup: false, firstInCluster: false });
+-      groupColor._other = groupColor._other || { color: Palette.groupAccent("_other"), tint: Palette.groupTint("_other") };
+-    });
+     // 表头算力域跨列
+     const groupSpans = [];
+     order.forEach((o) => {

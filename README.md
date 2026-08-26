@@ -92,6 +92,8 @@ The active `dev-v2-focused-rc5` candidate is documented under [`dev-v2-focused`]
 
 The broad 20-case [`dev-v1` archive](evals/archive/dev-v1/) is retained only for historical results and broad safety-regression reference. It contains generic cleanup cases that are intentionally not current tuning targets; active CI and model experiments do not run it.
 
+A manually adjudicated [real-world `cluster-gpu-monitor` field trial](evals/real-world/cluster-gpu-monitor/README.md) is preserved as historical evidence, separate from the active benchmark. It is not a controlled A/B comparison or evidence of general superiority.
+
 No project-level performance score is published. Historical diagnostics under `evals/archive/dev-v1/historical-results/` are development evidence only; public model-effect claims require repeated, pinned runs against a corpus frozen after the evaluated Skill version, with held-out cases reported separately. Fixture count and passing pre-cleanup tests are not evidence of Skill effectiveness.
 
 See [`evals/README.md`](evals/README.md) for the protocol and metrics.

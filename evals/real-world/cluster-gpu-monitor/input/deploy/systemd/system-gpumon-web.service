@@ -1,0 +1,43 @@
+[Unit]
+Description=gpumon web (system 级，仅监听 127.0.0.1，对外经 Caddy)
+After=network-online.target gpumon-collector.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__WEB_USER__
+Group=__GROUP__
+WorkingDirectory=__ROOT__/current
+Environment=GPUMON_ROOT=__ROOT__
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=__ROOT__/current/.venv/bin/gpumon web
+Restart=always
+RestartSec=5
+UMask=0077
+
+# Web 只读代码、配置和 SQLite；没有理由看到采集账户的 SSH home 或访问外网。
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=__ROOT__
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressAllow=localhost
+IPAddressDeny=any
+MemoryHigh=256M
+MemoryMax=384M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

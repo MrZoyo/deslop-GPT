@@ -1,0 +1,36 @@
+# 运行参数。复制为 settings.toml 后按需修改（settings.toml 不入库）。
+# 所有时间单位为秒。
+
+[collector]
+poll_interval_s = 30      # 每轮采集间隔
+ssh_connect_timeout_s = 8 # SSH 建连超时
+ssh_total_timeout_s = 20  # 单台机器一轮采集的整体超时（含 remote_probe 的 sleep 1）
+max_concurrency = 8       # 并发 SSH 的最大主机数
+cpu_sample_gap_s = 1      # remote_probe 内两次读 /proc/stat 的间隔，用于算 CPU 利用率
+ssh_output_limit_bytes = 4194304 # 单台单轮 stdout+stderr 总上限（默认 4 MiB，最高 16 MiB）
+
+[retention]
+raw_days = 35             # 原始 sample_* 保留天数；最低 31，默认多留 5 天余量，
+                          # 「使用人排行」会直接扫描 sample_proc 原始表。
+rollup_5m_days = 30       # 5 分钟聚合保留天数（≤24h 窗口用）
+rollup_1h_days = 400      # 1 小时聚合保留天数（>24h 窗口用）；须 > 最长时间窗，留足余量
+
+[db]
+path = "data/gpumon.db"   # 相对项目根目录
+
+[web]
+host = "127.0.0.1"        # 只监听本地；对外访问一律经 Caddy 反代（阶段二）
+port = 8848
+enable_docs = false        # 生产默认关闭 /docs、/redoc、/openapi.json
+max_query_concurrency = 4  # 昂贵统计查询最多同时执行几个
+query_queue_timeout_s = 1  # 查询槽位满时最多排队多久，超时返回 503
+query_timeout_s = 12       # 单个 SQLite 只读连接的总执行上限
+stats_cache_ttl_s = 15     # 历史统计短缓存；0 表示关闭
+ranking_user_limit = 200   # 用户排行最多返回多少人
+
+[privacy]
+mask_users = false        # true 时网页把使用人显示为 a***e
+
+[backup]
+enabled = true            # 是否启用定时备份（外部调度器调用 --scheduled 时检查）
+keep_count = 3            # 保留最近几个备份

@@ -8,6 +8,10 @@ The active development benchmark is [`dev-v2-focused`](dev-v2-focused/README.md)
 
 The 16 micro cases have same-prefix preservation counterexamples, golden/mutant polarity calibration, and alternate-valid calibration. The three mini repositories model accumulated test, verification, and fallback slop at repository scale.
 
+## Real-world evidence
+
+Manually adjudicated field trials are preserved separately under `real-world/` as historical evidence. They are not currently part of the active quantitative benchmark and must not be used to tune the Skill from a single repository. See the [`cluster-gpu-monitor` case study](real-world/cluster-gpu-monitor/README.md).
+
 ## Hard-gate order
 
 Focused grading separates four gates:

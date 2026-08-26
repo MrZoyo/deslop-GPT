@@ -1,0 +1,34 @@
+{
+  "case_id": "cluster-gpu-monitor-20260826",
+  "name": "cluster-gpu-monitor real-world deslop field trial",
+  "classification": "real-world-field-trial",
+  "status": "historical-evidence",
+  "capture_date": "2026-08-26",
+  "source_repository": "https://github.com/MrZoyo/cluster-gpu-monitor",
+  "source_license": "MIT",
+  "pre_cleanup_commit": "d9c730275ebaec46c718309ddc34a4bd04ae3938",
+  "pre_cleanup_tree": "1b1eea3df496ba94d5bf2b8a4e752f866b7301a2",
+  "first_cleanup_commit": "22fb141f7bba3a561b03d9372700f7bffc1e0530",
+  "reviewed_post_cleanup_commit": "76760d565fbd816c4a0f5bc3419fef159dbb7d7a",
+  "public_tags": {
+    "pre_cleanup": {
+      "name": "deslop-field-trial-before-20260826",
+      "target": "d9c730275ebaec46c718309ddc34a4bd04ae3938"
+    },
+    "reviewed_post_cleanup": {
+      "name": "deslop-field-trial-reviewed-20260826",
+      "target": "76760d565fbd816c4a0f5bc3419fef159dbb7d7a"
+    }
+  },
+  "snapshot": {
+    "path": "input/",
+    "method": "git archive d9c730275ebaec46c718309ddc34a4bd04ae3938",
+    "complete_tracked_tree": true,
+    "contents": "Only public tracked source from the pre-cleanup commit."
+  },
+  "reference_patches": {
+    "batch1.patch": "d9c730275ebaec46c718309ddc34a4bd04ae3938..22fb141f7bba3a561b03d9372700f7bffc1e0530",
+    "batch2.patch": "22fb141f7bba3a561b03d9372700f7bffc1e0530..76760d565fbd816c4a0f5bc3419fef159dbb7d7a"
+  },
+  "exclusions": "The private repository and production environment are excluded."
+}
