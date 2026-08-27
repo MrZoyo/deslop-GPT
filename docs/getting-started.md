@@ -1,10 +1,10 @@
 # Getting Started
 
-`deslop` is explicit and read-only by default. A safe first use is an audit of a narrow scope, followed by human review; only an invocation containing `apply` authorizes file edits.
+`deslop` is read-only by default. A safe first use is an audit of a narrow scope, followed by human review; only an invocation containing `apply` authorizes file edits.
 
 ## Install
 
-### Released standalone Skill: v0.2.0
+### Codex: released standalone Skill v0.2.0
 
 OpenAI's [Codex Skills documentation](https://developers.openai.com/codex/skills/) documents `$skill-installer` for curated skills and skills from other repositories. Invoke it with this repository URL:
 
@@ -14,23 +14,49 @@ Install the Skill from:
 https://github.com/MrZoyo/deslop-GPT/tree/v0.2.0/skills/deslop
 ```
 
-The v0.2.0 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. The immutable v0.1.0 payload remains at [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop).
+The v0.2.0 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. The same payload follows the open Agent Skills structure and can also be discovered directly by Claude Code. The immutable v0.1.0 payload remains at [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop).
 
 The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
-### Canonical user path with a reviewable checkout
+### Reviewable standalone checkout for Codex and Claude Code
 
-Codex discovers personal Skills under `$HOME/.agents/skills` and follows symlinked Skill directories. Clone the project outside the discovery tree, then link only the runtime payload:
+Codex discovers personal Skills under `$HOME/.agents/skills`; Claude Code uses `$HOME/.claude/skills`. Both follow symlinked Skill directories. Clone the project outside either discovery tree, then create only the link or links you need:
 
 ```bash
 git clone --branch v0.2.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
-mkdir -p "$HOME/.agents/skills"
+mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
 ```
 
-Run the `ln` command only when the destination does not already exist. Codex normally detects Skill changes automatically; restart Codex if the Skill does not appear.
+Use only the link for the host you need. Run an `ln` command only when its destination does not already exist. Codex normally detects Skill changes automatically. Claude Code watches existing Skill directories, but if the top-level directory was created after a session started, restart that session. The standalone command names are `$deslop` in Codex and `/deslop` in Claude Code.
 
-This is an independent community Skill. Compatibility does not imply affiliation with or endorsement by OpenAI.
+This is an independent community Skill. Compatibility does not imply affiliation with or endorsement by OpenAI or Anthropic.
+
+### Claude Code Plugin from GitHub
+
+The repository root is also a Claude Code Plugin and marketplace. Inside Claude Code, add the GitHub repository and install its `deslop` entry:
+
+```text
+/plugin marketplace add MrZoyo/deslop-GPT
+/plugin install deslop@deslop
+```
+
+Invoke the installed Plugin with its canonical namespaced command:
+
+```text
+/deslop:deslop audit
+```
+
+The marketplace currently follows `main` and declares the unreleased Plugin version 0.3.0. The immutable v0.2.0 tag predates the Claude Plugin metadata; use the tagged standalone payload when a released, pinned runtime is required. Because Claude Code uses the manifest version as its update key, development changes to the Plugin must bump that version before installed users can receive them.
+
+For local Plugin development, start Claude Code from this repository with:
+
+```bash
+claude --plugin-dir .
+```
+
+This loads the same [`skills/deslop/`](../skills/deslop/) payload under the `/deslop:deslop` namespace without installing it.
 
 ### Upgrade from v0.1.0
 
@@ -69,25 +95,39 @@ The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path 
 
 The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path.
 
-### Plugin status
+### Distribution status
 
-The `skills/deslop/` layout is ready for a future Plugin packaging commit, but Plugin distribution is withheld from v0.2.0. In the tested Codex CLI 0.149.1 environment, Plugin installation and caching succeeded while native registration of the bundled Skill did not. Standalone installation above is the supported release path.
+Claude Code packaging is defined by [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json), and the GitHub installation catalog is [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). These files are Claude-specific and do not replace Codex standalone discovery.
+
+Codex Plugin distribution remains withheld. In the tested Codex CLI 0.149.1 environment, Plugin installation and caching succeeded while native registration of the bundled Skill did not. The tagged standalone path above remains the supported Codex release path.
 
 ## Invocation modes
 
-| Invocation | Authorization and scope |
+Choose the command name for the active host and distribution:
+
+| Host and distribution | Command name |
 | --- | --- |
-| `$deslop` | Read-only audit of the established scope |
-| `$deslop audit` | Explicit read-only audit |
-| `$deslop apply` | Modify files within the established scope |
-| `$deslop tests` | Read-only audit focused on test signal |
-| `$deslop tests apply` | Apply test-focused cleanup, including justified mutual-support clusters |
-| `$deslop current branch apply` | Apply cleanup to current work relative to the actual merge base |
-| `$deslop deep` | Repository-wide read-only audit |
-| `$deslop deep apply` | Repository-wide cleanup without architectural redesign |
-| `$deslop path/to/file audit` | Restrict inspection to explicit paths plus minimal contract context |
+| Codex standalone Skill | `$deslop` |
+| Claude Code standalone Skill | `/deslop` |
+| Claude Code Plugin | `/deslop:deslop` |
+
+Append the following arguments to that command name:
+
+| Arguments | Authorization and scope |
+| --- | --- |
+| none | Read-only audit of the established scope |
+| `audit` | Explicit read-only audit |
+| `apply` | Modify files within the established scope |
+| `tests` | Read-only audit focused on test signal |
+| `tests apply` | Apply test-focused cleanup, including justified mutual-support clusters |
+| `current branch apply` | Apply cleanup to current work relative to the actual merge base |
+| `deep` | Repository-wide read-only audit |
+| `deep apply` | Repository-wide cleanup without architectural redesign |
+| `path/to/file audit` | Restrict inspection to explicit paths plus minimal contract context |
 
 Only `apply` authorizes edits. It does not authorize fetching, resetting, switching branches, staging, committing, pushing, or creating backups unless those operations are requested separately.
+
+Codex enforces explicit-only selection through [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml). That file is OpenAI-specific. Claude Code reads the shared standards-compatible `SKILL.md` and may select it from its description; without `apply`, that selection remains read-only. Use `/deslop` or `/deslop:deslop` explicitly when reproducible invocation matters.
 
 ## Scope behavior
 
@@ -112,7 +152,7 @@ Inside Git, `current branch` or an omitted scope means current work relative to 
 ## A review-first workflow
 
 1. Read repository instructions and inspect `git status`.
-2. Start with `$deslop audit`, explicit paths, or `$deslop deep`.
+2. Start with the host's `deslop` command plus `audit`, explicit paths, or `deep`.
 3. Review each candidate's external evidence, confidence, and preservation decision.
 4. Resolve MEDIUM uncertainty before applying anything.
 5. Invoke `apply` only for the supported scope.
@@ -136,7 +176,9 @@ Apply only the HIGH finding after confirming the evidence chain. Preserve or inv
 
 ## Update and remove
 
-For a pinned symlink installation, review a newer release and check out its immutable tag; the link does not need to change. If installed through `$skill-installer`, invoke it again with the newer tagged URL and follow its current update prompt. To remove the Skill, remove only the managed or symlinked `deslop` directory from the location where it was installed; keep or delete the separate source checkout according to your own workflow.
+For a pinned symlink installation, review a newer release and check out its immutable tag; the link does not need to change. If installed through `$skill-installer`, invoke it again with the newer tagged URL and follow its current update prompt. To remove a standalone Skill, remove only the managed or symlinked `deslop` directory from the location where it was installed; keep or delete the separate source checkout according to your own workflow.
+
+For a Claude Code Plugin installation, use `/plugin update deslop@deslop` after refreshing the marketplace, or `/plugin uninstall deslop@deslop` to remove it. Removing the Plugin does not remove a separate standalone link.
 
 ## Next steps
 

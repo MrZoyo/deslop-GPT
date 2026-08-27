@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "deslop",
+  "displayName": "deslop",
+  "version": "0.3.0",
+  "description": "Deletion-first audit and cleanup for accumulated test, verification, and fallback bloat.",
+  "author": {
+    "name": "MrZoyo",
+    "url": "https://github.com/MrZoyo"
+  },
+  "homepage": "https://github.com/MrZoyo/deslop-GPT",
+  "repository": "https://github.com/MrZoyo/deslop-GPT",
+  "license": "MIT",
+  "keywords": [
+    "agent-skill",
+    "code-cleanup",
+    "test-maintenance"
+  ]
+}

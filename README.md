@@ -15,7 +15,7 @@
 <p align="center">
   <a href="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml"><img src="https://github.com/MrZoyo/deslop-GPT/actions/workflows/validate.yml/badge.svg" alt="Validate workflow"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f.svg?style=flat-square" alt="MIT license"></a>
-  <a href="skills/deslop/"><img src="https://img.shields.io/badge/Agent%20Skill-Codex--compatible-0969da.svg?style=flat-square" alt="Codex-compatible Agent Skill"></a>
+  <a href="skills/deslop/"><img src="https://img.shields.io/badge/Agent%20Skill-Codex%20%2B%20Claude%20Code-0969da.svg?style=flat-square" alt="Codex and Claude Code compatible Agent Skill"></a>
   <a href="#safety-model"><img src="https://img.shields.io/badge/default-read--only-6e7781.svg?style=flat-square" alt="Read-only by default"></a>
   <a href="evals/real-world/cluster-gpu-monitor/README.md"><img src="https://img.shields.io/badge/field%20trial-manually%20adjudicated-8250df.svg?style=flat-square" alt="Manually adjudicated field trial"></a>
 </p>
@@ -52,7 +52,7 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Install v0.2.0 as a standalone Skill
+### Codex: install v0.2.0 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
@@ -70,23 +70,54 @@ mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes. See [Getting Started](docs/getting-started.md) for v0.1.0 migration, removal, scoping, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI product.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
-### Plugin status
+### Claude Code: install the Plugin from GitHub
 
-v0.2.0 uses the canonical `skills/deslop/` layout and is structurally ready for future skills-only Plugin packaging. Plugin distribution is not included in this release. In testing with Codex CLI 0.149.1, a valid Skills-only Plugin could be discovered, installed, and cached, but its bundled `deslop` Skill was not registered in the host available-skills catalog. Standalone Skill installation is the supported distribution method for v0.2.0; see the [Plugin compatibility note](docs/development.md#plugin-compatibility-note) for the concise diagnostic.
+Inside Claude Code, add this repository as a marketplace and install the Plugin:
+
+```text
+/plugin marketplace add MrZoyo/deslop-GPT
+/plugin install deslop@deslop
+```
+
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace currently tracks the unreleased Plugin version 0.3.0 on `main`; the immutable v0.2.0 tag predates the Claude distribution metadata.
+
+### One checkout, standalone discovery on both hosts
+
+The same released runtime payload can be linked into each host's user Skill directory:
+
+```bash
+mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
+ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
+```
+
+Use only the link for the host you need, and run each `ln` command only when its destination does not already exist. A standalone Claude Code installation invokes the Skill as `/deslop`. See [Getting Started](docs/getting-started.md) for installation scope, v0.1.0 migration, updates, removal, and a safer review-first workflow. `deslop` is an independent community project, not an OpenAI or Anthropic product.
+
+### Distribution status
+
+The shared [`skills/deslop/`](skills/deslop/) payload follows the open Agent Skills structure and is used unchanged by Codex and Claude Code. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) and [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) provide Claude Code packaging. Codex Plugin distribution remains withheld because the tested Codex host installed and cached a Skills-only Plugin without registering its bundled Skill; Codex standalone installation remains supported. See the [distribution compatibility note](docs/development.md#distribution-compatibility-note).
 
 ### Invoke it explicitly
 
-| Invocation | Effect |
+| Host and distribution | Command name |
 | --- | --- |
-| `$deslop` | Read-only audit of the established scope |
-| `$deslop audit` | Explicit read-only audit |
-| `$deslop apply` | Apply reviewed cleanup within scope |
-| `$deslop tests apply` | Prioritize test signal and mutual-support test/code clusters |
-| `$deslop current branch apply` | Clean current work relative to its actual merge base |
-| `$deslop deep` | Repository-wide read-only audit |
-| `$deslop deep apply` | Repository-wide cleanup without redesign |
+| Codex standalone Skill | `$deslop` |
+| Claude Code standalone Skill | `/deslop` |
+| Claude Code Plugin | `/deslop:deslop` |
+
+Append the same mode and scope arguments to the command name for each host:
+
+| Arguments | Effect |
+| --- | --- |
+| none | Read-only audit of the established scope |
+| `audit` | Explicit read-only audit |
+| `apply` | Apply reviewed cleanup within scope |
+| `tests apply` | Prioritize test signal and mutual-support test/code clusters |
+| `current branch apply` | Clean current work relative to its actual merge base |
+| `deep` | Repository-wide read-only audit |
+| `deep apply` | Repository-wide cleanup without redesign |
 
 Only `apply` authorizes edits. Staging, commits, pushes, branch changes, resets, and fetching still require separate permission.
 
@@ -128,7 +159,7 @@ The full decision model is documented in [Design](docs/design.md). The self-cont
 
 ## Safety model
 
-Invocation is explicit: [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml). Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
+Codex enforces explicit invocation through [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml). Claude Code does not read that OpenAI-specific metadata; the shared standards-compatible frontmatter instead tells Claude to invoke `deslop` explicitly. Claude Code may still select the Skill from its description, but such an invocation remains read-only unless the user includes `apply`. Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
 
 Apply authorization permits scoped edits; it does not resolve uncertainty in favor of deletion. See [Getting Started](docs/getting-started.md) for the review sequence and [Design](docs/design.md) for confidence classes and preserved boundaries.
 
@@ -164,6 +195,7 @@ Future cases can be added without becoming Skill-tuning inputs; see [Field Trial
 ## Repository structure
 
 ```text
+.claude-plugin/                 Claude Code Plugin and marketplace metadata
 skills/deslop/                   Self-contained runtime Skill payload
 docs/                            User, design, evidence, and development guides
 evals/dev-v2-focused/            Active focused development evaluation

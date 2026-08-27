@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "deslop",
+  "owner": {
+    "name": "MrZoyo",
+    "url": "https://github.com/MrZoyo"
+  },
+  "description": "Claude Code distribution for the deslop Agent Skill.",
+  "plugins": [
+    {
+      "name": "deslop",
+      "source": "./",
+      "description": "Audit or apply evidence-backed cleanup for accumulated test, verification, and fallback bloat."
+    }
+  ]
+}

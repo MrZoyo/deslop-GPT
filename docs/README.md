@@ -15,6 +15,7 @@ The top-level [README](../README.md) is the public overview. Detailed benchmark 
 ## Documentation boundaries
 
 - `docs/` explains the project to users and contributors.
+- `.claude-plugin/` packages the shared runtime for Claude Code and publishes its marketplace entry.
 - `skills/deslop/` is the self-contained runtime payload.
 - `evals/dev-v2-focused/` is the active development evaluation.
 - `evals/real-world/` preserves manually adjudicated historical evidence.
