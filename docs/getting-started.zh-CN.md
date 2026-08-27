@@ -2,27 +2,27 @@
 
 **简体中文** · [English](getting-started.md)
 
-`deslop` 默认为只读。安全的首次使用方式是先对较小范围执行审计，再由人工审查；只有包含 `apply` 的调用才授权编辑文件。
+`deslop` 默认只查看，不修改。第一次使用时，建议先审计一个较小的范围，再由人工检查结果；只有命令中明确带有 `apply`，才表示允许修改文件。
 
 ## 安装
 
-### Codex：已发布的独立 Skill v0.2.1
+### Codex：安装已发布的独立版 Skill（v0.2.1）
 
-OpenAI 的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)说明，可以使用 `$skill-installer` 安装精选 Skill 以及来自其他仓库的 Skill。请使用本仓库 URL 调用它：
+OpenAI 的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)说明，`$skill-installer` 既可以安装推荐的 Skill，也可以从其他仓库下载安装。把本仓库的 Skill 地址交给它即可：
 
 ```text
 $skill-installer
-Install the Skill from:
+请从以下地址安装 Skill：
 https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
 ```
 
-v0.2.1 的可安装载荷仅为 [`skills/deslop/`](../skills/deslop/)，不包括评估语料库或项目文档。同一载荷遵循开放的 Agent Skills 结构，也可以由 Claude Code 直接发现。运行时载荷与 v0.2.0 保持不变；v0.2.1 新增 Claude Code 分发元数据和双语项目文档。不可变的 v0.1.0 载荷仍位于 [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop)。
+v0.2.1 实际安装的内容只有 [`skills/deslop/`](../skills/deslop/)，不包括评测集和项目文档。这个目录遵循开放的 Agent Skills 结构，Claude Code 也可以直接加载。Skill 的运行时内容与 v0.2.0 完全相同；v0.2.1 只新增了 Claude Code 的发布配置和中英文项目文档。v0.1.0 的固定版本仍保留在 [`skill/deslop/`](https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop)。
 
-当前内置的 `$skill-installer` 会在由安装器管理的位置管理已下载的 Skill，默认位于 `$CODEX_HOME/skills` 下（通常是 `~/.codex/skills`）。这是安装器当前的行为，而非永久的公开路径契约。下文的 `$HOME/.agents/skills` 是有文档记录、可直接审查的用户发现路径。
+目前随 Codex 提供的 `$skill-installer` 会把下载的 Skill 放在安装器管理的目录中，默认是 `$CODEX_HOME/skills`（通常为 `~/.codex/skills`）。这只是安装器当前的实现方式，并不表示该路径是长期不变的公开约定。下文使用的 `$HOME/.agents/skills` 则是官方文档列出的用户级 Skill 加载目录，也便于直接检查其中内容。
 
-### 供 Codex 与 Claude Code 使用的可审查独立检出
+### 用同一份本地源码供 Codex 和 Claude Code 加载
 
-Codex 在 `$HOME/.agents/skills` 下发现个人 Skill；Claude Code 使用 `$HOME/.claude/skills`。二者都支持以符号链接方式安装的 Skill 目录。将项目克隆到这两个发现目录之外，然后只创建你需要的链接：
+Codex 从 `$HOME/.agents/skills` 加载个人 Skill，Claude Code 使用 `$HOME/.claude/skills`。两者都支持指向 Skill 目录的符号链接。先把项目克隆到这两个加载目录之外，再按需创建链接：
 
 ```bash
 git clone --branch v0.2.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
@@ -31,42 +31,42 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
 ```
 
-只需为你使用的宿主创建对应链接。仅当目标不存在时才运行相应的 `ln` 命令。Codex 通常会自动检测 Skill 变更。Claude Code 会监视已有的 Skill 目录；但如果顶层目录是在会话启动后才创建的，请重启该会话。独立 Skill 在 Codex 中的命令名称是 `$deslop`，在 Claude Code 中则是 `/deslop`。
+只创建当前平台需要的链接，并确认目标路径不存在后再执行对应的 `ln` 命令。Codex 通常会自动识别 Skill 的变更。Claude Code 会监视已经存在的 Skill 目录；如果顶层目录是在会话启动后才创建的，需要重启该会话。独立安装后，在 Codex 中使用 `$deslop`，在 Claude Code 中使用 `/deslop`。
 
-这是一个独立的社区 Skill。兼容性并不表示与 OpenAI 或 Anthropic 存在关联或获得其背书。
+这是一个独立的社区项目。能够在 OpenAI 或 Anthropic 的产品中运行，不代表它与这两家公司有关联，也不代表获得了官方认可。
 
 ### 从 GitHub 安装 Claude Code Plugin
 
-仓库根目录同时也是 Claude Code Plugin 和 marketplace。在 Claude Code 中添加该 GitHub 仓库，并安装其中的 `deslop` 条目：
+仓库根目录同时可以作为 Claude Code Plugin 及其插件市场源。在 Claude Code 中添加这个 GitHub 仓库，然后安装其中的 `deslop`：
 
 ```text
 /plugin marketplace add MrZoyo/deslop-GPT
 /plugin install deslop@deslop
 ```
 
-使用其规范的带命名空间命令调用已安装的 Plugin：
+安装完成后，用标准的命名空间命令调用 Plugin：
 
 ```text
 /deslop:deslop audit
 ```
 
-marketplace 跟踪 `main`，并声明了 0.2.1 版 Plugin。对应的 v0.2.1 标签包含同一份 Claude Plugin 元数据，并固定了该版本。由于 Claude Code 将清单版本作为更新键，未来的 Plugin 变更必须先递增该版本，已安装的用户才能收到更新。
+插件市场配置跟随 `main`，其中声明的 Plugin 版本是 0.2.1。对应的 v0.2.1 标签包含相同的 Claude Plugin 配置，并将发布内容固定下来。Claude Code 依靠 manifest 中的版本号判断是否有更新，因此以后每次修改 Plugin，都必须先提升该版本号，已安装用户才能收到更新。
 
-进行本地 Plugin 开发时，请从本仓库启动 Claude Code：
+在本地开发 Plugin 时，可以从本仓库启动 Claude Code：
 
 ```bash
 claude --plugin-dir .
 ```
 
-这样无需安装，即可在 `/deslop:deslop` 命名空间下加载同一个 [`skills/deslop/`](../skills/deslop/) 载荷。
+这样无需安装，就能以 `/deslop:deslop` 命令加载同一个 [`skills/deslop/`](../skills/deslop/) 目录。
 
 ### 从 v0.2.0 升级
 
-运行时 Skill 载荷及其 `skills/deslop/` 路径均未变化。通过符号链接安装的源码检出只需切换到 v0.2.1 标签，链接本身无需修改。由安装器管理的 Codex 副本应使用上方的 v0.2.1 URL 重新安装。Claude Code Plugin 安装方式从 v0.2.1 开始提供，请使用上方的 marketplace 命令。
+Skill 的运行时内容及其 `skills/deslop/` 路径都没有变化。如果符号链接指向本地源码仓库，只需把该仓库切换到 v0.2.1 标签，链接本身不用改。通过 Codex 安装器下载的副本，应使用上方的 v0.2.1 地址重新安装。Claude Code Plugin 是 v0.2.1 新增的安装方式，请使用上面的插件市场命令。
 
 ### 从 v0.1.0 升级
 
-安装器不会自动跟随 Git 目录重命名。请从以下位置重新安装：
+安装器不会自动适配 Git 仓库中的目录改名，因此需要从新地址重新安装：
 
 ```text
 https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
@@ -78,14 +78,14 @@ https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
 https://github.com/MrZoyo/deslop-GPT/tree/v0.1.0/skill/deslop
 ```
 
-如果 Codex 链接的是源码检出，请先检查现有目标：
+如果 Codex 通过符号链接加载本地源码仓库，请先检查现有链接：
 
 ```bash
 test -L "$HOME/.agents/skills/deslop"
 readlink "$HOME/.agents/skills/deslop"
 ```
 
-只有当输出确认它是预期指向 `~/.local/share/deslop-GPT/skill/deslop` 的 v0.1.0 符号链接时，才移除该符号链接本身，并为 v0.2.1 重新创建：
+只有当输出确认它确实是 v0.1.0 的符号链接，并且指向预期的 `~/.local/share/deslop-GPT/skill/deslop` 时，才删除链接本身，然后为 v0.2.1 重新创建链接：
 
 ```bash
 unlink "$HOME/.agents/skills/deslop"
@@ -93,25 +93,25 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" \
   "$HOME/.agents/skills/deslop"
 ```
 
-如果目标是实际目录或指向其他位置，请停止操作并检查，而不要移除它。v0.1.0 作为不可变历史版本，仍在其原始标签路径上受到支持。
+如果该路径是一个真实目录，或链接指向其他位置，请先停下来查清楚，不要直接删除。v0.1.0 仍作为固定的历史版本保留在原标签路径中。
 
 ### 开发分支
 
-[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 路径可能包含尚未发布的变更。只有在你有意使用开发版本时才选择它；需要可复现性时，请使用带标签的 v0.2.1 路径。
+[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 可能包含尚未发布的改动。只有明确想使用开发版时才选择它；如果需要稳定复现，请使用带 v0.2.1 标签的地址。
 
-独立运行时路径随仓库一起版本化：v0.1.0 仍位于 `skill/deslop/`，而 v0.2.0 及更高版本使用规范路径 `skills/deslop/`。
+独立版 Skill 的目录也随仓库版本变化：v0.1.0 位于 `skill/deslop/`，从 v0.2.0 开始则统一使用 `skills/deslop/`。
 
-### 分发状态
+### 发布方式现状
 
-Claude Code 打包由 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 定义，GitHub 安装目录则是 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。这些文件仅供 Claude 使用，不能替代 Codex 的独立发现方式。
+Claude Code 的 Plugin 配置由 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 定义，[`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json) 则提供从 GitHub 安装所需的插件市场信息。这些文件只供 Claude Code 使用，不能替代 Codex 加载独立 Skill 的方式。
 
-Codex Plugin 分发仍暂不提供。在经测试的 Codex CLI 0.149.1 环境中，Plugin 安装与缓存成功，但其中捆绑的 Skill 未能完成原生注册。上文带标签的独立路径仍是受支持的 Codex 发布路径。
+目前仍不提供 Codex Plugin 版本。在测试使用的 Codex CLI 0.149.1 中，Plugin 虽然可以安装并写入缓存，但其中包含的 Skill 没有被 Codex 注册。对 Codex 而言，当前支持的发布方式仍是安装上文带版本标签的独立 Skill。
 
 ## 调用模式
 
-根据当前宿主与分发方式选择命令名称：
+根据当前使用的平台和安装方式选择命令：
 
-| 宿主与分发方式 | 命令名称 |
+| 平台与安装方式 | 命令名称 |
 | --- | --- |
 | Codex 独立 Skill | `$deslop` |
 | Claude Code 独立 Skill | `/deslop` |
@@ -121,73 +121,73 @@ Codex Plugin 分发仍暂不提供。在经测试的 Codex CLI 0.149.1 环境中
 
 | 参数 | 授权与范围 |
 | --- | --- |
-| 无 | 对既定范围进行只读审计 |
-| `audit` | 明确进行只读审计 |
-| `apply` | 修改既定范围内的文件 |
-| `tests` | 以测试信号为重点进行只读审计 |
-| `tests apply` | 应用以测试为重点的清理，包括有充分依据的相互支撑簇 |
-| `current branch apply` | 相对于实际合并基准对当前工作应用清理 |
-| `deep` | 对整个仓库进行只读审计 |
-| `deep apply` | 在不重新设计架构的前提下清理整个仓库 |
-| `path/to/file audit` | 将检查限制在明确路径及最少必要的契约上下文内 |
+| 不带参数 | 对已经确定的范围做只读审计 |
+| `audit` | 明确要求只读审计 |
+| `apply` | 修改已经确定的范围内的文件 |
+| `tests` | 重点审查测试是否提供了有效证据，仍为只读 |
+| `tests apply` | 执行以测试为重点的清理，包括证据充分、只会相互自证的测试与代码组 |
+| `current branch apply` | 以实际的合并基点为准，清理当前分支上的工作 |
+| `deep` | 对整个仓库做只读审计 |
+| `deep apply` | 清理整个仓库，但不重新设计架构 |
+| `path/to/file audit` | 只检查指定路径，以及判断相关约定所必需的最少上下文 |
 
-只有 `apply` 才授权编辑。除非另行请求，否则它不授权获取远程内容、重置、切换分支、暂存、提交、推送或创建备份。
+只有 `apply` 表示允许编辑。拉取远程内容、重置、切换分支、暂存、提交、推送和创建备份仍需用户另行授权。
 
-Codex 通过 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 强制仅限明确选择。该文件是 OpenAI 专用的。Claude Code 会读取共享的标准兼容 `SKILL.md`，并可能根据其描述选中该 Skill；如果没有 `apply`，这种选择仍为只读。需要可复现调用时，请明确使用 `/deslop` 或 `/deslop:deslop`。
+Codex 通过 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 要求用户明确调用这个 Skill；该文件只对 OpenAI 的运行环境生效。Claude Code 读取通用格式的 `SKILL.md`，可能根据其中的描述自动选用该 Skill；但只要没有 `apply`，操作仍然是只读的。需要确保每次都以同样方式调用时，请明确输入 `/deslop` 或 `/deslop:deslop`。
 
-## 范围行为
+## 如何确定操作范围
 
-### 明确路径
+### 指定路径
 
-使用路径获得最小审查表面：
+指定路径可以把审查范围控制到最小：
 
 ```text
 $deslop src/reporting.py tests/test_reporting.py audit
 ```
 
-Agent 可以检查判断证据是否独立所需的最少调用方、契约、历史和测试。在应用模式下，除非直接需要少量相邻契约变更，否则操作范围不会超出指定路径。
+为了判断证据是否独立，Agent 可以查看最低限度的调用方、约定、历史记录和测试。进入 `apply` 模式后，修改仍限于指定路径；只有在必须同步调整相邻文件中的一小处约定时才可例外。
 
 ### 当前工作
 
-在 Git 中，`current branch` 或省略范围表示相对于实际本地合并基准的当前工作。已暂存、未暂存和未跟踪的工作均属于该边界；绝不自动假定 `main`。
+在 Git 仓库中，`current branch` 或省略范围，都表示审查当前工作相对于本地实际合并基点的变化。已暂存、未暂存和未跟踪的内容都包含在内；Skill 不会擅自假定基准分支是 `main`。
 
 ### 整个仓库
 
-`deep` 扩大检查范围，而不扩大权限。在 `deep apply` 中，生成代码、供应商依赖、第三方源码树、迁移、锁文件和外部生成的快照仍被排除，除非明确纳入或能够证明归仓库所有。
+`deep` 只扩大检查范围，不会扩大操作权限。即使使用 `deep apply`，生成代码、随项目复制进来的依赖、第三方源码、迁移历史、锁文件和外部生成的快照也默认排除；只有用户明确纳入，或有证据表明它确实由本仓库维护时，才会处理。
 
 ## 先审查后操作的工作流
 
-1. 阅读仓库指令并检查 `git status`。
-2. 从宿主的 `deslop` 命令配合 `audit`、明确路径或 `deep` 开始。
-3. 审查每个候选项的外部证据、置信度和保留决定。
-4. 应用任何内容之前，先解决 MEDIUM 级别的不确定性。
-5. 仅对有充分依据的范围调用 `apply`。
-6. 先运行仓库已有的针对性检查，再运行有文档记录的最终验证。
-7. 检查最终差异。暂存、提交或推送只能作为另行授权的操作执行。
+1. 阅读仓库说明，并检查 `git status`。
+2. 使用当前平台对应的 `deslop` 命令，从 `audit`、指定路径或 `deep` 开始。
+3. 检查每个候选项的外部证据和置信度，并确认哪些边界必须保留。
+4. 执行任何修改之前，先解决所有 MEDIUM 项的不确定性。
+5. 只对证据充分的范围调用 `apply`。
+6. 先运行仓库已有的针对性检查，再运行文档规定的最终验证。
+7. 查看最终差异。暂存、提交或推送都必须另外获得授权。
 
-审计应区分候选项与边界，而不是生成一份原始的代码异味列表。
+审计结果应清楚区分“可以删除的候选项”和“必须保留的系统边界”，不能只列一份未经判断的代码异味清单。
 
 ```text
 HIGH
-- redundant internal verifier; producer and verifier share all inputs
+- 内部校验器重复多余；产出方和校验方使用完全相同的输入
 
 PRESERVE
-- persisted readback crosses a real write/read failure boundary
+- 写入后回读跨越了真实的读写故障边界
 
 UNRESOLVED
-- compatibility branch has a caller, but its supported-version contract is unclear
+- 兼容分支有真实调用方，但目前不清楚它承诺支持哪些版本
 ```
 
-确认其证据链后，仅应用 HIGH 级别的发现。保留或进一步调查其他项目。
+确认完整证据链后，只执行 HIGH 项；其余内容应当保留或继续调查。
 
 ## 更新与移除
 
-对于固定版本的符号链接安装，请审查较新版本并检出其不可变标签；链接本身无需改变。如果通过 `$skill-installer` 安装，请用更新的带标签 URL 再次调用，并遵循其当前更新提示。要移除独立 Skill，只需从安装位置移除由安装器管理或以符号链接方式安装的 `deslop` 目录；是否保留单独的源码检出，由你自己的工作流决定。
+如果通过符号链接固定在某个版本，请先审查新版，再把本地仓库切换到新版的固定标签；链接本身不用改。如果通过 `$skill-installer` 安装，请用新版的标签地址再次调用安装器，并按当前提示完成更新。要移除独立 Skill，只删除实际安装位置中由安装器管理的 `deslop` 目录，或对应的 `deslop` 符号链接。另行保存的源码仓库是否删除，可按自己的工作方式决定。
 
-对于 Claude Code Plugin 安装，在刷新 marketplace 后使用 `/plugin update deslop@deslop` 更新，或使用 `/plugin uninstall deslop@deslop` 移除。移除 Plugin 不会同时移除单独的独立 Skill 链接。
+如果安装的是 Claude Code Plugin，刷新插件市场后可用 `/plugin update deslop@deslop` 更新，或用 `/plugin uninstall deslop@deslop` 卸载。卸载 Plugin 不会删除另外创建的独立 Skill 链接。
 
 ## 后续步骤
 
-- 阅读[设计](design.zh-CN.md)，了解证据模型。
-- 在解读开发结果之前阅读[评估](evaluation.zh-CN.md)。
-- 阅读[现场试验](field-trials.zh-CN.md)，了解真实世界证据边界。
+- 阅读[设计](design.zh-CN.md)，了解如何判断证据是否充分。
+- 解读开发评测结果前，先阅读[评测](evaluation.zh-CN.md)。
+- 阅读[真实项目试用](field-trials.zh-CN.md)，了解真实项目证据的适用边界。
