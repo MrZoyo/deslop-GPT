@@ -1,5 +1,7 @@
 # Development
 
+[简体中文](development.zh-CN.md) · **English**
+
 This repository separates runtime policy, active evaluation, historical evidence, and presentation material. Keep those boundaries visible in every change.
 
 ## Repository layout
@@ -97,7 +99,7 @@ Follow [Field Trials](field-trials.md). Capture the exact public tree with Git-n
 
 ## Release readiness
 
-Public project releases use semantic versioning beginning with v0.1.0. A `0.x` release is usable but still evolving. Annotated Git tags are immutable release identities. A distribution manifest version must match its intended Git release tag without the leading `v`; the 0.3.0 Claude Plugin manifest on `main` is unreleased until a matching tag exists. Every Plugin change must bump the manifest version because Claude Code uses it as the update key. Benchmark revision tags remain separate from project releases.
+Public project releases use semantic versioning beginning with v0.1.0. A `0.x` release is usable but still evolving. Annotated Git tags are immutable release identities. A distribution manifest version must match its Git release tag without the leading `v`; the current Claude Plugin manifest is 0.2.1 and matches v0.2.1. Every Plugin change must bump the manifest version because Claude Code uses it as the update key. Benchmark revision tags remain separate from project releases.
 
 Before a public-facing release commit:
 
@@ -114,6 +116,6 @@ Do not infer a product version from a benchmark tag or move a published release 
 
 The canonical [`skills/deslop/`](../skills/deslop/) runtime stays standards-compatible and is shared unchanged across hosts. Codex discovers it as a standalone Skill under `.agents/skills`; Claude Code can discover the same directory under `.claude/skills` or through the repository's Claude Plugin. The OpenAI-specific [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) controls Codex UI metadata and explicit-only invocation and is ignored by Claude Code.
 
-Claude Code packaging is shipped on `main` through [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) and [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). The repository root is the Plugin root, so Claude uses the default `skills/<name>/SKILL.md` scan and exposes the canonical namespaced command `/deslop:deslop`. The manifest declares the unreleased next version, 0.3.0; every Plugin change must bump that value for update detection, and a public release requires a matching `v0.3.0` tag. The v0.2.0 tag remains an immutable standalone release and does not contain this packaging metadata.
+Claude Code packaging is shipped through [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) and [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). The repository root is the Plugin root, so Claude uses the default `skills/<name>/SKILL.md` scan and exposes the canonical namespaced command `/deslop:deslop`. The manifest declares 0.2.1 and the matching `v0.2.1` tag pins that release. v0.2.1 adds distribution metadata and bilingual project documentation while leaving the runtime Skill payload byte-for-byte identical to v0.2.0. Every future Plugin change must bump the manifest value for update detection.
 
 Codex Plugin packaging remains a separate unresolved host issue. The tested host was Codex CLI 0.149.1. Plugin Creator validation accepted a temporary Skills-only manifest with `skills: "./skills/"`; local marketplace discovery, installation, and cache creation also succeeded. The cache contained `skills/deslop/SKILL.md`, but a fresh app-server with the ambient standalone Skill removed and `skills/list(forceReload=true)` returned no registered `deslop` Skill. The current blocker is therefore Codex Plugin-to-host Skill registration, not the canonical runtime layout or standalone Skill validity. The Claude-specific `.claude-plugin/` metadata does not change that result or replace the supported Codex standalone path.

@@ -1,5 +1,7 @@
 # `dev-v2-focused-rc5` pre-freeze note
 
+[简体中文](review.zh-CN.md) · **English**
+
 Review revision: rc5 is driven by published rc3 micro and rc4 mini model evidence. It narrows Skill behavior-preservation guidance after the `t01b`/`t03b` over-deletions, makes the `v01b` hidden contract independent of its pass-through writer, and deletes the lexical `envelope`/`receipt`/`proof` reduction gate that caused the verification mini false negative. It adds no grader layer, calibration type, dependency, or result machinery.
 
 ## Case-by-case review

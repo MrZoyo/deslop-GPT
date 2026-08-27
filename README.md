@@ -8,6 +8,8 @@
   <strong>A deletion-first Agent Skill for agent-maintained codebases</strong>
 </p>
 
+<p align="center"><a href="README.zh-CN.md">简体中文</a> · <strong>English</strong></p>
+
 <p align="center">
   Evidence-backed cleanup that reduces accumulated machinery while preserving real behavior.
 </p>
@@ -52,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.2.0 as a standalone Skill
+### Codex: install v0.2.1 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.2.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.2.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.2.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.1 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -81,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace currently tracks the unreleased Plugin version 0.3.0 on `main`; the immutable v0.2.0 tag predates the Claude distribution metadata.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace distributes Plugin version 0.2.1 from `main`, and the matching v0.2.1 tag pins the same release. This patch release adds Claude Code packaging and bilingual documentation; the runtime Skill payload is unchanged from v0.2.0.
 
 ### One checkout, standalone discovery on both hosts
 

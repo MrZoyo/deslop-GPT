@@ -1,5 +1,7 @@
 # Design
 
+[简体中文](design.zh-CN.md) · **English**
+
 `deslop` is a semantic cleanup policy for complexity accumulated through repeated coding-agent implementation and correction cycles. The self-contained runtime [`SKILL.md`](../skills/deslop/SKILL.md) is authoritative; this document explains the model without duplicating every runtime instruction.
 
 ## Deletion-first, not deletion-maximal

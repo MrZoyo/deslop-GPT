@@ -1,5 +1,7 @@
 # Evaluation
 
+[简体中文](evaluation.zh-CN.md) · **English**
+
 The evaluation material tests whether `deslop` can simplify accumulated machinery without erasing meaningful behavior. It is development evidence, not a claim of general model superiority.
 
 [`evals/README.md`](../evals/README.md) is the canonical protocol. The active corpus documentation lives in [`evals/dev-v2-focused/`](../evals/dev-v2-focused/README.md); this page provides navigation and interpretation rather than a competing copy of every command and threshold.

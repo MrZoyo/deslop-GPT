@@ -1,5 +1,7 @@
 # `dev-v2-focused`
 
+[简体中文](README.zh-CN.md) · **English**
+
 This is a new development corpus for accumulated complexity created by repeated coding-agent implementation and correction cycles. It is intentionally separate from historical `dev-v1`; do not tune the Skill to maximize either corpus and do not combine their scores.
 
 ## Scope and mix

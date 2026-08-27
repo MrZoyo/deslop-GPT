@@ -1,5 +1,7 @@
 # Field Trials
 
+[简体中文](field-trials.zh-CN.md) · **English**
+
 Real-world field trials preserve what happened when `deslop` was used against an actual public repository. They complement synthetic and miniature evaluations with reviewable provenance, but they are historical case studies—not active tuning inputs or controlled benchmark runs.
 
 ## Method

@@ -1,5 +1,7 @@
 # cluster-gpu-monitor real-world field trial
 
+[简体中文](README.zh-CN.md) · **English**
+
 This case preserves a manually adjudicated `$deslop` field trial against the real public repository [MrZoyo/cluster-gpu-monitor](https://github.com/MrZoyo/cluster-gpu-monitor). It is not a synthetic benchmark fixture. The repository had accumulated changes through repeated coding-agent development before `$deslop deep` was run read-only; findings were reviewed by a human before any cleanup was applied.
 
 ## Preserved artifacts

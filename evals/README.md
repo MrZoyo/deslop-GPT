@@ -1,5 +1,7 @@
 # Active evaluation protocol
 
+[简体中文](README.zh-CN.md) · **English**
+
 The active development benchmark is [`dev-v2-focused`](dev-v2-focused/README.md). It targets accumulated complexity created by repeated coding-agent cycles, not generic cleanup:
 
 - test-suite bloat: 4 paired cases (50%);

@@ -1,5 +1,7 @@
 # deslop documentation
 
+[简体中文](README.zh-CN.md) · **English**
+
 Choose the shortest path that matches what you want to do:
 
 | Goal | Start here |
@@ -21,3 +23,5 @@ The top-level [README](../README.md) is the public overview. Detailed benchmark 
 - `evals/real-world/` preserves manually adjudicated historical evidence.
 
 Changing explanatory prose here does not change runtime policy or evaluation semantics.
+
+Maintained project documentation is paired in English and Simplified Chinese. Runtime Skill instructions, frozen evaluation inputs, archived results, and reference evidence remain in their canonical language because translating them would change executable policy or frozen evidence identities.
