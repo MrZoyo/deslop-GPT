@@ -162,7 +162,7 @@ $deslop deep apply
 
 ## 安全模型
 
-Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml) 要求用户明确调用这个 Skill。Claude Code 不读取这项 OpenAI 专用元数据；共用 `SKILL.md` 文件头中的通用元数据则说明 `deslop` 应由用户明确调用。Claude Code 仍有可能根据描述自动选中该 Skill，但只要用户没有写 `apply`，它就只能读取和审计。默认模式与 `audit` 都是只读模式；审计也可以明确记录某段可疑代码经查证后决定保留。不能仅仅因为代码看起来很防御、由 Agent 编写，或有一项可以删除的测试，就认定代码本身也可以删除。
+Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml) 要求用户明确调用这个 Skill。Claude Code 不读取这项 OpenAI 专用元数据；共用 `SKILL.md` 文件头中的通用元数据则说明 `deslop` 应由用户明确调用。Claude Code 仍有可能根据描述自动选中该 Skill——[2026-09-03 的一次控制运行](evals/runtime-controls/results/claude-code-haiku-20260903.md)记录到它确实这么做了——但只要用户没有写 `apply`，它就只能读取和审计。默认模式与 `audit` 都是只读模式；审计也可以明确记录某段可疑代码经查证后决定保留。不能仅仅因为代码看起来很防御、由 Agent 编写，或有一项可以删除的测试，就认定代码本身也可以删除。
 
 只读验证应尽量重定向缓存或生成输出，并披露偶然留下的残留物。`apply` 只授权在既定范围内编辑，不能把尚未查清的问题一律解释成可以删除。审查顺序见[入门指南](docs/getting-started.zh-CN.md)，置信度分级和默认保留的边界见[设计](docs/design.zh-CN.md)。
 
@@ -172,13 +172,15 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 
 | Skill payload | 宿主与加载方式 | 运行次数 | 能够说明什么 |
 | --- | --- | --- | --- |
+| v0.3.1 发布 payload 哈希 | Claude Code 2.1.259 CLI，Haiku 4.5，`.claude/skills` 发现路径 | 3 个运行时控制案例，各 1 次，无 baseline | Claude 仅凭描述就选中了该 Skill，且仍然保持只读；一个不要求清理的提问没有把它拉进来 |
+| v0.3.1 发布 payload 哈希 | Claude Code 2.1.259 CLI，Haiku 4.5，`.claude/skills` 发现路径 | 5 个 `dev-v2` 小案例，各 3 次 apply，无 baseline | 15 次中 12 次通过全部隐藏检查；`t02b` 有 2/3 次删掉了仍受支持的 legacy header 分支 |
 | v0.3.1 发布内容（发布前精确哈希） | Codex 子代理按路径加载 Skill | 1 次默认 audit，加 `t02b`、`t03b` 两个保留案例 | 窄范围开发回归 smoke；三次都没有改变 fixture 内容 |
 | v0.3.1 标签 Plugin | Claude Code 2.1.259，隔离配置与远端 `main` catalog | 1 次 marketplace 安装，不调用模型 | 远程 HTTPS source 把 v0.3.1 标签解析到提交 `a19128d`；安装版本和运行时哈希一致 |
 | v0.3.0 正式版精确哈希 | Codex 子代理按路径加载 Skill | 3 个小型仓库 apply，加 1 次 audit | 三个清理结果均通过隐藏行为、精简和新增内容限制；不包含 CLI discovery 或 baseline 证据 |
 | v0.3.0 正式版精确哈希 | Claude Code 2.1.259 本地 Plugin，Haiku 4.5 | 1 次 audit，加 1 次 apply | 已验证 Plugin 加载和一个有效清理结果；apply 在最终报告前达到回合上限 |
 | 更早的开发 payload | Codex CLI 0.149.1，`gpt-5.6-sol` | rc3 小案例、rc4 小型仓库和 rc5 定向诊断 | 只适用于对应 payload 哈希的历史开发证据 |
 
-2026-09-03 的两组前向 smoke 保存在 [`evals/release-smoke/`](evals/release-smoke/) 下。它们都是已暴露、单次、没有 baseline 的开发诊断，不是 held-out 模型效果证据。旧版 rc3 小案例试运行中，加载当时的 Skill 后总 token 增加 63.1%，耗时增加 16.5%；这次单次结果不能预测 v0.3.x 成本，但说明 `deslop` 更适合有意安排的累积清理，不适合作为每个微小 diff 的固定步骤。
+2026-09-03 的两组前向 smoke 保存在 [`evals/release-smoke/`](evals/release-smoke/) 下；同一天的两次 Claude Code CLI 运行分别保存在 [`evals/runtime-controls/results/`](evals/runtime-controls/results/) 和 [`evals/dev-v2-focused/results/`](evals/dev-v2-focused/results/) 下。它们都是已暴露、没有 baseline 的开发诊断，不是 held-out 模型效果证据。其中重复运行的 `dev-v2` 是第一次与更早的单次 smoke 结论相反：`t02b` 在 Codex 子代理下通过过一次，但三次 Haiku 运行里有两次连同覆盖它的测试一起删掉了仍受支持的 legacy header 分支——正是这个案例要拦截的过度删除。旧版 rc3 小案例试运行中，加载当时的 Skill 后总 token 增加 63.1%，耗时增加 16.5%；这次单次结果不能预测 v0.3.x 成本，但说明 `deslop` 更适合有意安排的累积清理，不适合作为每个微小 diff 的固定步骤。
 
 ### 专项开发评测
 

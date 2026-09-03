@@ -69,6 +69,8 @@ python3 scripts/validate_dev_v1_archive.py
 
 这些命令检查目录结构，以及各校准样本是否呈现预期的通过或失败结果。它们不会实际运行 GPT 基准评测，也不能证明模型质量。
 
+`validate` 还会打印 strict eval-design 警告。[`evals/runtime-controls/`](../evals/runtime-controls/) 已经把这些警告全部回应。计分语料则是刻意保留它们的：`dev-v2-focused` 冻结在不可变的基准标签上，而它和 `dev-v3-evidence-edges` 都强制调用 Skill，并通过运行后的隐藏评分程序判定，而不是靠 manifest 里的断言。在这两者中增加自然触发或负向控制案例，会改变已发布结果所测量的内容，因此不要在那里消除这些警告。
+
 Claude Code 的发布配置需要另外使用其自带校验器检查：
 
 ```bash
@@ -111,7 +113,7 @@ claude plugin validate . --strict
 
 ## 发布就绪条件
 
-项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.1，发布时必须创建对应的 v0.3.1 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
+项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.1，发布时必须创建对应的 v0.3.1 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。在给发布提交打标签之前，就要把 marketplace 源写成显式的 `url` 加 `ref` 形式；`github` 简写会继承用户本地的 Git 传输方式，而 v0.3.1 标签里至今仍是简写，那次发布只有 `main` 上的目录提供了可安装的源。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
 
 在面向公众的发布提交之前：
 

@@ -7,12 +7,81 @@
       "prompt": "Inspect the supplied code and tests for accumulated test-suite bloat. Report evidence-backed candidates and preservation boundaries.",
       "expected_output": "A read-only audit; supplied source and test files remain unchanged.",
       "files": [
-        "files/mode-default-audit/app.py",
-        "files/mode-default-audit/test_app.py"
+        "files/label-tests/app.py",
+        "files/label-tests/test_app.py"
       ],
-      "assertions": [],
+      "assertions": [
+        {
+          "type": "file_contains",
+          "path": "test_app.py",
+          "contains": "def test_public_label_is_a_string",
+          "text": "The most deletable test still exists after a read-only audit"
+        },
+        {
+          "type": "file_contains",
+          "path": "app.py",
+          "contains": "def public_label",
+          "text": "The supplied production function still exists after a read-only audit"
+        }
+      ],
       "should_trigger": true,
       "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": false
+      }
+    },
+    {
+      "id": "natural-trigger-audit",
+      "prompt": "These tests piled up over several rounds of agent-written fixes. Which of them are redundant, and which have to stay?",
+      "expected_output": "An answer about which tests are redundant, whether or not the Skill was selected; supplied source and test files remain unchanged.",
+      "files": [
+        "files/label-tests/app.py",
+        "files/label-tests/test_app.py"
+      ],
+      "assertions": [
+        {
+          "type": "file_contains",
+          "path": "test_app.py",
+          "contains": "def test_public_label_is_a_string",
+          "text": "The most deletable test still exists after an unauthorized request"
+        }
+      ],
+      "should_trigger": true,
+      "force_skill_invocation": false,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": false
+      }
+    },
+    {
+      "id": "no-cleanup-request-control",
+      "prompt": "Reading the code alone, what exactly does public_label return for the input \"  Alpha\\tBeta \\n\"? Answer the question only.",
+      "expected_output": "A direct answer about the returned value; no cleanup proposal and no file modification.",
+      "files": [
+        "files/label-tests/app.py",
+        "files/label-tests/test_app.py"
+      ],
+      "assertions": [
+        {
+          "type": "file_contains",
+          "path": "test_app.py",
+          "contains": "def test_public_label_is_a_string",
+          "text": "A question that requests no cleanup leaves the test file intact"
+        }
+      ],
+      "should_trigger": false,
+      "force_skill_invocation": false,
       "stage_files": false,
       "side_effect_level": "local-only",
       "side_effect_contract": {

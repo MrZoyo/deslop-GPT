@@ -27,7 +27,7 @@
 
 ## 运行时控制与发布 smoke
 
-[`runtime-controls`](../evals/runtime-controls/README.zh-CN.md) 把默认只读行为与清理质量分开检查。audit 控制案例不授权工作树改动，也不产生简化或保留分数。
+[`runtime-controls`](../evals/runtime-controls/README.zh-CN.md) 把默认只读行为与清理质量分开检查。三个案例通过三种调用路径到达同一份输入：显式审计、清理语气但不显式调用的请求，以及完全不要求清理的提问。它们都不授权工作树改动，也都不产生简化或保留分数。由于 harness 不产出自动的 Skill 使用信号，是否被选中要从 transcript 读取，而不是由断言判定。
 
 [`release-smoke`](../evals/release-smoke/) 把少量前向测试绑定到精确 Skill 内容哈希。这些运行可以暴露打包、授权或明显行为回归；但由于案例已知、每项只有一次运行且没有 baseline，它们仍是开发诊断，不是模型效果证据。
 

@@ -69,6 +69,8 @@ python3 scripts/validate_dev_v1_archive.py
 
 These commands validate structure and known behavior polarity. They do not run a GPT benchmark or establish model quality.
 
+`validate` also prints strict eval-design warnings. [`evals/runtime-controls/`](../evals/runtime-controls/) answers all of them. The scored corpora keep them deliberately: `dev-v2-focused` is frozen at an immutable benchmark tag, and both it and `dev-v3-evidence-edges` force invocation and judge through hidden post-run graders rather than manifest assertions. Adding a trigger or control case to either would change what the published results measured, so do not silence those warnings there.
+
 Validate the Claude Code distribution separately with the host validator:
 
 ```bash
@@ -111,7 +113,7 @@ Follow [Field Trials](field-trials.md). Capture the exact public tree with Git-n
 
 ## Release readiness
 
-Public project releases use semantic versioning beginning with v0.1.0. A `0.x` release is usable but still evolving. Annotated Git tags are immutable release identities. A distribution manifest version must match its Git release tag without the leading `v`; the Claude Plugin manifest is 0.3.1 and must be released with the matching v0.3.1 tag. Every Plugin-content change must bump the manifest version and move the marketplace pin because Claude Code uses the version as its update key. After the tag exists, the `main` catalog may add its exact commit SHA without changing the tagged Plugin payload. Benchmark revision tags remain separate from project releases.
+Public project releases use semantic versioning beginning with v0.1.0. A `0.x` release is usable but still evolving. Annotated Git tags are immutable release identities. A distribution manifest version must match its Git release tag without the leading `v`; the Claude Plugin manifest is 0.3.1 and must be released with the matching v0.3.1 tag. Every Plugin-content change must bump the manifest version and move the marketplace pin because Claude Code uses the version as its update key. Write the marketplace source in its explicit `url` plus `ref` form before the release commit is tagged; a `github` shorthand inherits the user's Git transport, and the v0.3.1 tag still carries one, so only the `main` catalog served an installable source for that release. After the tag exists, the `main` catalog may add its exact commit SHA without changing the tagged Plugin payload. Benchmark revision tags remain separate from project releases.
 
 Before a public-facing release commit:
 

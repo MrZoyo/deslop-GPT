@@ -27,7 +27,7 @@ The draft introduces `repair` cases where cleanup exposes a fail-open current co
 
 ## Runtime controls and release smokes
 
-[`runtime-controls`](../evals/runtime-controls/README.md) checks default read-only behavior separately from cleanup quality. Its audit control authorizes no worktree changes and contributes no simplification or preservation score.
+[`runtime-controls`](../evals/runtime-controls/README.md) checks default read-only behavior separately from cleanup quality. Three cases reach one shared input through an explicit audit, a cleanup-shaped request with no explicit invocation, and a question that asks for no cleanup at all. None authorizes a worktree change, and none contributes a simplification or preservation score. Because the harness reports no automatic Skill-usage signal, whether the Skill was selected is read from the transcript rather than graded.
 
 [`release-smoke`](../evals/release-smoke/) binds small forward tests to exact Skill content hashes. These runs can expose packaging, authorization, or gross behavioral regressions, but their known fixtures, single runs, and missing baselines make them development diagnostics rather than model-effect evidence.
 

@@ -1,0 +1,89 @@
+{
+  "schema": "deslop-runtime-control-result-v1",
+  "status": "exposed-development-diagnostic",
+  "public_performance_claim": false,
+  "date": "2026-09-03",
+  "suite": "runtime-controls",
+  "payload": {
+    "path": "skills/deslop",
+    "content_hash": "39146983500952bbe4dae7247ad27671e6ac64c70aa777bc32118765e046feba",
+    "skill_md_sha256": "0ebc15ab46405afb16f66d65d26a38710d0ed56b76750a4176d231c83db2ed5c",
+    "same_payload_as": "v0.3.1 release"
+  },
+  "repository": {
+    "slug": "MrZoyo/deslop-GPT",
+    "commit": "0c82347500c1d4b397f0c1a12aaec56171ab9675",
+    "dirty_at_run_start": true,
+    "dirty_note": "Working tree carried the harness content-digest fix and this expanded manifest; skills/deslop was unchanged."
+  },
+  "configuration": {
+    "harness": "agent-skill-eval==0.7.0",
+    "agent": "claude-code",
+    "agent_cli": "2.1.259 (Claude Code)",
+    "model": "claude-haiku-4-5-20251001",
+    "discovery_path": ".claude/skills/deslop",
+    "invocation_prefix": "/deslop",
+    "sandbox": "host-managed",
+    "permission_mode": "dangerously-skip-permissions",
+    "runs_per_case": 1,
+    "baseline": "none-run-without-baseline",
+    "concurrency": 1,
+    "ambient_skill_sources": []
+  },
+  "read_only_gate": {
+    "status_line_comparison": true,
+    "content_digest_comparison": true,
+    "digest_recorded_in": "outputs/pre_state.json and outputs/post_state.json",
+    "all_cases_digest_identical": true
+  },
+  "cases": [
+    {
+      "id": "mode-default-audit",
+      "invocation": "explicit, without apply",
+      "skill_selected": true,
+      "skill_selection_evidence": "transcript is a deslop audit report with evidence, confidence, and preservation sections",
+      "assertions_passed": 3,
+      "assertions_total": 3,
+      "side_effect_contract": "passed",
+      "duration_seconds": 33.7,
+      "cost_usd_cli_estimate": 0.0415961
+    },
+    {
+      "id": "natural-trigger-audit",
+      "invocation": "cleanup-shaped request, no explicit invocation",
+      "skill_selected": true,
+      "skill_selection_evidence": "transcript opens by naming deslop's test-first evidence analysis; no explicit invocation was in the prompt",
+      "stayed_read_only": true,
+      "asked_before_editing": true,
+      "assertions_passed": 2,
+      "assertions_total": 2,
+      "side_effect_contract": "passed",
+      "duration_seconds": 32.0,
+      "cost_usd_cli_estimate": 0.0446926
+    },
+    {
+      "id": "no-cleanup-request-control",
+      "invocation": "plain question about the code",
+      "skill_selected": false,
+      "skill_selection_evidence": "single-line answer, 684 output tokens, no audit structure",
+      "answer_correct": true,
+      "assertions_passed": 2,
+      "assertions_total": 2,
+      "side_effect_contract": "passed",
+      "duration_seconds": 8.6,
+      "cost_usd_cli_estimate": 0.0248368
+    }
+  ],
+  "totals": {
+    "model_calls": 3,
+    "cost_usd_cli_estimate": 0.1111255
+  },
+  "limitations": [
+    "One run per case",
+    "No without-Skill baseline",
+    "Known development fixture rather than a held-out case",
+    "Skill selection was read from transcripts; the harness reports no automatic Skill-usage signal",
+    "One model on one host; says nothing about other models or about Codex",
+    "Establishes read-only behavior and host discovery only, not cleanup precision or recall"
+  ]
+}
