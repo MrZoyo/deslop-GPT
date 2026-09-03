@@ -108,7 +108,14 @@ def parse_remaining_tests(evidence: str) -> dict:
     return {"count": int(count_match.group(1)) if count_match else None}
 
 
-def trajectory_counts(stdout_path: Path) -> dict[str, int]:
+def trajectory_counts(stdout_path: Path) -> dict[str, int | None]:
+    """Count trajectory events in an agent CLI's event-stream log.
+
+    Only hosts that stream per-item events can be counted this way. The
+    claude-code harness asks for one final JSON object instead, so there is no
+    trajectory to read; report None rather than zeros, which would otherwise
+    claim the agent ran no commands and sent no messages.
+    """
     counts = {
         "completed_turns": 0,
         "completed_commands": 0,
@@ -116,12 +123,15 @@ def trajectory_counts(stdout_path: Path) -> dict[str, int]:
         "agent_messages": 0,
     }
     if not stdout_path.is_file():
-        return counts
+        return dict.fromkeys(counts, None)
+    streamed = False
     for line in stdout_path.read_text().splitlines():
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if event.get("type") in ("turn.completed", "item.completed"):
+            streamed = True
         if event.get("type") == "turn.completed":
             counts["completed_turns"] += 1
         if event.get("type") != "item.completed":
@@ -133,7 +143,7 @@ def trajectory_counts(stdout_path: Path) -> dict[str, int]:
             counts["completed_file_changes"] += 1
         elif item_type == "agent_message":
             counts["agent_messages"] += 1
-    return counts
+    return counts if streamed else dict.fromkeys(counts, None)
 
 
 def build_start_order(progress: list[dict]) -> tuple[dict[tuple, int], list[dict]]:
@@ -430,8 +440,16 @@ def main() -> None:
     last_event = progress[-1]
     repository_metadata = metadata.get("benchmark_repository", {})
     execution = metadata.get("execution", {})
-    codex_environment = metadata.get("codex_environment", {})
     run_metadata = [load_json(path) for path in sorted(iteration_dir.rglob("run_meta.json"))]
+    # Describe the host the runs actually used. Reading codex_environment
+    # unconditionally would report an empty environment for a claude-code run.
+    agents = sorted({row.get("agent") for row in run_metadata if row.get("agent")})
+    agent_environments = metadata.get("agent_environments", {})
+    agent_environment = agent_environments.get(agents[0]) if len(agents) == 1 else None
+    if agent_environment is None:
+        # Artifacts written before the harness recorded a profile per agent
+        # carry only the Codex one.
+        agent_environment = metadata.get("codex_environment", {})
     without = config_aggregate([run for run in runs if not run["with_skill"]])
     with_skill = config_aggregate([run for run in runs if run["with_skill"]])
     timings = [run["timing"] for run in runs]
@@ -471,11 +489,15 @@ def main() -> None:
             "concurrency": execution.get("concurrency"),
             "max_retries": execution.get("agent_max_retries"),
             "timeout_seconds": execution.get("agent_timeout_seconds"),
-            "sandbox": codex_environment.get("sandbox"),
-            "network": codex_environment.get("network"),
-            "approval_policy": codex_environment.get("approval_policy"),
-            "local_config": codex_environment.get("local_config"),
-            "baseline": "same-strong-evidence-backed-cleanup-prompt-without-skill",
+            "sandbox": agent_environment.get("sandbox"),
+            "network": agent_environment.get("network"),
+            "approval_policy": agent_environment.get("approval_policy"),
+            "local_config": agent_environment.get("local_config"),
+            "baseline": (
+                "same-strong-evidence-backed-cleanup-prompt-without-skill"
+                if execution.get("with_baseline")
+                else "none-run-without-baseline"
+            ),
             "post_grade_hook": "python3 evals/dev-v2-focused/grade_focused.py",
         },
         "task_order": {
