@@ -10,9 +10,10 @@
     {
       "name": "deslop",
       "source": {
-        "source": "github",
-        "repo": "MrZoyo/deslop-GPT",
-        "ref": "v0.3.1"
+        "source": "url",
+        "url": "https://github.com/MrZoyo/deslop-GPT.git",
+        "ref": "v0.3.1",
+        "sha": "a19128db72503949184655be6c69536753616473"
       },
       "description": "Audit or apply test-first, evidence-backed cleanup for accumulated test, verification, and fallback bloat."
     }

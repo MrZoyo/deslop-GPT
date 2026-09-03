@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源固定到 v0.3.1 标签。这个补丁版本澄清需求证据与宿主指令文件，加入当前只读控制案例，并让评测 wrapper 识别不同宿主。v0.3.0 的 test-first 与 evidence-edge 范围保持不变。
+Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源使用明确的 HTTPS Git URL，并固定到 v0.3.1 标签及其发布提交。这个补丁版本澄清需求证据与宿主指令文件，加入当前只读控制案例，并让评测 wrapper 识别不同宿主。v0.3.0 的 test-first 与 evidence-edge 范围保持不变。
 
 ### 一份本地源码，同时供两个平台加载
 
@@ -173,6 +173,7 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 | Skill payload | 宿主与加载方式 | 运行次数 | 能够说明什么 |
 | --- | --- | --- | --- |
 | v0.3.1 发布内容（发布前精确哈希） | Codex 子代理按路径加载 Skill | 1 次默认 audit，加 `t02b`、`t03b` 两个保留案例 | 窄范围开发回归 smoke；三次都没有改变 fixture 内容 |
+| v0.3.1 标签 Plugin | Claude Code 2.1.259，隔离配置与本地 catalog | 1 次 marketplace 安装，不调用模型 | 远程 HTTPS source 把 v0.3.1 标签解析到提交 `a19128d`；安装版本和运行时哈希一致 |
 | v0.3.0 正式版精确哈希 | Codex 子代理按路径加载 Skill | 3 个小型仓库 apply，加 1 次 audit | 三个清理结果均通过隐藏行为、精简和新增内容限制；不包含 CLI discovery 或 baseline 证据 |
 | v0.3.0 正式版精确哈希 | Claude Code 2.1.259 本地 Plugin，Haiku 4.5 | 1 次 audit，加 1 次 apply | 已验证 Plugin 加载和一个有效清理结果；apply 在最终报告前达到回合上限 |
 | 更早的开发 payload | Codex CLI 0.149.1，`gpt-5.6-sol` | rc3 小案例、rc4 小型仓库和 rc5 定向诊断 | 只适用于对应 payload 哈希的历史开发证据 |

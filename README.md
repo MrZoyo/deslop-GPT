@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source is pinned to the v0.3.1 tag. This patch release clarifies requirement evidence and host instruction files, adds an active read-only control, and makes the evaluation wrapper host-aware. The v0.3.0 test-first and evidence-edge additions remain unchanged in scope.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.1 tag and release commit. This patch release clarifies requirement evidence and host instruction files, adds an active read-only control, and makes the evaluation wrapper host-aware. The v0.3.0 test-first and evidence-edge additions remain unchanged in scope.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -173,6 +173,7 @@ Read-only verification should redirect caches or generated output when practical
 | Runtime payload | Host and path | Runs | What it establishes |
 | --- | --- | --- | --- |
 | v0.3.1 release payload, pre-release exact hash | Codex subagents loading the Skill by path | 1 default audit plus `t02b` and `t03b` preservation cases | Narrow development regression smoke; all three left fixture content unchanged |
+| v0.3.1 tagged Plugin | Claude Code 2.1.259, isolated config and local catalog | 1 marketplace installation, no model call | Remote HTTPS source resolved the v0.3.1 tag to commit `a19128d`; installed version and runtime hash matched |
 | v0.3.0, exact release hash | Codex subagents loading the Skill by path | 3 mini-repository apply runs plus 1 audit | All three cleaned artifacts passed hidden behavior, reduction, and negative-change gates; no CLI discovery or baseline evidence |
 | v0.3.0, exact release hash | Claude Code 2.1.259 local Plugin, Haiku 4.5 | 1 audit plus 1 apply | Plugin loading and one valid cleanup artifact; apply stopped at its turn ceiling before the final report |
 | Earlier development payloads | Codex CLI 0.149.1, `gpt-5.6-sol` | rc3 micro, rc4 mini, and targeted rc5 diagnostics | Historical development evidence tied only to those payload hashes |

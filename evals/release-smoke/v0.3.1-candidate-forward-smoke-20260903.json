@@ -41,11 +41,28 @@
       "repository_files_unchanged": true
     }
   ],
+  "distribution_follow_up": {
+    "kind": "Claude Code marketplace installation; no model call",
+    "cli_version": "2.1.259",
+    "configuration": "isolated temporary CLAUDE_CONFIG_DIR",
+    "catalog_loading": "local checkout containing the candidate catalog transport fix",
+    "plugin_source": {
+      "source": "url",
+      "url": "https://github.com/MrZoyo/deslop-GPT.git",
+      "ref": "v0.3.1",
+      "sha": "a19128db72503949184655be6c69536753616473"
+    },
+    "install_succeeded": true,
+    "installed_version": "0.3.1",
+    "cached_commit": "a19128db72503949184655be6c69536753616473",
+    "skill_md_sha256": "0ebc15ab46405afb16f66d65d26a38710d0ed56b76750a4176d231c83db2ed5c"
+  },
   "limitations": [
     "No without-Skill baseline",
     "One run per case",
     "Known development cases rather than held-out cases",
     "Host did not expose model or token telemetry",
-    "Direct Skill loading rather than Codex CLI discovery"
+    "Direct Skill loading rather than Codex CLI discovery",
+    "The Claude distribution follow-up tests installation only, not model behavior"
   ]
 }

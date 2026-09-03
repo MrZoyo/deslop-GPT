@@ -50,7 +50,7 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop
 /deslop:deslop audit
 ```
 
-插件市场目录跟随 `main`，声明的 Plugin 版本是 0.3.1，并把 Plugin 源固定到对应的 v0.3.1 标签。这样即使 `main` 以后出现开发中改动，新安装用户仍会得到正式发布内容。Claude Code 依靠 manifest 中的版本号判断更新，因此以后每次修改 Plugin，都必须同时提升版本号和固定的发布 ref。
+插件市场目录跟随 `main`，声明的 Plugin 版本是 0.3.1，并使用明确的 HTTPS Git source，同时固定到对应的 v0.3.1 标签及其发布提交。这样既不会依赖用户的 GitHub SSH 传输设置，也能保证 `main` 以后出现开发中改动时，新安装用户仍得到正式发布内容。Claude Code 依靠 manifest 中的版本号判断更新，因此以后每次修改 Plugin，都必须提升版本号，并把目录 pin 移到新的发布。
 
 在本地开发 Plugin 时，可以从本仓库启动 Claude Code：
 
