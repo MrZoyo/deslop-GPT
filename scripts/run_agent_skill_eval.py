@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 import os
 import subprocess
@@ -25,6 +26,117 @@ IGNORED_STATUS_MARKERS = (
     ".pyc",
 )
 _ACTIVE_EXECUTOR = None
+_WORKSPACE_SNAPSHOT = None
+
+
+def meaningful_status(entries) -> set[str]:
+    return {
+        entry
+        for entry in entries
+        if not any(marker in entry for marker in IGNORED_STATUS_MARKERS)
+    }
+
+
+def excluded_workspace_path(relative: str) -> bool:
+    """Report whether a workspace path lies outside the side-effect contract.
+
+    Excluded are git internals, the transient tool caches the status comparison
+    already ignores, and the Skill payload the harness installs itself, whose
+    integrity the discovery smoke test checks separately. Directories are passed
+    with a trailing slash so a whole subtree can be pruned in one check.
+    """
+    from agent_skill_eval.skills import SKILL_PATHS
+
+    roots = [".git"]
+    for target_directories in SKILL_PATHS.values():
+        roots.extend(target_directories)
+    if any(relative == root or relative.startswith(f"{root}/") for root in roots):
+        return True
+    return any(marker in relative for marker in IGNORED_STATUS_MARKERS)
+
+
+def file_fingerprint(path: Path) -> str:
+    if path.is_symlink():
+        return f"symlink:{os.readlink(path)}"
+    try:
+        return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError as error:
+        return f"unreadable:{error.strerror}"
+
+
+def workspace_content_digest(workspace: Path) -> dict[str, str]:
+    """Fingerprint every workspace file the side-effect contract owns.
+
+    ``git status`` collapses an untracked directory into one entry and reports
+    nothing at all when an untracked file is edited in place. The harness copies
+    fixtures after its initial commit, so an unstaged fixture stays untracked for
+    the whole run: a status-line comparison alone cannot see a model rewriting
+    the very files a read-only control hands it.
+    """
+    digest: dict[str, str] = {}
+    for root, directories, files in os.walk(workspace, followlinks=False):
+        root_path = Path(root)
+        directories[:] = [
+            name
+            for name in directories
+            if not excluded_workspace_path(
+                f"{(root_path / name).relative_to(workspace).as_posix()}/"
+            )
+        ]
+        for name in files:
+            path = root_path / name
+            relative = path.relative_to(workspace).as_posix()
+            if excluded_workspace_path(relative):
+                continue
+            digest[relative] = file_fingerprint(path)
+    return dict(sorted(digest.items()))
+
+
+def content_digest_problems(pre_state, post_state) -> list[str]:
+    before = getattr(pre_state, "content_digest", None)
+    after = getattr(post_state, "content_digest", None)
+    if before is None or after is None:
+        return [
+            "worktree content digest unavailable: the read-only gate cannot show "
+            "that supplied files were left untouched"
+        ]
+    created = sorted(set(after) - set(before))
+    deleted = sorted(set(before) - set(after))
+    modified = sorted(
+        name for name in set(before) & set(after) if before[name] != after[name]
+    )
+    if not (modified or created or deleted):
+        return []
+    return [
+        f"worktree content changed: modified={modified}; created={created}; "
+        f"deleted={deleted}"
+    ]
+
+
+def configure_content_digest() -> None:
+    """Record a workspace content fingerprint alongside each git snapshot."""
+    global _WORKSPACE_SNAPSHOT
+    if _WORKSPACE_SNAPSHOT is not None:
+        return
+
+    import agent_skill_eval.runner as runner
+    from agent_skill_eval.models import GitStateSnapshot
+    from pydantic import Field
+
+    class WorkspaceStateSnapshot(GitStateSnapshot):
+        content_digest: dict[str, str] = Field(default_factory=dict)
+
+    capture_git_state = runner.capture_git_state
+
+    def capture_with_content_digest(workspace, *args, **kwargs):
+        snapshot = capture_git_state(workspace, *args, **kwargs)
+        return WorkspaceStateSnapshot(
+            **snapshot.model_dump(),
+            content_digest=workspace_content_digest(Path(workspace)),
+        )
+
+    _WORKSPACE_SNAPSHOT = WorkspaceStateSnapshot
+    runner.capture_git_state = capture_with_content_digest
 
 
 def counterbalanced_indices(
@@ -169,13 +281,6 @@ def configure_side_effect_contract() -> None:
     from agent_skill_eval.models import AssertionResult, GradingResult
     from agent_skill_eval.runner import EvalRunner
 
-    def meaningful_status(entries):
-        return {
-            entry
-            for entry in entries
-            if not any(marker in entry for marker in IGNORED_STATUS_MARKERS)
-        }
-
     def apply_contract(self, grading, eval_case, pre_state, post_state):
         contract = eval_case.side_effect_contract
         if contract is None:
@@ -207,6 +312,7 @@ def configure_side_effect_contract() -> None:
             removed = sorted(before - after)
             if added or removed:
                 problems.append(f"worktree status changed: added={added}; removed={removed}")
+            problems.extend(content_digest_problems(pre_state, post_state))
 
         result = AssertionResult(
             text="The run respected its side-effect contract",
@@ -467,15 +573,9 @@ def configure_agent_invocation() -> None:
     EvalRunner._run_single = run_with_host_invocation
 
 
-def side_effect_contract_self_test() -> None:
+def read_only_case() -> tuple[Any, Any]:
     from agent_skill_eval.graders import summarize_assertion_results
-    from agent_skill_eval.models import (
-        AssertionResult,
-        EvalCase,
-        GitStateSnapshot,
-        GradingResult,
-    )
-    from agent_skill_eval.runner import EvalRunner
+    from agent_skill_eval.models import AssertionResult, EvalCase, GradingResult
 
     assertion = AssertionResult(text="seed", passed=True, evidence="ok")
     grading = GradingResult(
@@ -494,36 +594,126 @@ def side_effect_contract_self_test() -> None:
             "allow_worktree_changes": False,
         },
     )
-    before = GitStateSnapshot(
+    return grading, case
+
+
+def contract_holds(grading, case, pre_state, post_state) -> tuple[bool, str]:
+    from agent_skill_eval.runner import EvalRunner
+
+    result = EvalRunner._apply_side_effect_contract(
+        None, grading, case, pre_state, post_state
+    ).assertion_results[-1]
+    return result.passed, result.evidence
+
+
+def side_effect_contract_self_test() -> None:
+    from agent_skill_eval.models import GitStateSnapshot
+
+    grading, case = read_only_case()
+    digest = {"app.py": "sha256:aaa", "test_app.py": "sha256:bbb"}
+    before = _WORKSPACE_SNAPSHOT(
         local_branches=["main"],
         current_branch="main",
         head_sha="abc",
         commit_shas=["abc"],
         status_porcelain=["?? app.py"],
+        content_digest=digest,
     )
-    unchanged = EvalRunner._apply_side_effect_contract(None, grading, case, before, before)
-    if not unchanged.assertion_results[-1].passed:
+    passed, _ = contract_holds(grading, case, before, before)
+    if not passed:
         raise RuntimeError("side-effect contract rejected an unchanged pre/post state")
 
     changed = before.model_copy(update={"status_porcelain": ["?? app.py", "?? audit-report.md"]})
-    mutated = EvalRunner._apply_side_effect_contract(None, grading, case, before, changed)
-    if mutated.assertion_results[-1].passed:
+    passed, _ = contract_holds(grading, case, before, changed)
+    if passed:
         raise RuntimeError("side-effect contract accepted a changed worktree state")
 
     git_changed = before.model_copy(
         update={"local_branches": ["main", "agent-change"], "commit_shas": ["abc", "def"]}
     )
-    mutated_git = EvalRunner._apply_side_effect_contract(None, grading, case, before, git_changed)
-    if mutated_git.assertion_results[-1].passed:
+    passed, _ = contract_holds(grading, case, before, git_changed)
+    if passed:
         raise RuntimeError("side-effect contract accepted a new branch and commit")
 
     cache_only = before.model_copy(
         update={"status_porcelain": ["?? app.py", "?? __pycache__/app.cpython-313.pyc"]}
     )
-    cache_result = EvalRunner._apply_side_effect_contract(None, grading, case, before, cache_only)
-    if not cache_result.assertion_results[-1].passed:
+    passed, _ = contract_holds(grading, case, before, cache_only)
+    if not passed:
         raise RuntimeError("side-effect contract treated ignored Python cache as a worktree mutation")
+
+    # A snapshot pair without a content fingerprint cannot support the read-only
+    # claim, so the contract must fail closed rather than fall back to status lines.
+    blind = GitStateSnapshot(status_porcelain=["?? app.py"])
+    passed, _ = contract_holds(grading, case, blind, blind)
+    if passed:
+        raise RuntimeError("side-effect contract passed without a workspace content digest")
     print("Side-effect contract pre/post self-test passed", file=sys.stderr)
+
+
+def read_only_worktree_self_test() -> None:
+    """Check the read-only gate against a workspace built like the harness builds one.
+
+    ``WorkspaceManager`` commits an empty tree first and copies fixtures
+    afterwards, so with ``stage_files: false`` the fixtures stay untracked and
+    their ``git status`` lines never move. This test edits and deletes such a
+    fixture in place and requires the contract to notice.
+    """
+    import agent_skill_eval.runner as runner
+
+    grading, case = read_only_case()
+
+    def git(workspace: Path, *arguments: str) -> None:
+        subprocess.run(["git", *arguments], cwd=workspace, capture_output=True, check=True)
+
+    with tempfile.TemporaryDirectory() as directory:
+        workspace = Path(directory) / "workspace"
+        workspace.mkdir()
+        git(workspace, "init", "-b", "main")
+        git(workspace, "config", "user.email", "eval@agent-skill-eval.local")
+        git(workspace, "config", "user.name", "Skill Eval")
+        git(workspace, "add", ".")
+        git(workspace, "commit", "-m", "Initial commit", "--allow-empty")
+
+        fixture = workspace / "test_app.py"
+        (workspace / "app.py").write_text("def public_label(value):\n    return value\n")
+        fixture.write_text(
+            "def test_behavior():\n    assert public_label('a') == 'a'\n\n\n"
+            "def test_type():\n    assert isinstance(public_label('a'), str)\n"
+        )
+
+        pre_state = runner.capture_git_state(workspace)
+        passed, evidence = contract_holds(grading, case, pre_state, runner.capture_git_state(workspace))
+        if not passed:
+            raise RuntimeError(f"read-only gate rejected an untouched workspace: {evidence}")
+
+        cache = workspace / "__pycache__"
+        cache.mkdir()
+        (cache / "app.cpython-313.pyc").write_bytes(b"\x00")
+        passed, evidence = contract_holds(grading, case, pre_state, runner.capture_git_state(workspace))
+        if not passed:
+            raise RuntimeError(f"read-only gate rejected transient cache residue: {evidence}")
+
+        fixture.write_text("def test_behavior():\n    assert public_label('a') == 'a'\n")
+        edited_state = runner.capture_git_state(workspace)
+        if meaningful_status(edited_state.status_porcelain) != meaningful_status(
+            pre_state.status_porcelain
+        ):
+            raise RuntimeError(
+                "an in-place fixture edit changed git status lines; this test no longer "
+                "covers the blind spot it was written for"
+            )
+        passed, evidence = contract_holds(grading, case, pre_state, edited_state)
+        if passed:
+            raise RuntimeError("read-only gate accepted an in-place edit of an untracked fixture")
+        if fixture.name not in evidence:
+            raise RuntimeError(f"read-only gate did not name the edited fixture: {evidence}")
+
+        fixture.unlink()
+        passed, evidence = contract_holds(grading, case, pre_state, runner.capture_git_state(workspace))
+        if passed:
+            raise RuntimeError("read-only gate accepted a deleted untracked fixture")
+    print("Read-only worktree self-test passed", file=sys.stderr)
 
 
 def task_order_self_test() -> None:
@@ -620,9 +810,11 @@ def main() -> None:
         configure_side_effect_contract()
         configure_agent_invocation()
         configure_task_order()
+        configure_content_digest()
         smoke_test(skill_argument, agent_types, check_ambient=command == "run")
         if command == "self-test":
             side_effect_contract_self_test()
+            read_only_worktree_self_test()
             task_order_self_test()
             invocation_self_test()
             print(f"agent-skill-eval {installed_version} wrapper self-test passed")
