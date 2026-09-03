@@ -1,0 +1,136 @@
+{
+  "corpus_revision": "dev-v3-evidence-edges-draft1",
+  "status": "draft",
+  "scope": [
+    "production_reachability",
+    "test_hermeticity",
+    "artifact_authority",
+    "schema_contract"
+  ],
+  "negative_change_budget": {
+    "new_files_max": 0,
+    "test_count_growth_max": 0,
+    "new_external_dependencies_max": 0,
+    "abstraction_growth_max": 0,
+    "syntax_errors_max": 0,
+    "positive_python_loc_growth_max": {
+      "simplify": 4,
+      "repair": 12,
+      "preserve": 4
+    }
+  },
+  "cases": [
+    {
+      "id": "r01a",
+      "pair": "r01",
+      "category": "production_reachability",
+      "expected": "simplify",
+      "target": "Remove the future-only branch and its dedicated test.",
+      "evidence_root": "The only active producer selects the primary camera."
+    },
+    {
+      "id": "r01b",
+      "pair": "r01",
+      "category": "production_reachability",
+      "expected": "preserve",
+      "target": "Preserve both actively configured camera variants.",
+      "evidence_root": "Current configuration selects both left and right variants."
+    },
+    {
+      "id": "r02a",
+      "pair": "r02",
+      "category": "production_reachability",
+      "expected": "simplify",
+      "target": "Remove the obsolete package fixture and private legacy execution path.",
+      "evidence_root": "The surviving current summary has a separate public contract."
+    },
+    {
+      "id": "r02b",
+      "pair": "r02",
+      "category": "production_reachability",
+      "expected": "preserve",
+      "target": "Keep one test that crosses the current package through the public execution seam.",
+      "evidence_root": "The current contract names the producer-to-state-machine path."
+    },
+    {
+      "id": "h01a",
+      "pair": "h01",
+      "category": "test_hermeticity",
+      "expected": "simplify",
+      "target": "Remove the skipped one-off-output test and its test-owned production helper.",
+      "evidence_root": "The unmanaged output has no clean-checkout producer or consumer."
+    },
+    {
+      "id": "h01b",
+      "pair": "h01",
+      "category": "test_hermeticity",
+      "expected": "preserve",
+      "target": "Preserve validation against the repository-managed protocol fixture.",
+      "evidence_root": "The fixture is a tracked external-format example with an independent version rule."
+    },
+    {
+      "id": "h02a",
+      "pair": "h02",
+      "category": "test_hermeticity",
+      "expected": "repair",
+      "target": "Redirect generated output so the test cannot overwrite the tracked compiled target.",
+      "evidence_root": "A permanent test must leave pre-existing tracked content unchanged."
+    },
+    {
+      "id": "h02b",
+      "pair": "h02",
+      "category": "test_hermeticity",
+      "expected": "preserve",
+      "target": "Preserve the integration check that reads tracked source and writes only to a temporary target.",
+      "evidence_root": "The source asset is repository-managed and the output is isolated."
+    },
+    {
+      "id": "v03a",
+      "pair": "v03",
+      "category": "artifact_authority",
+      "expected": "repair",
+      "target": "Require and verify the package-declared authority before loading component data.",
+      "evidence_root": "The descriptor makes the aggregate artifact authoritative."
+    },
+    {
+      "id": "v03b",
+      "pair": "v03",
+      "category": "artifact_authority",
+      "expected": "preserve",
+      "target": "Preserve absence semantics for explicitly optional preview enrichment.",
+      "evidence_root": "The descriptor marks preview as optional and report data remains authoritative."
+    },
+    {
+      "id": "s01a",
+      "pair": "s01",
+      "category": "schema_contract",
+      "expected": "repair",
+      "target": "Make the montage reader enforce the current shared schema version.",
+      "evidence_root": "Montage is a current public deserialize boundary."
+    },
+    {
+      "id": "s01b",
+      "pair": "s01",
+      "category": "schema_contract",
+      "expected": "preserve",
+      "target": "Preserve explicit version-1 migration while rejecting unknown versions.",
+      "evidence_root": "The public function is named and documented as a migration boundary."
+    },
+    {
+      "id": "s02a",
+      "pair": "s02",
+      "category": "schema_contract",
+      "expected": "repair",
+      "target": "Make component_package required in both the dataclass and parser.",
+      "evidence_root": "Current task identity cannot be inferred from a historical output path."
+    },
+    {
+      "id": "s02b",
+      "pair": "s02",
+      "category": "schema_contract",
+      "expected": "preserve",
+      "target": "Preserve the documented default for an optional display label.",
+      "evidence_root": "Display text is optional presentation data, not task identity."
+    }
+  ]
+}

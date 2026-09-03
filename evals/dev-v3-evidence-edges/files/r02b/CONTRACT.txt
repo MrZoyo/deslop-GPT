@@ -1,0 +1,3 @@
+The current task identity TASK-CURRENT-03 must pass through package production,
+the public package reader, and OpenDoorStateMachine. Keep one hermetic test
+of that complete public path.

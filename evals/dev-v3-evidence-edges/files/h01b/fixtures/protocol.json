@@ -1,0 +1,1 @@
+{"schema": "sensor-protocol-2", "channels": ["rgb", "depth", "mask"]}

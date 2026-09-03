@@ -18,15 +18,19 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Validate focused accumulated-slop corpus
         run: python3 scripts/validate_focused_corpus.py
+      - name: Validate evidence-edge draft corpus
+        run: python3 scripts/validate_evidence_edges_corpus.py
       - name: Validate harness wrapper
         run: |
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py self-test \
             --skill skills/deslop \
             --evals evals/dev-v2-focused/evals.json
-      - name: Validate focused eval manifest
+      - name: Validate eval manifests
         run: |
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/evals.json
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/dev-v3-evidence-edges/evals.json

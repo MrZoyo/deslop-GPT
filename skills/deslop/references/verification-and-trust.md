@@ -51,6 +51,18 @@ Does the value cross out of the current trusted execution domain?
 
 Public visibility alone does not create a trust boundary. Two services owned by the same producer can still be circular; one process can still cross a real failure domain by writing, publishing, reopening, decoding, or reading persisted output.
 
+## Declared authority is not optional enrichment
+
+When a config, package manifest, or sidecar declares an authoritative artifact, require and verify that artifact. A pattern such as `if path.exists(): verify(path)` silently changes a missing authority into compatibility mode. Missing and mismatched authoritative inputs should fail at the same boundary unless the protocol explicitly defines absence as valid.
+
+Lower-level sidecars or caches do not replace a missing package-level authority merely because they remain internally consistent. Conversely, a thumbnail, annotation, or cache marked optional by the current protocol may be absent without failure. Determine required versus optional from the contract, not from filesystem presence.
+
+## Schema and identity closure
+
+A writer and its main loader do not complete a schema migration. Enumerate every public deserialize boundary: library API, CLI, `tools/`, visualizer, converter, resume/recovery path, and validator. Each current reader should reuse the canonical validator or enforce the same shared version contract. Keep an explicit migration reader only when old data remains supported.
+
+For critical identity, source path, count, or handedness fields, align all three layers: type declaration, parser, and validation. A required annotation paired with `mapping.get(..., old_default)` remains an implicit compatibility path. Remove defaults that can reinterpret malformed current data as a historical format.
+
 ## Independence test
 
 For every claimed verification, record:
@@ -127,3 +139,5 @@ Prefer direct failure for unexpected internal errors. A narrow fallback for one 
 ## Preserve by default
 
 When evidence is incomplete, preserve security and authorization, real external protocols, supported compatibility, persistence and transactions, concurrency, resource limits, scientific invariants, independently supplied artifact verification, and content-addressed identity. Report the missing evidence instead of inventing a justification or deleting on aesthetic grounds.
+
+For production reachability, public-reader enumeration, and documentation/config ownership, also read [evidence-and-reachability.md](evidence-and-reachability.md).

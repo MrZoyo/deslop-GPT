@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Audit or apply subtractive cleanup for accumulated agent-created test bloat, verification theater, and defensive or fallback bloat while preserving independent external behavior. Invoke explicitly for semantic simplification, not generic refactoring.
+description: Audit or apply evidence-backed, test-first subtractive cleanup for accumulated agent-created test bloat, verification theater, and defensive or fallback bloat while preserving independent external behavior. Invoke explicitly for semantic simplification, not generic refactoring.
 ---
 
 # Deslop
@@ -21,6 +21,19 @@ Generic dead code, wrappers, abstractions, comments, and ordinary duplication ar
 
 Adding tests is not the default response to cleanup. When production slop is deleted, tests whose only purpose is to protect that slop should normally be deleted in the same change.
 
+## Test-first evidence pass
+
+When tests are in scope, complete this pass before changing production behavior:
+
+1. Inventory collected test nodes plus their fixtures, fakes, helper stacks, generated inputs, output targets, skips, and deselection rules.
+2. Map each test to `current owner -> production branch -> observable result -> independent oracle -> failure domain`.
+3. Group tests by failure domain. Consolidate inputs that reach the same branch and result; preserve separate rejection, safety, persistence, protocol, resource, and numerical semantics.
+4. Choose the strongest surviving evidence root for each group: a public seam where possible, an independently specified low-level invariant where necessary, and one hermetic cross-layer root for each current delivery path.
+5. Remove fixtures and test-only support with the tests they serve. Remove production code in that cluster only when separate caller, contract, history, and reachability evidence also justify it.
+6. Re-collect and run the remaining suite. Record skips and deselections, and compare worktree state before and after tests that may generate files.
+
+Do not use coverage, test count, or a test-created configuration as an owner. The output of this pass is a smaller evidence set with the same real failure domains, not a target number of tests.
+
 ## Closed justification loops
 
 Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. Follow justification chains outward until they reach an independent evidence root.
@@ -30,6 +43,8 @@ A production/test pair is mutual-support slop only when the production construct
 If a fallback exists only because a test exercises it, and that test exists only because the fallback was added, neither member is independent evidence. The same closed justification loop can include checksum logic and checksum tests, receipts/manifests and validators, wrappers and wrapper-only tests, obsolete compatibility branches and their tests, or defensive validators and tests that only exercise them. Call this **mutual-support slop**.
 
 Accept a dependency cluster only when its chain reaches a current user requirement, real external caller, public API contract, documented protocol or specification, security/trust boundary, persistence or corruption boundary, or scientific/numerical invariant. If the cluster only justifies itself, prefer deleting the whole cluster rather than preserving each member because another member depends on it.
+
+Trace edges as well as nodes. Separately tested producers, readers, and consumers do not prove that a current production path connects them. Before removing a fixture, validator, registry entry, or wrapper that crosses layers, identify the current producer -> reader -> consumer path and preserve one hermetic integration root when that path carries real behavior.
 
 ## Modes and authorization
 
@@ -47,10 +62,12 @@ Only `apply` authorizes edits. Do not fetch, reset, switch branches, stage, comm
 ## Establish evidence before editing
 
 1. Read applicable `AGENTS.md` files, repository conventions, and the requested scope.
-2. Inspect callers, tests, history, specifications, and documented verification commands.
+2. Inspect callers, tests, history, specifications, current configuration, registries, public readers, and documented verification commands.
 3. Classify the evidence chain before trusting an existing test or fallback.
 4. Put current user requirements and corrections first. A current user requirement or correction overrides conflicting historical tests; do not preserve old or incorrect behavior merely because an existing test asserts it.
 5. A bug fix should normally replace incorrect behavior, not preserve it behind a fallback.
+
+Prove reachability from a non-test producer such as an active config, external request, public CLI, persisted record, or hardware/runtime selection. A test-injected flag, synthetic future config, diagnostic command, or scripted dry-run does not by itself own a production branch.
 
 Inside trusted code, use a **fail-visible bias**: allow unexpected failures to surface unless there is a concrete recovery, translation, cleanup, protocol, or compatibility contract. Broad `except Exception`, catch-and-fallback, catch-log-rethrow, speculative legacy fallbacks, and compatibility branches without independent evidence are high-priority investigation targets. Do not hide bugs in the name of robustness.
 
@@ -74,25 +91,29 @@ Read only the relevant references:
 - [verification-and-trust.md](references/verification-and-trust.md) for checksum, receipt, manifest, provenance, and trust-boundary clusters.
 - [code-smells.md](references/code-smells.md) for defensive, fallback, compatibility, wrapper, and abstraction candidates.
 - [scientific-code.md](references/scientific-code.md) for numerical, simulation, ML, or engineering invariants.
+- [evidence-and-reachability.md](references/evidence-and-reachability.md) when cleanup touches cross-layer fixtures, generated artifacts, active configuration, schema readers, registries/CLIs, or test hermeticity.
 
 ## Subtractive workflow
 
-1. Inventory tests before production cleanup. Group them by distinct externally meaningful behavior and independent oracle; keep the minimum sufficient set. Do not optimize for test count, assertion count, or coverage percentage.
+1. Complete the test-first evidence pass before production cleanup when tests are in scope.
 2. Trace verification machinery as a cluster, not a function. Remove serialization, digest fields, envelopes, manifests, validators, recomputation, and tests together when no independent root remains.
 3. Trace fallback branches to actual supported consumers and failure contracts. Prefer direct failure when the current contract says an operation should fail.
 4. Delete tests that exist only to keep deleted production slop green. Add a replacement test only when deleting the old test would leave a real external behavior unprotected and an independent oracle exists.
 5. Preserve real public, persistence, security, protocol, compatibility, resource, and scientific boundaries even when their code resembles a smell.
+6. Treat declared authoritative inputs as required unless the protocol explicitly marks them optional. Missing and invalid authoritative artifacts should share the same visible failure semantics.
+7. For a schema or identity change, enumerate every public reader, including CLIs, tools, visualizers, converters, and resume paths. Do not infer compatibility from a missing field or file.
+8. Keep permanent tests hermetic: use repository-managed or test-created inputs, write to temporary outputs, and skip only when the test actually crosses the optional dependency boundary.
 
 ## Negative-change budget
 
-Normally reduce structural surface area. New dependencies, abstractions, wrappers, compatibility layers, cryptographic/provenance machinery, and tests have a default budget of zero. New code is acceptable only when it preserves a real behavior while removing more accumulated slop. If a cleanup adds substantial production or test lines, stop and reconsider.
+Normally reduce structural surface area. New dependencies, abstractions, wrappers, compatibility layers, cryptographic/provenance machinery, and tests have a default budget of zero. New code is acceptable only when it preserves a real behavior while removing more accumulated slop. A small current-path integration root or a direct required-input check can be justified when cleanup exposes a real protection gap. If a cleanup adds substantial production or test lines, stop and reconsider.
 
 In `deep apply`, exclude generated code, vendored dependencies, `third_party` trees, migration history, lockfiles, and externally generated snapshots or artifacts unless explicitly included or demonstrably repository-owned.
 
 ## Proportional verification
 
-Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run, state that plainly.
+Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Compare test collection before and after; zero surviving tests is a failure, and unexpected skips or deselections require explanation. When tests can generate files, compare the worktree before and after the suite so a green run cannot hide writes to tracked outputs. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run, state that plainly.
 
 ## Final report
 
-Report the inspected scope; removed test, verification, and fallback clusters; independent evidence roots; preserved boundaries; tests removed or consolidated; checks actually run; approximate production/test size changes when useful; and uncertainty intentionally left untouched. Explicitly call out any closed justification loop that drove deletion.
+Report the inspected scope; removed test, verification, and fallback clusters; independent evidence roots; preserved boundaries; tests removed or consolidated; before/after collection plus skips or deselections when available; checks actually run; approximate production/test size changes when useful; and uncertainty intentionally left untouched. Explicitly call out any closed justification loop that drove deletion.

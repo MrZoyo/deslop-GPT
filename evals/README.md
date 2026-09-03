@@ -10,6 +10,8 @@ The active development benchmark is [`dev-v2-focused`](dev-v2-focused/README.md)
 
 The 16 micro cases have same-prefix preservation counterexamples, golden/mutant polarity calibration, and alternate-valid calibration. The three mini repositories model accumulated test, verification, and fallback slop at repository scale.
 
+`dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and 7 executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. It is validated in CI but is not yet a model-comparison corpus; its results must not be combined with `dev-v2-focused`.
+
 ## Real-world evidence
 
 Manually adjudicated field trials are preserved separately under `real-world/` as historical evidence. They are not currently part of the active quantitative benchmark and must not be used to tune the Skill from a single repository. See the [`cluster-gpu-monitor` case study](real-world/cluster-gpu-monitor/README.md).
@@ -31,6 +33,7 @@ For mini repositories, the remaining test suite and hidden behavior gate must bo
 
 ```bash
 python3 scripts/validate_focused_corpus.py
+python3 scripts/validate_evidence_edges_corpus.py
 
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
@@ -39,6 +42,10 @@ uv run --with agent-skill-eval==0.7.0 \
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
   evals/dev-v2-focused/mini-evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate \
+  evals/dev-v3-evidence-edges/evals.json
 ```
 
 The focused validator checks:
@@ -52,7 +59,7 @@ The focused validator checks:
 - three mini-repository behavior, reduction, and metric gates;
 - the 16-case micro manifest and 3-case mini-repository manifest.
 
-Do not run GPT A/B while this corpus is being changed. The current working revision is the `dev-v2-focused-rc5` candidate; freeze it before collecting new comparable results. Keep the published rc3 micro and rc4 mini pilots as separate historical evidence.
+The `dev-v2-focused-rc5` revision is frozen. Do not run GPT A/B on the `dev-v3-evidence-edges-draft1` corpus while it is changing; review and freeze it before collecting comparable results. Keep the published rc3 micro and rc4 mini pilots as separate historical evidence.
 
 ## Model run shapes after freeze
 

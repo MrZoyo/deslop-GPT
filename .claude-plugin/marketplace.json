@@ -10,7 +10,7 @@
     {
       "name": "deslop",
       "source": "./",
-      "description": "Audit or apply evidence-backed cleanup for accumulated test, verification, and fallback bloat."
+      "description": "Audit or apply test-first, evidence-backed cleanup for accumulated test, verification, and fallback bloat."
     }
   ]
 }

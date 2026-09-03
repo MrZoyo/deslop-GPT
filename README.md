@@ -34,7 +34,7 @@ The percentages below are design priorities, not measured prevalence.
 
 | Priority | Target | Question |
 | ---: | --- | --- |
-| ~50% | **Test-suite bloat** | Does each test protect distinct external behavior with an independent oracle? |
+| ~50% | **Test-suite bloat** | Does each test protect a distinct failure domain with a current owner and an independent oracle? |
 | ~25% | **Verification theater** | Can the verifier fail independently from the producer, or do both share the same information and failure domain? |
 | ~25% | **Defensive / fallback bloat** | Does the recovery path implement a current contract, or merely mask an unexpected internal error? |
 
@@ -54,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.2.1 as a standalone Skill
+### Codex: install v0.3.0 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.2.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.2.1 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace distributes Plugin version 0.2.1 from `main`, and the matching v0.2.1 tag pins the same release. This patch release adds Claude Code packaging and bilingual documentation; the runtime Skill payload is unchanged from v0.2.0.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace distributes Plugin version 0.3.0 from `main`, and the matching v0.3.0 tag pins the same release. This minor release adds a test-first evidence pass, stronger fixture and hermeticity rules, current-path edge protection, and the evidence-edge development corpus.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -153,6 +153,7 @@ The example is schematic; it does not represent a benchmark fixture or performan
 
 - **Independent evidence roots:** current requirements, real callers, public contracts, protocols, trust boundaries, persistence boundaries, or scientific invariants.
 - **Closed justification loops:** production code and tests do not become necessary merely by justifying each other.
+- **Production reachability and edge closure:** prove the current input-to-consumer path, not only isolated callers or test-injected branches.
 - **Production/test asymmetry:** redundant test evidence can be removed without deleting the behavior it observes.
 - **Fail-visible bias:** unexpected internal failures should surface unless a concrete recovery or translation contract exists.
 - **Subtraction without redesign:** dependencies, abstractions, wrappers, compatibility layers, and replacement scaffolding have a default budget of zero.
@@ -170,6 +171,8 @@ Apply authorization permits scoped edits; it does not resolve uncertainty in fav
 ### Focused development evaluation
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.md) tests preservation and simplification decisions across paired micro cases and three end-to-end miniature repositories. Behavior gates run before reduction metrics. Micro and mini-repository results remain separate, and the repository publishes no project-level performance score.
+
+The follow-up [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.md) draft records 19 anonymized field observations and implements 7 new executable pairs. It is validated as a draft, not reported as model-performance evidence.
 
 See [Evaluation](docs/evaluation.md) for interpretation limits and [`evals/README.md`](evals/README.md) for the canonical protocol.
 
@@ -201,6 +204,7 @@ Future cases can be added without becoming Skill-tuning inputs; see [Field Trial
 skills/deslop/                   Self-contained runtime Skill payload
 docs/                            User, design, evidence, and development guides
 evals/dev-v2-focused/            Active focused development evaluation
+evals/dev-v3-evidence-edges/     Follow-up evidence-edge draft
 evals/real-world/                Manually adjudicated real-world evidence
 evals/archive/                   Retired historical evaluation material
 scripts/                         Validation and evaluation tooling

@@ -45,7 +45,7 @@ python3 evals/dev-v2-focused/grade_focused.py compare \
 
 比较结果包括清理前后的生产代码行数与测试代码行数、测试数量与运行时间、样例数据加载次数、代码结构变化、校验和/验证/回退相关词的出现次数，以及该类别是否达到精简目标、是否违反新增内容限制。清理结果如果没有通过行为检查，就不计精简分。
 
-逐项复核记录见 [`review.zh-CN.md`](review.zh-CN.md)。当前工作版本是候选版 `dev-v2-focused-rc5`；已经发布的 rc3 小案例试运行和 rc4 小型仓库试运行继续作为不可改写的历史证据保存。
+逐项复核记录见 [`review.zh-CN.md`](review.zh-CN.md)。`dev-v2-focused-rc5` 已由不可移动的基准标签冻结；已经发布的 rc3 小案例试运行和 rc4 小型仓库试运行继续作为不可改写的历史证据保存。
 
 [`mini-evals.json`](mini-evals.json) 可以把这三个仓库交给模型运行。评分后处理会根据每个小型仓库的 ID 找到未经修改的原始样例，并调用 `compare_mini_repositories()` 比较；项目没有为此再造第二套运行框架。
 

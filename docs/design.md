@@ -18,6 +18,14 @@ Generic formatting, broad refactoring, framework migration, architectural redesi
 
 > **Reduce test surface, not behavior surface.**
 
+## Test-first cleanup
+
+When tests are in scope, audit them before changing production behavior. Map each test to its current owner, production branch, observable result, independent oracle, and failure domain. Consolidate tests only when those elements match; similar syntax or a shared helper is not enough.
+
+Choose the strongest evidence root for each failure domain. Prefer a public seam, retain independently specified low-level invariants, and keep one hermetic integration root for each current delivery path. Treat fixtures, fakes, helper stacks, unmanaged inputs, tracked output targets, skips, and deselection rules as part of the test cluster.
+
+Deleting redundant test evidence does not authorize deleting the behavior it observed. Production removal needs separate caller, contract, history, and reachability evidence. After cleanup, re-collect the suite, explain skips or deselections, and confirm that test execution leaves the worktree unchanged.
+
 ## Independent evidence roots
 
 A construct is justified when its dependency chain reaches evidence independent from the construct itself. Useful roots include:
@@ -45,6 +53,18 @@ producer → receipt → validator → validator-only test
 ```
 
 If the cluster has no independent root, the whole cluster is a deletion candidate. If an external consumer, protocol, persisted boundary, or independent oracle exists, the loop is open and the relevant behavior must be preserved.
+
+## Evidence graphs include edges
+
+Passing unit tests for a producer, reader, and consumer do not prove that the current production identity crosses all three. Before retiring a cross-layer fixture, validator, registry entry, or wrapper, trace the active config or external input through the complete public path. Preserve one hermetic integration root when deleting the old carrier would otherwise leave that edge unprotected.
+
+Production reachability must start outside tests. A synthetic flag, future-only config, monkeypatched gate, diagnostic command, or scripted success path shows executability, not current ownership. Active configuration, an external caller, a persisted record, or an owned runtime selection establishes reachability.
+
+## Hermetic tests and explicit authority
+
+Permanent tests use repository-managed or test-created inputs and write generated output to temporary targets. Reading a tracked source asset can be legitimate; allowing a deep builder to overwrite a tracked compiled target is not. Optional-dependency skips should correspond to a dependency that the test actually invokes.
+
+Requiredness comes from the protocol, not from filesystem presence. If a package declares an authoritative artifact, its absence must fail just as a digest mismatch does. If a schema changes, every current public reader must enforce the shared version; only explicitly scoped migration readers should accept the old form. Critical identity fields must be required consistently by the type, parser, and validator.
 
 ## Production/test asymmetry
 
@@ -90,6 +110,8 @@ Apply mode removes resolved HIGH candidates. It does not turn MEDIUM uncertainty
 New dependencies, abstractions, wrappers, compatibility layers, provenance machinery, and replacement tests have a default budget of zero. New code is justified only when it preserves a real behavior while enabling a larger, focused subtraction.
 
 If cleanup adds substantial structure or changes architecture, stop and re-establish the boundary.
+
+Small corrective additions remain possible when they close a demonstrated protection gap, such as one current-path integration test or a direct required-input check. Their independent root and narrow scope must be explicit.
 
 ## Related approaches
 

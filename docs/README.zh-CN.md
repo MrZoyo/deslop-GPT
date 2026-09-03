@@ -20,6 +20,7 @@
 - `.claude-plugin/`：将共用的 Skill 打包为 Claude Code Plugin，并提供插件市场配置。
 - `skills/deslop/`：可以独立使用的完整 Skill 运行时文件。
 - `evals/dev-v2-focused/`：当前使用的开发评测。
+- `evals/dev-v3-evidence-edges/`：已经过结构校验的后续草案，不是冻结后的模型对比评测。
 - `evals/real-world/`：经人工复核并冻结留档的真实项目证据。
 
 这里只是项目说明。修改这里的文字，不会改变 Skill 的执行规则或评测标准。

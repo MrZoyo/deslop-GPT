@@ -16,6 +16,18 @@ same helper / same algorithm / implementation-generated expected value / mock se
 
 An independently implemented cross-check is useful only when it can fail differently. Repeating an implementation with different names is not independence.
 
+## Build an evidence map
+
+For a non-trivial suite, make the reasoning inspectable before deleting nodes:
+
+| Test or parameter group | Current owner | Production branch | Observable result | Oracle root | Failure domain | Stronger overlap |
+| --- | --- | --- | --- | --- | --- | --- |
+| one row per candidate | active config, caller, protocol, or none | actual branch reached | success, rejection, error, or state | independent source | what can fail differently | test that dominates it, if any |
+
+This can remain working notes; do not add a permanent audit artifact merely to prove cleanup. The map prevents three common errors: merging tests that have different failure semantics, retaining permutations that reach the same branch and result, and deleting production behavior merely because its only test was redundant.
+
+One test dominates another only when it protects the same owner, branch, result, and failure domain with an equally independent or stronger oracle. A public integration test does not automatically dominate a known numerical example, corruption test, or protocol rejection. Conversely, a long snapshot does not dominate a focused test merely because it asserts more fields.
+
 ## High-priority accumulated patterns
 
 | Pattern | Suspicious signal | Preserve when | Preferred action |
@@ -37,6 +49,12 @@ An independently implemented cross-check is useful only when it can fail differe
 | Snapshot bloat | Large snapshots obscure a small behavioral signal | Rendered/serialized artifact is the externally reviewed contract | Replace with focused semantic assertions |
 | Fixture-tautological test | Fixture setup guarantees the asserted state and no production behavior is invoked | Fixture state is an independently established integration precondition | Delete |
 | Obsolete-behavior test | Test preserves behavior a current user requirement explicitly corrected | Supported consumers still require the old behavior | Replace the test with the corrected contract |
+| Unmanaged-artifact test | Default tests read untracked `outputs/`, a one-off run directory, or a local formal package | Input is repository-managed, test-created, or an explicitly provisioned external resource | Delete the orphan test/support cluster or rebuild a self-contained behavioral test |
+| Tracked-output test | A compiler or materializer reached through a test writes to a tracked target | The test redirects writes to a temporary path and treats tracked data as read-only input | Redirect the output; inspect deep builders, not only direct file writes |
+| Synthetic-capability test | A production dry-run invents observations or success states and a test asserts that scripted success | Dry-run only parses, assembles, or validates without claiming the backend capability | Delete the fake capability path and its test |
+| Fake-only dependency skip | A fake-backed test skips when an SDK or simulator it never calls is absent | The test actually imports, compiles, encodes, or calls the optional boundary | Remove the skip or use one consistent module-level boundary |
+| Disconnected layer tests | Producer, loader, and consumer pass separately, but no test crosses the current identity through all three | A hermetic integration root already protects that production edge | Keep or create the smallest independent current-path root before retiring the old fixture |
+| Coverage-owned branch test | A threshold mutation, future-only config, or direct post-gate helper call exists only to cover a branch | Active production input reaches the branch or an adjacent guard has distinct safety semantics | Remove the unreachable branch/test cluster after checking current configs and registries |
 
 ## Closed justification loops
 
@@ -62,6 +80,12 @@ Delete or consolidate when no distinct regression remains. Preserve separate tes
 
 Do not optimize for test count, assertion count, branch coverage, or line coverage. A smaller suite with independent signal is better than a larger suite that merely documents its own implementation.
 
+## Retire fixtures by behavior
+
+An obsolete fixture and the behavior once reached through it are separate decisions. Map every fixture-backed test to a current owner. Delete behavior with no owner; move surviving behavior to the lowest stable public seam. Before removing a cross-layer fixture, confirm that one hermetic test still crosses the current producer, reader, and consumer. Green endpoint unit tests do not prove that edge.
+
+Delete a fixture's private builders, fakes, compatibility fields, and helper stack when no surviving test or production path uses them. Do not restore an unmanaged experiment artifact or preserve a whole legacy package merely to keep one current assertion reachable.
+
 ## Adding tests during cleanup
 
 Adding a test is not the default response. Add one only when:
@@ -81,3 +105,7 @@ When production slop is deleted, delete tests whose only purpose was to protect 
 - Keep scenario names and failure messages capable of localizing a real regression.
 - Run the remaining suite after deletion; zero remaining tests is not a passing cleanup.
 - Preserve low-level tests when low-level behavior itself is a stable contract, not merely because the code is private.
+- Count collected nodes before and after, then inspect skips and deselections; a smaller reported total can hide lost execution.
+- Fingerprint the worktree around suites that invoke compilers, materializers, exporters, or code generators.
+
+For generated inputs, current configuration, and cross-layer path checks, also read [evidence-and-reachability.md](evidence-and-reachability.md).

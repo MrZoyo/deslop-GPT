@@ -20,6 +20,7 @@ The top-level [README](../README.md) is the public overview. Detailed benchmark 
 - `.claude-plugin/` packages the shared runtime for Claude Code and publishes its marketplace entry.
 - `skills/deslop/` is the self-contained runtime payload.
 - `evals/dev-v2-focused/` is the active development evaluation.
+- `evals/dev-v3-evidence-edges/` is a validated follow-up draft, not a frozen comparison corpus.
 - `evals/real-world/` preserves manually adjudicated historical evidence.
 
 Changing explanatory prose here does not change runtime policy or evaluation semantics.

@@ -34,7 +34,7 @@
 
 | 优先级 | 目标 | 判断问题 |
 | ---: | --- | --- |
-| ~50% | **测试膨胀** | 每项测试是否覆盖不同的对外行为，并使用独立的判断依据？ |
+| ~50% | **测试膨胀** | 每项测试是否都用独立判断依据保护了一个有当前 owner 的独立失败域？ |
 | ~25% | **形式大于实效的验证** | 校验方能否发现产出方自身发现不了的错误，还是双方使用相同信息、也会因相同原因一起出错？ |
 | ~25% | **过度防御与回退逻辑** | 恢复路径是否履行一项当前仍有效的约定，还是只把意外的内部错误藏起来？ |
 
@@ -54,25 +54,25 @@
 
 ## 快速开始
 
-### Codex：安装独立版 Skill（v0.2.1）
+### Codex：安装独立版 Skill（v0.3.0）
 
 把下面的 GitHub Skill 地址交给内置安装器：
 
 ```text
 $skill-installer
 请从以下地址安装 Skill：
-https://github.com/MrZoyo/deslop-GPT/tree/v0.2.1/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
 ```
 
 如果希望直接检查本地源码，可以把 Skill 运行目录链接到 Codex 官方文档规定的用户级 Skill 目录：
 
 ```bash
-git clone --branch v0.2.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.2.1 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
+Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.0 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
 
 ### Claude Code：从 GitHub 安装 Plugin
 
@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。Claude 插件市场从 `main` 发布 0.2.1 版 Plugin，对应的 v0.2.1 标签固定了相同内容。这个补丁版本只新增 Claude Code 发布配置和中英文文档；Skill 运行时内容与 v0.2.0 完全相同。
+Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。Claude 插件市场从 `main` 发布 0.3.0 版 Plugin，对应的 v0.3.0 标签固定了相同内容。这个小版本新增 test-first evidence pass，强化 fixture 与 hermeticity 判断、当前路径保护，并加入 evidence-edge 开发回归集。
 
 ### 一份本地源码，同时供两个平台加载
 
@@ -153,6 +153,7 @@ $deslop deep apply
 
 - **独立证据来源：** 当前需求、真实调用方、公开约定、协议、信任边界、持久化边界或科学不变量。
 - **相互自证的闭环：** 生产代码和测试不能只靠彼此证明对方有必要存在。
+- **生产可达性与路径闭合：** 应证明当前输入能够穿过完整路径抵达 consumer，而不是只看孤立 caller 或测试注入的分支。
 - **生产代码与测试并不对等：** 冗余测试可以删除，但测试所观察的行为不能因此一并删除。
 - **优先暴露错误：** 除非存在明确的恢复或错误转换约定，否则意外的内部错误应当直接暴露。
 - **只做减法，不重新设计：** 默认不新增依赖、抽象层、包装层、兼容层或替代脚手架。
@@ -170,6 +171,8 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 ### 专项开发评测
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.zh-CN.md) 使用成对的小案例和三个端到端小型仓库，检查 Agent 是否能正确判断该删什么、该留什么。只有先通过行为检查，才会计算精简指标。小案例和小型仓库的结果始终分开报告，本仓库不发布项目级性能分数。
+
+后续的 [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，并先实现了 7 对新的可执行案例。目前只校验草案内部一致性，不把它描述成模型表现证据。
 
 结果应如何解读，见[评测](docs/evaluation.zh-CN.md)；完整规则见 [`evals/README.zh-CN.md`](evals/README.zh-CN.md)。
 
@@ -201,6 +204,7 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 skills/deslop/                  可独立使用的完整 Skill 运行时文件
 docs/                           使用、设计、证据与开发指南
 evals/dev-v2-focused/           当前专项开发评测
+evals/dev-v3-evidence-edges/    后续证据边界草案
 evals/real-world/               经人工复核的真实项目证据
 evals/archive/                  已退役的历史评测材料
 scripts/                        仓库校验与评测工具

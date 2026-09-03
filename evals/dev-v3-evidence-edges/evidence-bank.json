@@ -1,0 +1,219 @@
+{
+  "schema": "deslop-field-evidence-v1",
+  "source": {
+    "kind": "anonymized field review",
+    "observed_on": "2026-09-02",
+    "note": "This bank records reusable decisions, not the private source tree or a scored model result."
+  },
+  "label_semantics": {
+    "positive": "Evidence supports subtraction, consolidation, or a fail-visible correction.",
+    "negative": "A nearby construct has an independent root and must be preserved."
+  },
+  "preservation_roots": [
+    {
+      "category": "safety_and_task_result",
+      "examples": [
+        "non-finite values, joint limits, collision, illegal contact, and force backoff",
+        "release, clearance, target, and settle ordering, including rebound and hold semantics",
+        "terminal observation freeze, environment isolation, and batch error isolation",
+        "execution-quality signals that must not overwrite hard task failure",
+        "the current reachable task path and its distinct hard safety gates"
+      ]
+    },
+    {
+      "category": "persistence_and_external_protocol",
+      "examples": [
+        "atomic publish, replace, discard, and partial-output cleanup",
+        "media and state sidecars verified through real disk readback",
+        "current schema, source identity, resume comparison, ledger, and explicit counts",
+        "archive CRC, real member hashes, deterministic rebuild, and release manifests",
+        "corruption, missing fields, timeline drift, and malformed current data",
+        "physical state/action meaning and bounded parallel validation"
+      ]
+    },
+    {
+      "category": "hardware_calibration_and_numerics",
+      "examples": [
+        "runtime ABI matches and mismatches",
+        "accelerator versions, device capability, and required kernel selection",
+        "hand-eye, mirror, rigid-transform, and tool-mount calibration relations",
+        "real camera projection, field of view, resolution, and physical clearance",
+        "known mathematical examples, unit conversions, clamp behavior, and invalid time steps",
+        "concurrency limits, resource bounds, and cleanup lifecycle"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "p01",
+      "title": "Large snapshots versus focused integration evidence",
+      "cluster": "test_bloat",
+      "positive": "A snapshot copies hundreds of configuration or topology fields from the same implementation and fails on harmless reshaping.",
+      "negative": "An exact serialized artifact is itself an externally reviewed wire or persistence contract.",
+      "independent_oracle": "A small set of cross-layer closure facts, or exact external bytes when the bytes are the contract.",
+      "coverage": {"kind": "candidate", "pairs": []}
+    },
+    {
+      "id": "p02",
+      "title": "Group by failure domain, not historical test name",
+      "cluster": "test_bloat",
+      "positive": "Several inputs reach the same production branch and the same observable failure, so one table-driven node is sufficient.",
+      "negative": "Non-finite input, limits, collision, force, rebound, missing depth, and invisible masks have distinct acceptance semantics.",
+      "independent_oracle": "Input equivalence class to production branch to observable result mapping.",
+      "coverage": {"kind": "existing", "pairs": ["dev-v2-focused:t01", "dev-v2-focused:t03"]}
+    },
+    {
+      "id": "p03",
+      "title": "Private helper versus independent algorithm root",
+      "cluster": "test_bloat",
+      "positive": "A private helper test derives inputs and expected values from the same implementation constants or steps.",
+      "negative": "The helper implements a stable mathematical, encoding, or safety rule with known examples or independent invariants.",
+      "independent_oracle": "Known numerical result, external format, geometric invariant, or public behavior.",
+      "coverage": {"kind": "existing", "pairs": ["dev-v2-focused:t02"]}
+    },
+    {
+      "id": "p04",
+      "title": "One-off experiment artifact versus managed fixture",
+      "cluster": "test_hermeticity",
+      "positive": "A default test reads an untracked run output or developer-local package and otherwise skips or fails.",
+      "negative": "The input is tracked, created by the test, or provisioned as an explicit managed resource.",
+      "independent_oracle": "A clean checkout can reproduce the input and the asserted behavior.",
+      "coverage": {"kind": "new", "pairs": ["h01"]}
+    },
+    {
+      "id": "p05",
+      "title": "Obsolete fixture versus surviving behavior",
+      "cluster": "production_reachability",
+      "positive": "An old fixture carries only retired behavior with no current producer or consumer.",
+      "negative": "A current behavior still needs a lower public seam or integration root after the old carrier is removed.",
+      "independent_oracle": "Test to behavior to current owner mapping.",
+      "coverage": {"kind": "new", "pairs": ["r02"]}
+    },
+    {
+      "id": "p06",
+      "title": "Manufactured dry-run success versus assembly dry-run",
+      "cluster": "production_reachability",
+      "positive": "A production command invents observations or forces phases to report a capability that no backend executes.",
+      "negative": "A dry-run only parses, assembles, or validates a request and makes no execution claim.",
+      "independent_oracle": "A real backend boundary for capability claims; parser or assembly contract for non-executing dry-runs.",
+      "coverage": {"kind": "candidate", "pairs": []}
+    },
+    {
+      "id": "p07",
+      "title": "Tracked output writes versus read-only source assets",
+      "cluster": "test_hermeticity",
+      "positive": "A test reaches a builder whose configured output overwrites tracked compiled assets.",
+      "negative": "The test reads tracked source data but redirects every generated output to a temporary directory.",
+      "independent_oracle": "Worktree state remains byte-for-byte unchanged around the test suite.",
+      "coverage": {"kind": "new", "pairs": ["h02"]}
+    },
+    {
+      "id": "p08",
+      "title": "Future possibility versus current production owner",
+      "cluster": "production_reachability",
+      "positive": "Only synthetic tests can enable a future camera, platform, or task variant.",
+      "negative": "An active config, controlled deployment, or owned work package selects the variant.",
+      "independent_oracle": "Reachability from a non-test production input.",
+      "coverage": {"kind": "new", "pairs": ["r01"]}
+    },
+    {
+      "id": "p09",
+      "title": "Registry and CLI loop versus public command",
+      "cluster": "production_reachability",
+      "positive": "A registry entry, CLI, diagnostic module, config, and tests only reference one another after an experiment ends.",
+      "negative": "A current operator workflow or external consumer invokes the documented public command.",
+      "independent_oracle": "A caller outside the registry/CLI/diagnostic cluster.",
+      "coverage": {"kind": "candidate", "pairs": []}
+    },
+    {
+      "id": "p10",
+      "title": "Self-digest versus independent identity",
+      "cluster": "artifact_authority",
+      "positive": "One producer writes a payload, digest, receipt, and validation conclusion from the same information.",
+      "negative": "A digest crosses publication, transport, resume, persisted readback, or a third-party consumer boundary.",
+      "independent_oracle": "Independently supplied digest, content identity, or corruption failure domain.",
+      "coverage": {"kind": "existing", "pairs": ["dev-v2-focused:v01", "dev-v2-focused:v02"]}
+    },
+    {
+      "id": "p11",
+      "title": "Test-only compatibility alias versus supported stored data",
+      "cluster": "fallback_bloat",
+      "positive": "An alias, legacy field, or diagnostic rule has no old producer, data inventory, external consumer, or retirement condition.",
+      "negative": "A current external consumer or stored-data population still requires the compatibility path under an explicit policy.",
+      "independent_oracle": "Named producer, consumer, data population, and sunset condition.",
+      "coverage": {"kind": "existing", "pairs": ["dev-v2-focused:f01"]}
+    },
+    {
+      "id": "p12",
+      "title": "Silent fallback versus explicit recovery contract",
+      "cluster": "fallback_bloat",
+      "positive": "Malformed current data is reinterpreted through defaults, filenames, broad retries, or an old path.",
+      "negative": "An explicit version, missing-field rule, external error translation, or cleanup contract defines recovery.",
+      "independent_oracle": "Current producer schema or documented legacy protocol.",
+      "coverage": {"kind": "existing", "pairs": ["dev-v2-focused:f01", "dev-v2-focused:f02"]}
+    },
+    {
+      "id": "p13",
+      "title": "Fake-only dependency skip versus real optional boundary",
+      "cluster": "test_hermeticity",
+      "positive": "A fake-backed test skips when an SDK or simulator that it never calls is absent.",
+      "negative": "The test imports the SDK, compiles the real model, writes through the codec, or calls the optional backend.",
+      "independent_oracle": "The dependency is present on the executed call path.",
+      "coverage": {"kind": "candidate", "pairs": []}
+    },
+    {
+      "id": "p14",
+      "title": "Coverage-created branch versus active safety path",
+      "cluster": "production_reachability",
+      "positive": "Tests mutate thresholds or call post-gate helpers to cover a branch no active config can reach.",
+      "negative": "The current task reaches the branch, or the adjacent guard enforces a distinct hard safety failure.",
+      "independent_oracle": "Active configuration and separate safety acceptance semantics.",
+      "coverage": {"kind": "new", "pairs": ["r01"]}
+    },
+    {
+      "id": "p15",
+      "title": "Green endpoints versus a closed production path",
+      "cluster": "production_reachability",
+      "positive": "A retired cross-layer fixture has no current identity or consumer and can be removed as a cluster.",
+      "negative": "Producer, loader, and state machine pass separately, but no test proves that the current identity crosses their edges.",
+      "independent_oracle": "One hermetic current producer-to-reader-to-consumer integration root.",
+      "coverage": {"kind": "new", "pairs": ["r02"]}
+    },
+    {
+      "id": "p16",
+      "title": "Conditional integrity versus explicit optional enrichment",
+      "cluster": "artifact_authority",
+      "positive": "A declared package-level artifact is verified only when its file happens to exist, allowing lower-level sidecars to take over authority.",
+      "negative": "The protocol explicitly marks an enrichment artifact optional and defines behavior when it is absent.",
+      "independent_oracle": "Package declaration and digest contract, not filesystem presence.",
+      "coverage": {"kind": "new", "pairs": ["v03"]}
+    },
+    {
+      "id": "p17",
+      "title": "Main-loader schema bump versus explicit migration reader",
+      "cluster": "schema_contract",
+      "positive": "The writer and canonical loader reject old data while a CLI, visualizer, or tool still hand-parses and accepts it.",
+      "negative": "A separately named migration reader intentionally accepts a documented old version.",
+      "independent_oracle": "Every current public deserialize boundary enforces the shared version; migration boundaries are explicit.",
+      "coverage": {"kind": "new", "pairs": ["s01"]}
+    },
+    {
+      "id": "p18",
+      "title": "Critical-field default versus optional presentation default",
+      "cluster": "schema_contract",
+      "positive": "A required identity, source path, count, or handedness field still has a historical dataclass or parser default.",
+      "negative": "A presentation or enrichment field is explicitly optional and has defined default behavior.",
+      "independent_oracle": "Type, parser, and validator agree on requiredness.",
+      "coverage": {"kind": "new", "pairs": ["s02"]}
+    },
+    {
+      "id": "p19",
+      "title": "Stale current docs versus labeled history",
+      "cluster": "production_reachability",
+      "positive": "Authoritative PLAN, STATUS, architecture, or workflow text still promises a removed fallback or marks a completed fix as pending.",
+      "negative": "A history, migration note, or future proposal is clearly labeled and does not describe the current path.",
+      "independent_oracle": "Current callers and active configuration agree with current-facing documentation.",
+      "coverage": {"kind": "candidate", "pairs": []}
+    }
+  ]
+}
