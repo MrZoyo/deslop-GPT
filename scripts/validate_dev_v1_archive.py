@@ -60,6 +60,7 @@ def validate_skill() -> None:
         "references/test-smells.md",
         "references/verification-and-trust.md",
         "references/scientific-code.md",
+        "references/evidence-and-reachability.md",
     }
     for reference in required_references:
         if reference not in skill_text or not (SKILL_ROOT / reference).is_file():
