@@ -6,17 +6,17 @@
 
 ## Install
 
-### Codex: released standalone Skill v0.3.0
+### Codex: released standalone Skill v0.3.1
 
 OpenAI's [Codex Skills documentation](https://developers.openai.com/codex/skills/) documents `$skill-installer` for curated skills and skills from other repositories. Invoke it with this repository URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
-The v0.3.0 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. The same payload follows the open Agent Skills structure and can also be discovered directly by Claude Code. This release adds a test-first evidence pass, stronger fixture and hermeticity rules, and current-path edge protection. The immutable v0.2.1 and v0.1.0 payloads remain available at their tagged paths.
+The v0.3.1 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. The same payload follows the open Agent Skills structure and can also be discovered directly by Claude Code. It retains the v0.3.0 test-first evidence pass and adds narrower requirement-evidence, host-instruction, and read-only verification guidance. The immutable v0.3.0, v0.2.1, and v0.1.0 payloads remain available at their tagged paths.
 
 The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
@@ -25,7 +25,7 @@ The currently bundled `$skill-installer` manages downloaded Skills in an install
 Codex discovers personal Skills under `$HOME/.agents/skills`; Claude Code uses `$HOME/.claude/skills`. Both follow symlinked Skill directories. Clone the project outside either discovery tree, then create only the link or links you need:
 
 ```bash
-git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
@@ -50,7 +50,7 @@ Invoke the installed Plugin with its canonical namespaced command:
 /deslop:deslop audit
 ```
 
-The marketplace follows `main` and declares Plugin version 0.3.0. The matching v0.3.0 tag contains the same Claude Plugin metadata and pins the release. Because Claude Code uses the manifest version as its update key, future Plugin changes must bump that version before installed users can receive them.
+The marketplace catalog follows `main`, declares Plugin version 0.3.1, and pins the Plugin source to the matching v0.3.1 tag. This keeps new installations on the released runtime even when `main` later contains development work. Because Claude Code uses the manifest version as its update key, future Plugin changes must bump both the version and pinned release ref before installed users can receive them.
 
 For local Plugin development, start Claude Code from this repository with:
 
@@ -62,14 +62,14 @@ This loads the same [`skills/deslop/`](../skills/deslop/) payload under the `/de
 
 ### Upgrade from v0.2.1
 
-v0.3.0 changes the runtime guidance while keeping the `skills/deslop/` path unchanged. A source checkout installed through a symlink only needs to move to the v0.3.0 tag; the link itself does not change. Reinstall an installer-managed Codex copy from the v0.3.0 URL above. Update an installed Claude Code Plugin with `claude plugin update deslop@deslop`, then restart Claude Code. Users on v0.2.0 can upgrade directly the same way.
+v0.3.1 changes the runtime guidance while keeping the `skills/deslop/` path unchanged. A source checkout installed through a symlink only needs to move to the v0.3.1 tag; the link itself does not change. Reinstall an installer-managed Codex copy from the v0.3.1 URL above. Update an installed Claude Code Plugin with `claude plugin update deslop@deslop`, then restart Claude Code. Users on v0.3.0 or v0.2.x can upgrade directly the same way.
 
 ### Upgrade from v0.1.0
 
 The installer does not automatically follow a Git directory rename. Reinstall from:
 
 ```text
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
 The old v0.1.0 path was:
@@ -85,7 +85,7 @@ test -L "$HOME/.agents/skills/deslop"
 readlink "$HOME/.agents/skills/deslop"
 ```
 
-Only when that output confirms the expected v0.1.0 symlink to `~/.local/share/deslop-GPT/skill/deslop`, remove the symlink itself and recreate it for v0.3.0:
+Only when that output confirms the expected v0.1.0 symlink to `~/.local/share/deslop-GPT/skill/deslop`, remove the symlink itself and recreate it for v0.3.1:
 
 ```bash
 unlink "$HOME/.agents/skills/deslop"
@@ -97,7 +97,7 @@ If the destination is a real directory or points somewhere else, stop and review
 
 ### Development branch
 
-The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.3.0 path when reproducibility matters.
+The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.3.1 path when reproducibility matters.
 
 The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path.
 
@@ -132,6 +132,8 @@ Append the following arguments to that command name:
 | `path/to/file audit` | Restrict inspection to explicit paths plus minimal contract context |
 
 Only `apply` authorizes edits. It does not authorize fetching, resetting, switching branches, staging, committing, pushing, or creating backups unless those operations are requested separately.
+
+In read-only modes, checks should use no-write flags or temporary cache/output locations when available. If a tool still leaves incidental cache artifacts, the audit should disclose them; if a check cannot avoid changing repository-owned content, skip it and say why.
 
 Codex enforces explicit-only selection through [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml). That file is OpenAI-specific. Claude Code reads the shared standards-compatible `SKILL.md` and may select it from its description; without `apply`, that selection remains read-only. Use `/deslop` or `/deslop:deslop` explicitly when reproducible invocation matters.
 

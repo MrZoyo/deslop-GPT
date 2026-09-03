@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tardigrde/agent-skill-eval/v0.7.0/schemas/evals.schema.json",
+  "skill_name": "deslop",
+  "evals": [
+    {
+      "id": "mode-default-audit",
+      "prompt": "Inspect the supplied code and tests for accumulated test-suite bloat. Report evidence-backed candidates and preservation boundaries.",
+      "expected_output": "A read-only audit; supplied source and test files remain unchanged.",
+      "files": [
+        "files/mode-default-audit/app.py",
+        "files/mode-default-audit/test_app.py"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": false
+      }
+    }
+  ]
+}

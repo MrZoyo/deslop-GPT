@@ -13,6 +13,8 @@
 | [`docs/`](./) | 面向用户和贡献者的使用、设计、证据与开发文档 |
 | [`evals/dev-v2-focused/`](../evals/dev-v2-focused/) | 当前专项开发评测及其评分程序 |
 | [`evals/dev-v3-evidence-edges/`](../evals/dev-v3-evidence-edges/) | 关于可达性、hermeticity、权威输入和 schema 边界的后续草案 |
+| [`evals/runtime-controls/`](../evals/runtime-controls/) | 与清理质量分数分离的授权和宿主运行时控制案例 |
+| [`evals/release-smoke/`](../evals/release-smoke/) | 明确记录限制、绑定具体版本的小型前向测试 |
 | [`evals/real-world/`](../evals/real-world/) | 经人工复核并冻结留档的真实项目证据 |
 | [`evals/archive/`](../evals/archive/) | 已退役的评测材料与历史诊断结果 |
 | [`scripts/`](../scripts/) | 评测集校验、评测框架适配与结果导出工具 |
@@ -53,6 +55,10 @@ uv run --with agent-skill-eval==0.7.0 \
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
   evals/dev-v3-evidence-edges/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate \
+  evals/runtime-controls/evals.json
 ```
 
 已退役的归档材料有单独的可选校验程序：
@@ -105,7 +111,7 @@ claude plugin validate . --strict
 
 ## 发布就绪条件
 
-项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.0，发布时必须创建对应的 v0.3.0 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 都必须提升该版本号。基准评测自身的修订标签与项目发布版本彼此独立。
+项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.1，发布时必须创建对应的 v0.3.1 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 都必须同时提升版本号和 marketplace 中固定的发布 ref。基准评测自身的修订标签与项目发布版本彼此独立。
 
 在面向公众的发布提交之前：
 
@@ -122,6 +128,6 @@ claude plugin validate . --strict
 
 统一使用的 [`skills/deslop/`](../skills/deslop/) 目录遵循通用标准，各运行平台加载的都是完全相同的内容。Codex 可以从 `.agents/skills` 把它加载为独立 Skill；Claude Code 可以从 `.claude/skills` 加载同一目录，也可以通过本仓库的 Claude Plugin 加载。OpenAI 专用的 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 负责 Codex 界面元数据，并要求用户明确调用该 Skill；Claude Code 会忽略这个文件。
 
-Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。manifest 声明的版本是 0.3.0；发布时必须用对应的 `v0.3.0` 标签固定内容。v0.3.0 强化测试清理、fixture 退役、测试 hermeticity 和当前路径保护。以后每次修改 Plugin，都必须提升 manifest 版本号，Claude Code 才能检测到更新。
+Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。manifest 声明的版本是 0.3.1，marketplace 也把 Plugin 源固定到对应的 `v0.3.1` 标签，不会在同一版本下把以后 `main` 的内容交给新用户。v0.3.1 保留 v0.3.0 的 test-first 范围，同时澄清授权与跨宿主行为。以后每次修改 Plugin，都必须同时提升 manifest 版本号和固定 ref。
 
 Codex Plugin 的打包问题仍未解决，而且与 Claude Code 的发布方式无关。测试使用的是 Codex CLI 0.149.1。Plugin Creator 能通过一份临时的纯 Skills manifest，其中配置了 `skills: "./skills/"`；本地插件市场也能找到并安装它，缓存同样可以正常创建。缓存中确实存在 `skills/deslop/SKILL.md`，但在移除环境中另行安装的独立 Skill 后，新启动的 app-server 调用 `skills/list(forceReload=true)`，仍然没有返回已注册的 `deslop` Skill。因此，当前问题出在 Codex 没有把 Plugin 中的 Skill 注册到运行环境，而不是 `skills/deslop/` 目录结构有误，也不是独立 Skill 本身无效。Claude 专用的 `.claude-plugin/` 元数据不会改变这个结果，不能替代 Codex 当前支持的独立安装方式。

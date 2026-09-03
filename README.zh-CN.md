@@ -54,25 +54,25 @@
 
 ## 快速开始
 
-### Codex：安装独立版 Skill（v0.3.0）
+### Codex：安装独立版 Skill（v0.3.1）
 
 把下面的 GitHub Skill 地址交给内置安装器：
 
 ```text
 $skill-installer
 请从以下地址安装 Skill：
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
 如果希望直接检查本地源码，可以把 Skill 运行目录链接到 Codex 官方文档规定的用户级 Skill 目录：
 
 ```bash
-git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.0 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
+Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.1 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
 
 ### Claude Code：从 GitHub 安装 Plugin
 
@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。Claude 插件市场从 `main` 发布 0.3.0 版 Plugin，对应的 v0.3.0 标签固定了相同内容。这个小版本新增 test-first evidence pass，强化 fixture 与 hermeticity 判断、当前路径保护，并加入 evidence-edge 开发回归集。
+Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源固定到 v0.3.1 标签。这个补丁版本澄清需求证据与宿主指令文件，加入当前只读控制案例，并让评测 wrapper 识别不同宿主。v0.3.0 的 test-first 与 evidence-edge 范围保持不变。
 
 ### 一份本地源码，同时供两个平台加载
 
@@ -164,9 +164,20 @@ $deslop deep apply
 
 Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml) 要求用户明确调用这个 Skill。Claude Code 不读取这项 OpenAI 专用元数据；共用 `SKILL.md` 文件头中的通用元数据则说明 `deslop` 应由用户明确调用。Claude Code 仍有可能根据描述自动选中该 Skill，但只要用户没有写 `apply`，它就只能读取和审计。默认模式与 `audit` 都是只读模式；审计也可以明确记录某段可疑代码经查证后决定保留。不能仅仅因为代码看起来很防御、由 Agent 编写，或有一项可以删除的测试，就认定代码本身也可以删除。
 
-`apply` 只授权在既定范围内编辑，不能把尚未查清的问题一律解释成可以删除。审查顺序见[入门指南](docs/getting-started.zh-CN.md)，置信度分级和默认保留的边界见[设计](docs/design.zh-CN.md)。
+只读验证应尽量重定向缓存或生成输出，并披露偶然留下的残留物。`apply` 只授权在既定范围内编辑，不能把尚未查清的问题一律解释成可以删除。审查顺序见[入门指南](docs/getting-started.zh-CN.md)，置信度分级和默认保留的边界见[设计](docs/design.zh-CN.md)。
 
 ## 证据
+
+### 验证状态
+
+| Skill payload | 宿主与加载方式 | 运行次数 | 能够说明什么 |
+| --- | --- | --- | --- |
+| v0.3.1 发布内容（发布前精确哈希） | Codex 子代理按路径加载 Skill | 1 次默认 audit，加 `t02b`、`t03b` 两个保留案例 | 窄范围开发回归 smoke；三次都没有改变 fixture 内容 |
+| v0.3.0 正式版精确哈希 | Codex 子代理按路径加载 Skill | 3 个小型仓库 apply，加 1 次 audit | 三个清理结果均通过隐藏行为、精简和新增内容限制；不包含 CLI discovery 或 baseline 证据 |
+| v0.3.0 正式版精确哈希 | Claude Code 2.1.259 本地 Plugin，Haiku 4.5 | 1 次 audit，加 1 次 apply | 已验证 Plugin 加载和一个有效清理结果；apply 在最终报告前达到回合上限 |
+| 更早的开发 payload | Codex CLI 0.149.1，`gpt-5.6-sol` | rc3 小案例、rc4 小型仓库和 rc5 定向诊断 | 只适用于对应 payload 哈希的历史开发证据 |
+
+2026-09-03 的两组前向 smoke 保存在 [`evals/release-smoke/`](evals/release-smoke/) 下。它们都是已暴露、单次、没有 baseline 的开发诊断，不是 held-out 模型效果证据。旧版 rc3 小案例试运行中，加载当时的 Skill 后总 token 增加 63.1%，耗时增加 16.5%；这次单次结果不能预测 v0.3.x 成本，但说明 `deslop` 更适合有意安排的累积清理，不适合作为每个微小 diff 的固定步骤。
 
 ### 专项开发评测
 
@@ -205,6 +216,8 @@ skills/deslop/                  可独立使用的完整 Skill 运行时文件
 docs/                           使用、设计、证据与开发指南
 evals/dev-v2-focused/           当前专项开发评测
 evals/dev-v3-evidence-edges/    后续证据边界草案
+evals/runtime-controls/         授权与宿主运行时控制案例
+evals/release-smoke/            绑定版本的前向 smoke 记录
 evals/real-world/               经人工复核的真实项目证据
 evals/archive/                  已退役的历史评测材料
 scripts/                        仓库校验与评测工具

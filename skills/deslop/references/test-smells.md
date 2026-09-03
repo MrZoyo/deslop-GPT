@@ -48,7 +48,7 @@ One test dominates another only when it protects the same owner, branch, result,
 | Implementation-derived expected value | Expected value is recomputed by the code under test or a copied algorithm | Independent reference data or mathematical invariant exists | Use the independent oracle or delete |
 | Snapshot bloat | Large snapshots obscure a small behavioral signal | Rendered/serialized artifact is the externally reviewed contract | Replace with focused semantic assertions |
 | Fixture-tautological test | Fixture setup guarantees the asserted state and no production behavior is invoked | Fixture state is an independently established integration precondition | Delete |
-| Obsolete-behavior test | Test preserves behavior a current user requirement explicitly corrected | Supported consumers still require the old behavior | Replace the test with the corrected contract |
+| Obsolete-behavior test | Test conflicts with an explicit current-task requirement or current authoritative project document | Supported consumers still require the old behavior | Replace the test with the corrected contract |
 | Unmanaged-artifact test | Default tests read untracked `outputs/`, a one-off run directory, or a local formal package | Input is repository-managed, test-created, or an explicitly provisioned external resource | Delete the orphan test/support cluster or rebuild a self-contained behavioral test |
 | Tracked-output test | A compiler or materializer reached through a test writes to a tracked target | The test redirects writes to a temporary path and treats tracked data as read-only input | Redirect the output; inspect deep builders, not only direct file writes |
 | Synthetic-capability test | A production dry-run invents observations or success states and a test asserts that scripted success | Dry-run only parses, assembles, or validates without claiming the backend capability | Delete the fake capability path and its test |
@@ -62,7 +62,7 @@ Production code does not justify a test merely because the test exercises it. A 
 
 If a test exists only to keep a defensive branch green, and the branch exists only because that test was added, the pair is mutual-support slop. Apply the same rule to checksum tests and digest code, receipt tests and receipt validators, wrapper tests and wrappers, compatibility tests and obsolete branches, and validator tests and validators. Do not preserve one member merely because the other member depends on it; delete the closed cluster when no independent root remains.
 
-Independent roots include a current user requirement, real external caller, public API, documented protocol, security or trust boundary, persisted corruption boundary, scientific invariant, or a separately maintained reference dataset.
+Independent roots include an explicit current-task requirement, a current authoritative project document, real external caller, public API, documented protocol, security or trust boundary, persisted corruption boundary, scientific invariant, or a separately maintained reference dataset.
 
 ## Keep or delete
 
@@ -96,7 +96,7 @@ Adding a test is not the default response. Add one only when:
 - the expected result has an independent source; and
 - the test observes a meaningful seam rather than cleanup details.
 
-When production slop is deleted, delete tests whose only purpose was to protect that slop in the same change. Do not add a replacement test merely because a function now lacks a unit test, coverage falls, or a model prefers symmetry. A current user requirement or correction outranks a historical test that asserts obsolete or incorrect behavior.
+When production slop is deleted, delete tests whose only purpose was to protect that slop in the same change. Do not add a replacement test merely because a function now lacks a unit test, coverage falls, or a model prefers symmetry. An explicit current-task requirement or current authoritative project document outranks a historical test that asserts obsolete or incorrect behavior; an inferred preference does not.
 
 ## Consolidation discipline
 

@@ -1,0 +1,51 @@
+{
+  "schema": "deslop-forward-smoke-v1",
+  "status": "exposed-development-diagnostic",
+  "public_performance_claim": false,
+  "date": "2026-09-03",
+  "candidate": {
+    "version": "0.3.1",
+    "base_commit": "83c30df5e4f037244f4fa7ee5be44370ba676ef6",
+    "dirty_at_run_start": true,
+    "skill_content_hash": "39146983500952bbe4dae7247ad27671e6ac64c70aa777bc32118765e046feba",
+    "skill_md_sha256": "0ebc15ab46405afb16f66d65d26a38710d0ed56b76750a4176d231c83db2ed5c"
+  },
+  "runner": {
+    "kind": "Codex collaboration subagent",
+    "model": "not-exposed-by-host",
+    "invocation": "exact Skill loaded by path",
+    "baseline": false,
+    "runs_per_case": 1
+  },
+  "cases": [
+    {
+      "id": "mode-default-audit",
+      "passed": true,
+      "decision": "audit-only",
+      "remaining_tests": 3,
+      "repository_files_unchanged": true,
+      "incidental_cache_artifacts": 0
+    },
+    {
+      "id": "t02b",
+      "passed": true,
+      "decision": "preserve",
+      "remaining_tests": 2,
+      "repository_files_unchanged": true
+    },
+    {
+      "id": "t03b",
+      "passed": true,
+      "decision": "preserve",
+      "remaining_tests": 2,
+      "repository_files_unchanged": true
+    }
+  ],
+  "limitations": [
+    "No without-Skill baseline",
+    "One run per case",
+    "Known development cases rather than held-out cases",
+    "Host did not expose model or token telemetry",
+    "Direct Skill loading rather than Codex CLI discovery"
+  ]
+}

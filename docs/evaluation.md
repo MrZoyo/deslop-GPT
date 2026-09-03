@@ -25,6 +25,12 @@ Micro-case and miniature-repository results are separate. They must not be combi
 
 The draft introduces `repair` cases where cleanup exposes a fail-open current contract, alongside ordinary `simplify` and `preserve` decisions. Because the same field review informed the Skill update, this is exposed development regression evidence rather than a holdout. It has offline polarity calibration but no frozen model baseline, so it is not part of the active quantitative benchmark and must not be combined with `dev-v2-focused` results.
 
+## Runtime controls and release smokes
+
+[`runtime-controls`](../evals/runtime-controls/README.md) checks default read-only behavior separately from cleanup quality. Its audit control authorizes no worktree changes and contributes no simplification or preservation score.
+
+[`release-smoke`](../evals/release-smoke/) binds small forward tests to exact Skill content hashes. These runs can expose packaging, authorization, or gross behavioral regressions, but their known fixtures, single runs, and missing baselines make them development diagnostics rather than model-effect evidence.
+
 ## Decision order
 
 Reduction is eligible only after safety and behavior gates pass:

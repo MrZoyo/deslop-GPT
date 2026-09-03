@@ -34,3 +34,5 @@ jobs:
             python scripts/run_agent_skill_eval.py validate evals/dev-v2-focused/mini-evals.json
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py validate evals/dev-v3-evidence-edges/evals.json
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/runtime-controls/evals.json

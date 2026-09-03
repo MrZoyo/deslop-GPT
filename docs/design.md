@@ -30,7 +30,7 @@ Deleting redundant test evidence does not authorize deleting the behavior it obs
 
 A construct is justified when its dependency chain reaches evidence independent from the construct itself. Useful roots include:
 
-- a current user requirement or correction;
+- an explicit requirement or correction in the current task, or a current authoritative project document;
 - a real external caller;
 - public success, rejection, error, or compatibility behavior;
 - a protocol, specification, or persisted format;

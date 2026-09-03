@@ -117,12 +117,31 @@ def counterbalanced_as_completed(futures, timeout=None):
 
 
 def option_value(arguments: list[str], option: str) -> str | None:
+    values = option_values(arguments, option)
+    return values[-1] if values else None
+
+
+def option_values(arguments: list[str], option: str) -> list[str]:
+    values = []
     for index, argument in enumerate(arguments):
         if argument == option and index + 1 < len(arguments):
-            return arguments[index + 1]
-        if argument.startswith(f"{option}="):
-            return argument.split("=", 1)[1]
-    return None
+            values.append(arguments[index + 1])
+        elif argument.startswith(f"{option}="):
+            values.append(argument.split("=", 1)[1])
+    return values
+
+
+def requested_agent_types(arguments: list[str]):
+    from agent_skill_eval.models import AgentType
+
+    values = option_values(arguments, "--agent") + option_values(arguments, "-a")
+    values = values or [AgentType.CODEX.value]
+    requested = []
+    for value in values:
+        agent_type = AgentType(value)
+        if agent_type not in requested:
+            requested.append(agent_type)
+    return requested
 
 
 def validate_skill_identity(skill_argument: str, evals_argument: str) -> None:
@@ -206,6 +225,7 @@ def configure_side_effect_contract() -> None:
 
 def configure_task_order() -> None:
     import agent_skill_eval.runner as runner
+    from agent_skill_eval.models import AgentType
     from agent_skill_eval.runner import EvalRunner
 
     runner.ThreadPoolExecutor = CounterbalancedExecutor
@@ -248,55 +268,203 @@ def configure_task_order() -> None:
             "rule": "Skill first when case_position + run_index is even; baseline first otherwise.",
             "case_order": [str(eval_case.id) for eval_case in self.suite.evals],
         }
-        metadata["codex_environment"] = {
-            "sandbox": "workspace-write",
+        shared = {
             "network": "not-explicitly-pinned-or-recorded",
-            "approval_policy": "not-pinned-by-harness",
-            "local_config": "inherited-except-model-and-reasoning",
+            "local_config": "inherited-except-explicit-model-settings",
         }
+        profiles = {
+            AgentType.CODEX: {
+                **shared,
+                "sandbox": "workspace-write",
+                "permission_mode": "codex workspace-write",
+            },
+            AgentType.CLAUDE_CODE: {
+                **shared,
+                "sandbox": "host-managed",
+                "permission_mode": "dangerously-skip-permissions",
+            },
+            AgentType.OPENCODE: {
+                **shared,
+                "sandbox": "host-managed",
+                "permission_mode": "dangerously-skip-permissions",
+            },
+            AgentType.FAKE: {
+                **shared,
+                "sandbox": "synthetic",
+                "permission_mode": "synthetic",
+            },
+        }
+        metadata["agent_environments"] = {
+            agent_type.value: profiles[agent_type] for agent_type in self.agents
+        }
+        if AgentType.CODEX in self.agents:
+            metadata["codex_environment"] = metadata["agent_environments"][
+                AgentType.CODEX.value
+            ]
         metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
 
     EvalRunner._save_eval_metadata = save_with_reproducibility_metadata
 
 
-def ambient_skill_paths(skill_name: str) -> list[Path]:
+def _nested_strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield str(key)
+            yield from _nested_strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _nested_strings(item)
+
+
+def active_claude_plugin_sources(skill_name: str) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["claude", "plugin", "list", "--json"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        raise RuntimeError(f"could not inspect ambient Claude plugins: {error}") from error
+    if result.returncode != 0:
+        evidence = (result.stderr or result.stdout).strip()
+        raise RuntimeError(f"could not inspect ambient Claude plugins: {evidence}")
+    try:
+        plugins = json.loads(result.stdout or "[]")
+    except json.JSONDecodeError as error:
+        raise RuntimeError("Claude plugin list did not return valid JSON") from error
+
+    needle = skill_name.casefold()
+    matches = []
+    for plugin in plugins if isinstance(plugins, list) else [plugins]:
+        values = list(_nested_strings(plugin))
+        identities = [
+            value
+            for value in values
+            if value.casefold() == needle
+            or value.casefold().startswith(f"{needle}@")
+            or value.casefold().endswith(f":{needle}")
+        ]
+        if identities:
+            matches.append(f"claude-plugin:{identities[0]}")
+    return matches
+
+
+def ambient_skill_sources(skill_name: str, agent_types) -> list[str]:
+    from agent_skill_eval.models import AgentType
+
     user_home = Path.home()
     codex_home = Path(os.environ.get("CODEX_HOME", user_home / ".codex"))
-    candidates = {
-        user_home / CODEX_SKILL_PATH / skill_name,
-        codex_home / "skills" / skill_name,
-        Path("/etc/codex/skills") / skill_name,
-    }
-    return sorted(path for path in candidates if path.exists())
+    candidates = set()
+    sources = []
+    if AgentType.CODEX in agent_types:
+        candidates.update(
+            {
+                user_home / CODEX_SKILL_PATH / skill_name,
+                codex_home / "skills" / skill_name,
+                Path("/etc/codex/skills") / skill_name,
+            }
+        )
+    if AgentType.CLAUDE_CODE in agent_types:
+        claude_home = Path(os.environ.get("CLAUDE_CONFIG_DIR", user_home / ".claude"))
+        candidates.update(
+            {
+                claude_home / "skills" / skill_name,
+                claude_home / "skills" / "synced" / skill_name,
+                claude_home / "commands" / f"{skill_name}.md",
+                Path("/etc/claude-code/.claude/skills") / skill_name,
+            }
+        )
+        sources.extend(active_claude_plugin_sources(skill_name))
+    sources.extend(str(path) for path in sorted(candidates) if path.exists())
+    return sorted(sources)
 
 
-def smoke_test(skill_argument: str, *, check_ambient: bool) -> None:
+def smoke_test(skill_argument: str, agent_types, *, check_ambient: bool) -> None:
     from agent_skill_eval.models import AgentType
-    from agent_skill_eval.skills import SkillInstaller
+    from agent_skill_eval.skills import SKILL_PATHS, SkillInstaller
 
     skill_path = Path(skill_argument).resolve()
     installer = SkillInstaller(skill_path)
-    existing_ambient_paths = ambient_skill_paths(installer.skill_name) if check_ambient else []
-    if existing_ambient_paths:
-        paths = ", ".join(str(path) for path in existing_ambient_paths)
+    existing_ambient_sources = (
+        ambient_skill_sources(installer.skill_name, agent_types) if check_ambient else []
+    )
+    if existing_ambient_sources:
+        sources = ", ".join(existing_ambient_sources)
         raise RuntimeError(
-            f"ambient Skill path(s) would contaminate the without-Skill baseline: {paths}; "
+            f"ambient Skill source(s) would make the evaluated payload ambiguous: {sources}; "
             "run the benchmark from a clean user profile or container"
         )
-    with tempfile.TemporaryDirectory() as directory:
-        workspace = Path(directory)
-        installed_path = installer.install(workspace, AgentType.CODEX)
-        expected_path = workspace / CODEX_SKILL_PATH / installer.skill_name
-        if installed_path != expected_path or not (installed_path / "SKILL.md").is_file():
-            raise RuntimeError("Codex skill discovery smoke test did not use .agents/skills")
-        installed_hash = SkillInstaller(installed_path).content_hash()
-        if installed_hash != installer.content_hash():
-            raise RuntimeError("Codex skill discovery smoke test found a content hash mismatch")
-    print(
-        f"Codex skill discovery smoke test passed: "
-        f"path={CODEX_SKILL_PATH}/{installer.skill_name} hash={installed_hash}",
-        file=sys.stderr,
-    )
+    for agent_type in agent_types:
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            installed_path = installer.install(workspace, agent_type)
+            expected_path = workspace / SKILL_PATHS[agent_type][-1] / installer.skill_name
+            if installed_path != expected_path or not (installed_path / "SKILL.md").is_file():
+                raise RuntimeError(
+                    f"{agent_type.value} skill discovery smoke test used an unexpected path"
+                )
+            installed_hash = SkillInstaller(installed_path).content_hash()
+            if installed_hash != installer.content_hash():
+                raise RuntimeError(
+                    f"{agent_type.value} skill discovery smoke test found a content hash mismatch"
+                )
+        print(
+            f"{agent_type.value} skill discovery smoke test passed: "
+            f"path={SKILL_PATHS[agent_type][-1]}/{installer.skill_name} hash={installed_hash}",
+            file=sys.stderr,
+        )
+
+
+def explicit_invocation_prompt(agent_type, skill_name: str, prompt: str) -> str:
+    from agent_skill_eval.models import AgentType
+
+    if agent_type == AgentType.CLAUDE_CODE:
+        return f"/{skill_name} {prompt}"
+    if agent_type == AgentType.CODEX:
+        return f"Use the ${skill_name} skill. {prompt}"
+    return f"Use the {skill_name} skill. {prompt}"
+
+
+def configure_agent_invocation() -> None:
+    from agent_skill_eval.runner import EvalRunner
+
+    run_single = EvalRunner._run_single
+
+    def run_with_host_invocation(
+        self,
+        eval_case,
+        agent_type,
+        with_skill,
+        iteration_dir,
+        iteration=1,
+        run_index=1,
+    ):
+        if with_skill and eval_case.force_skill_invocation:
+            eval_case = eval_case.model_copy(
+                update={
+                    "prompt": explicit_invocation_prompt(
+                        agent_type,
+                        self.suite.skill_name,
+                        eval_case.prompt,
+                    ),
+                    "force_skill_invocation": False,
+                }
+            )
+        return run_single(
+            self,
+            eval_case,
+            agent_type,
+            with_skill,
+            iteration_dir,
+            iteration,
+            run_index,
+        )
+
+    EvalRunner._run_single = run_with_host_invocation
 
 
 def side_effect_contract_self_test() -> None:
@@ -411,6 +579,24 @@ def task_order_self_test() -> None:
     print("Deterministic A/B counterbalancing self-test passed", file=sys.stderr)
 
 
+def invocation_self_test() -> None:
+    from agent_skill_eval.models import AgentType
+
+    prompt = "Audit the repository."
+    expected = {
+        AgentType.CODEX: "Use the $deslop skill. Audit the repository.",
+        AgentType.CLAUDE_CODE: "/deslop Audit the repository.",
+        AgentType.OPENCODE: "Use the deslop skill. Audit the repository.",
+    }
+    for agent_type, value in expected.items():
+        actual = explicit_invocation_prompt(agent_type, "deslop", prompt)
+        if actual != value:
+            raise RuntimeError(f"host invocation self-test failed for {agent_type.value}")
+    if requested_agent_types(["-a", "claude-code"]) != [AgentType.CLAUDE_CODE]:
+        raise RuntimeError("short agent option self-test failed")
+    print("Host-specific Skill invocation self-test passed", file=sys.stderr)
+
+
 def main() -> None:
     installed_version = version("agent-skill-eval")
     if installed_version != EXPECTED_VERSION:
@@ -430,12 +616,15 @@ def main() -> None:
         if skill_argument is None or evals_argument is None:
             raise RuntimeError(f"{command} requires --skill and --evals")
         validate_skill_identity(skill_argument, evals_argument)
+        agent_types = requested_agent_types(arguments)
         configure_side_effect_contract()
+        configure_agent_invocation()
         configure_task_order()
-        smoke_test(skill_argument, check_ambient=command == "run")
+        smoke_test(skill_argument, agent_types, check_ambient=command == "run")
         if command == "self-test":
             side_effect_contract_self_test()
             task_order_self_test()
+            invocation_self_test()
             print(f"agent-skill-eval {installed_version} wrapper self-test passed")
             return
 

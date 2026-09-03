@@ -12,6 +12,10 @@ The 16 micro cases have same-prefix preservation counterexamples, golden/mutant 
 
 `dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and 7 executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. It is validated in CI but is not yet a model-comparison corpus; its results must not be combined with `dev-v2-focused`.
 
+[`runtime-controls`](runtime-controls/README.md) separately checks authorization and other host/runtime promises. These controls are neither cleanup-quality cases nor part of either corpus score.
+
+Small version-bound forward tests are archived under [`release-smoke`](release-smoke/). They remain exposed development diagnostics and never replace a frozen A/B or held-out corpus.
+
 ## Real-world evidence
 
 Manually adjudicated field trials are preserved separately under `real-world/` as historical evidence. They are not currently part of the active quantitative benchmark and must not be used to tune the Skill from a single repository. See the [`cluster-gpu-monitor` case study](real-world/cluster-gpu-monitor/README.md).
@@ -46,6 +50,10 @@ uv run --with agent-skill-eval==0.7.0 \
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
   evals/dev-v3-evidence-edges/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate \
+  evals/runtime-controls/evals.json
 ```
 
 The focused validator checks:

@@ -34,6 +34,11 @@ When tests are in scope, complete this pass before changing production behavior:
 
 Do not use coverage, test count, or a test-created configuration as an owner. The output of this pass is a smaller evidence set with the same real failure domains, not a target number of tests.
 
+### Test decision contrast
+
+- **HIGH cleanup:** several tests reach the same public success branch; one asserts the exact externally visible result while the others only repeat construction, type, or non-empty checks. Keep the strongest behavioral root and remove the dominated tests plus support used only by them.
+- **PRESERVE:** one test covers successful output and another covers externally visible rejection, safety, persistence, or supported compatibility behavior. They protect different results or failure domains; do not merge or delete one merely to reduce the count.
+
 ## Closed justification loops
 
 Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. Follow justification chains outward until they reach an independent evidence root.
@@ -50,7 +55,7 @@ Trace edges as well as nodes. Separately tested producers, readers, and consumer
 
 Interpret invocation from natural language; do not depend on a runtime-specific arguments variable.
 
-- **Default or `audit`:** read-only. Report candidates, evidence, confidence, closed loops, and constructs to preserve.
+- **Default or `audit`:** read-only. Report candidates, evidence, confidence, closed loops, and constructs to preserve. Do not intentionally modify repository-owned content; disable or redirect tool caches and generated outputs when practical.
 - **`apply`:** modify files only within the established scope.
 - **`tests`:** prioritize test signal and mutual-support slop. Without `apply`, remain read-only.
 - **`deep`:** inspect repository-wide. Without `apply`, remain read-only; with `apply`, cleanup is allowed but redesign is not.
@@ -61,10 +66,10 @@ Only `apply` authorizes edits. Do not fetch, reset, switch branches, stage, comm
 
 ## Establish evidence before editing
 
-1. Read applicable `AGENTS.md` files, repository conventions, and the requested scope.
+1. Read the active host's applicable project-instruction files, such as `AGENTS.md` or `CLAUDE.md`, plus repository conventions and the requested scope.
 2. Inspect callers, tests, history, specifications, current configuration, registries, public readers, and documented verification commands.
 3. Classify the evidence chain before trusting an existing test or fallback.
-4. Put current user requirements and corrections first. A current user requirement or correction overrides conflicting historical tests; do not preserve old or incorrect behavior merely because an existing test asserts it.
+4. Put explicit current requirements first. A requirement or correction stated in the current task, or recorded in a current authoritative project document, overrides conflicting historical tests. Do not promote an inferred preference or the cleanup objective itself into a requirement.
 5. A bug fix should normally replace incorrect behavior, not preserve it behind a fallback.
 
 Prove reachability from a non-test producer such as an active config, external request, public CLI, persisted record, or hardware/runtime selection. A test-injected flag, synthetic future config, diagnostic command, or scripted dry-run does not by itself own a production branch.
@@ -112,7 +117,7 @@ In `deep apply`, exclude generated code, vendored dependencies, `third_party` tr
 
 ## Proportional verification
 
-Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Compare test collection before and after; zero surviving tests is a failure, and unexpected skips or deselections require explanation. When tests can generate files, compare the worktree before and after the suite so a green run cannot hide writes to tracked outputs. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run, state that plainly.
+Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Compare test collection before and after; zero surviving tests is a failure, and unexpected skips or deselections require explanation. When tests can generate files, compare the worktree before and after the suite so a green run cannot hide writes to tracked outputs. In read-only modes, use no-write options or temporary locations for caches and generated output when available, and report any incidental tool artifacts left behind. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run without changing repository-owned content, do not run it in audit mode; state that plainly.
 
 ## Final report
 

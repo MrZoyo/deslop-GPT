@@ -9,7 +9,11 @@
   "plugins": [
     {
       "name": "deslop",
-      "source": "./",
+      "source": {
+        "source": "github",
+        "repo": "MrZoyo/deslop-GPT",
+        "ref": "v0.3.1"
+      },
       "description": "Audit or apply test-first, evidence-backed cleanup for accumulated test, verification, and fallback bloat."
     }
   ]

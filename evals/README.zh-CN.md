@@ -12,6 +12,10 @@
 
 `dev-v2-focused-rc5` 已经冻结。另建的 [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，并先把其中 7 组做成可执行案例，覆盖生产可达性、测试 hermeticity、权威 artifact 和 schema 契约。CI 会校验它的内部一致性，但它目前还不能用于模型对比，结果也不能与 `dev-v2-focused` 混算。
 
+[`runtime-controls`](runtime-controls/README.zh-CN.md) 单独检查授权边界和其他宿主运行时承诺。这些控制案例既不是清理质量案例，也不计入任何语料分数。
+
+绑定具体版本的小型前向测试保存在 [`release-smoke`](release-smoke/) 下。它们始终属于已暴露的开发诊断，不能替代冻结的 A/B 或独立留出集。
+
 ## 真实项目证据
 
 经人工复核的真实项目案例作为历史证据，单独保存在 `real-world/` 下。它们不属于当前的定量基准评测，也不能根据单个仓库的结果反过来调优 Skill。参见 [`cluster-gpu-monitor` 案例](real-world/cluster-gpu-monitor/README.zh-CN.md)。
@@ -46,6 +50,10 @@ uv run --with agent-skill-eval==0.7.0 \
 uv run --with agent-skill-eval==0.7.0 \
   python scripts/run_agent_skill_eval.py validate \
   evals/dev-v3-evidence-edges/evals.json
+
+uv run --with agent-skill-eval==0.7.0 \
+  python scripts/run_agent_skill_eval.py validate \
+  evals/runtime-controls/evals.json
 ```
 
 专项校验程序会检查：

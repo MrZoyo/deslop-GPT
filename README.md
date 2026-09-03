@@ -54,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.3.0 as a standalone Skill
+### Codex: install v0.3.1 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.0 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.1 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The Claude marketplace distributes Plugin version 0.3.0 from `main`, and the matching v0.3.0 tag pins the same release. This minor release adds a test-first evidence pass, stronger fixture and hermeticity rules, current-path edge protection, and the evidence-edge development corpus.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source is pinned to the v0.3.1 tag. This patch release clarifies requirement evidence and host instruction files, adds an active read-only control, and makes the evaluation wrapper host-aware. The v0.3.0 test-first and evidence-edge additions remain unchanged in scope.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -164,9 +164,20 @@ The full decision model is documented in [Design](docs/design.md). The self-cont
 
 Codex enforces explicit invocation through [`allow_implicit_invocation: false`](skills/deslop/agents/openai.yaml). Claude Code does not read that OpenAI-specific metadata; the shared standards-compatible frontmatter instead tells Claude to invoke `deslop` explicitly. Claude Code may still select the Skill from its description, but such an invocation remains read-only unless the user includes `apply`. Default and `audit` modes are read-only, and suspicious constructs can be recorded as deliberate preservation decisions. Code is not removable merely because it looks defensive, was written by an agent, or has a test that could be deleted.
 
-Apply authorization permits scoped edits; it does not resolve uncertainty in favor of deletion. See [Getting Started](docs/getting-started.md) for the review sequence and [Design](docs/design.md) for confidence classes and preserved boundaries.
+Read-only verification should redirect caches or generated output when practical and disclose incidental residue. Apply authorization permits scoped edits; it does not resolve uncertainty in favor of deletion. See [Getting Started](docs/getting-started.md) for the review sequence and [Design](docs/design.md) for confidence classes and preserved boundaries.
 
 ## Evidence
+
+### Validation status
+
+| Runtime payload | Host and path | Runs | What it establishes |
+| --- | --- | --- | --- |
+| v0.3.1 release payload, pre-release exact hash | Codex subagents loading the Skill by path | 1 default audit plus `t02b` and `t03b` preservation cases | Narrow development regression smoke; all three left fixture content unchanged |
+| v0.3.0, exact release hash | Codex subagents loading the Skill by path | 3 mini-repository apply runs plus 1 audit | All three cleaned artifacts passed hidden behavior, reduction, and negative-change gates; no CLI discovery or baseline evidence |
+| v0.3.0, exact release hash | Claude Code 2.1.259 local Plugin, Haiku 4.5 | 1 audit plus 1 apply | Plugin loading and one valid cleanup artifact; apply stopped at its turn ceiling before the final report |
+| Earlier development payloads | Codex CLI 0.149.1, `gpt-5.6-sol` | rc3 micro, rc4 mini, and targeted rc5 diagnostics | Historical development evidence tied only to those payload hashes |
+
+The two 2026-09-03 forward smokes are published under [`evals/release-smoke/`](evals/release-smoke/). They are exposed, single-run diagnostics without a baseline and are not held-out model-effect evidence. The older rc3 micro pilot measured 63.1% more total tokens and 16.5% more wall time with its then-current Skill; that one-run result does not predict v0.3.x cost, but it supports using `deslop` for deliberate accumulated-slop work rather than routine tiny diffs.
 
 ### Focused development evaluation
 
@@ -205,6 +216,8 @@ skills/deslop/                   Self-contained runtime Skill payload
 docs/                            User, design, evidence, and development guides
 evals/dev-v2-focused/            Active focused development evaluation
 evals/dev-v3-evidence-edges/     Follow-up evidence-edge draft
+evals/runtime-controls/          Authorization and host/runtime controls
+evals/release-smoke/             Version-bound forward-smoke records
 evals/real-world/                Manually adjudicated real-world evidence
 evals/archive/                   Retired historical evaluation material
 scripts/                         Validation and evaluation tooling

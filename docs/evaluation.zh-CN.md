@@ -25,6 +25,12 @@
 
 当清理过程暴露 current contract 的 fail-open 缺口时，这套草案允许 `repair`，并继续区分普通的 `simplify` 与 `preserve`。由于同一份现场复核也用于更新 Skill，这里只能作为答案已暴露的开发回归证据，不能当作独立留出集。它已经具备离线正反校准，但还没有冻结后的模型 baseline，因此不属于当前定量基准，也不能与 `dev-v2-focused` 的结果混算。
 
+## 运行时控制与发布 smoke
+
+[`runtime-controls`](../evals/runtime-controls/README.zh-CN.md) 把默认只读行为与清理质量分开检查。audit 控制案例不授权工作树改动，也不产生简化或保留分数。
+
+[`release-smoke`](../evals/release-smoke/) 把少量前向测试绑定到精确 Skill 内容哈希。这些运行可以暴露打包、授权或明显行为回归；但由于案例已知、每项只有一次运行且没有 baseline，它们仍是开发诊断，不是模型效果证据。
+
 ## 决策顺序
 
 只有先通过安全与行为检查，清理幅度才会计入评分：

@@ -6,17 +6,17 @@
 
 ## 安装
 
-### Codex：安装已发布的独立版 Skill（v0.3.0）
+### Codex：安装已发布的独立版 Skill（v0.3.1）
 
 OpenAI 的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)说明，`$skill-installer` 既可以安装推荐的 Skill，也可以从其他仓库下载安装。把本仓库的 Skill 地址交给它即可：
 
 ```text
 $skill-installer
 请从以下地址安装 Skill：
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
-v0.3.0 实际安装的内容只有 [`skills/deslop/`](../skills/deslop/)，不包括评测集和项目文档。这个目录遵循开放的 Agent Skills 结构，Claude Code 也可以直接加载。本版本新增 test-first evidence pass，强化 fixture 与 hermeticity 判断，并保护当前跨层路径。v0.2.1 和 v0.1.0 的固定内容仍保留在各自标签下。
+v0.3.1 实际安装的内容只有 [`skills/deslop/`](../skills/deslop/)，不包括评测集和项目文档。这个目录遵循开放的 Agent Skills 结构，Claude Code 也可以直接加载。它保留 v0.3.0 的 test-first evidence pass，并进一步收紧需求证据、宿主指令和只读验证规则。v0.3.0、v0.2.1 和 v0.1.0 的固定内容仍保留在各自标签下。
 
 目前随 Codex 提供的 `$skill-installer` 会把下载的 Skill 放在安装器管理的目录中，默认是 `$CODEX_HOME/skills`（通常为 `~/.codex/skills`）。这只是安装器当前的实现方式，并不表示该路径是长期不变的公开约定。下文使用的 `$HOME/.agents/skills` 则是官方文档列出的用户级 Skill 加载目录，也便于直接检查其中内容。
 
@@ -25,7 +25,7 @@ v0.3.0 实际安装的内容只有 [`skills/deslop/`](../skills/deslop/)，不�
 Codex 从 `$HOME/.agents/skills` 加载个人 Skill，Claude Code 使用 `$HOME/.claude/skills`。两者都支持指向 Skill 目录的符号链接。先把项目克隆到这两个加载目录之外，再按需创建链接：
 
 ```bash
-git clone --branch v0.3.0 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
@@ -50,7 +50,7 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop
 /deslop:deslop audit
 ```
 
-插件市场配置跟随 `main`，其中声明的 Plugin 版本是 0.3.0。对应的 v0.3.0 标签包含相同的 Claude Plugin 配置，并将发布内容固定下来。Claude Code 依靠 manifest 中的版本号判断是否有更新，因此以后每次修改 Plugin，都必须先提升该版本号，已安装用户才能收到更新。
+插件市场目录跟随 `main`，声明的 Plugin 版本是 0.3.1，并把 Plugin 源固定到对应的 v0.3.1 标签。这样即使 `main` 以后出现开发中改动，新安装用户仍会得到正式发布内容。Claude Code 依靠 manifest 中的版本号判断更新，因此以后每次修改 Plugin，都必须同时提升版本号和固定的发布 ref。
 
 在本地开发 Plugin 时，可以从本仓库启动 Claude Code：
 
@@ -62,14 +62,14 @@ claude --plugin-dir .
 
 ### 从 v0.2.1 升级
 
-v0.3.0 更新了 Skill 运行规则，但 `skills/deslop/` 路径没有变化。如果符号链接指向本地源码仓库，只需把该仓库切换到 v0.3.0 标签，链接本身不用改。通过 Codex 安装器下载的副本，应使用上方的 v0.3.0 地址重新安装。已经安装 Claude Code Plugin 的用户可运行 `claude plugin update deslop@deslop`，然后重启 Claude Code。v0.2.0 用户也可以用同样方式直接升级。
+v0.3.1 更新了 Skill 运行规则，但 `skills/deslop/` 路径没有变化。如果符号链接指向本地源码仓库，只需把该仓库切换到 v0.3.1 标签，链接本身不用改。通过 Codex 安装器下载的副本，应使用上方的 v0.3.1 地址重新安装。已经安装 Claude Code Plugin 的用户可运行 `claude plugin update deslop@deslop`，然后重启 Claude Code。v0.3.0 或 v0.2.x 用户都可以用同样方式直接升级。
 
 ### 从 v0.1.0 升级
 
 安装器不会自动适配 Git 仓库中的目录改名，因此需要从新地址重新安装：
 
 ```text
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.0/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
 ```
 
 旧的 v0.1.0 路径为：
@@ -85,7 +85,7 @@ test -L "$HOME/.agents/skills/deslop"
 readlink "$HOME/.agents/skills/deslop"
 ```
 
-只有当输出确认它确实是 v0.1.0 的符号链接，并且指向预期的 `~/.local/share/deslop-GPT/skill/deslop` 时，才删除链接本身，然后为 v0.3.0 重新创建链接：
+只有当输出确认它确实是 v0.1.0 的符号链接，并且指向预期的 `~/.local/share/deslop-GPT/skill/deslop` 时，才删除链接本身，然后为 v0.3.1 重新创建链接：
 
 ```bash
 unlink "$HOME/.agents/skills/deslop"
@@ -97,7 +97,7 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" \
 
 ### 开发分支
 
-[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 可能包含尚未发布的改动。只有明确想使用开发版时才选择它；如果需要稳定复现，请使用带 v0.3.0 标签的地址。
+[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 可能包含尚未发布的改动。只有明确想使用开发版时才选择它；如果需要稳定复现，请使用带 v0.3.1 标签的地址。
 
 独立版 Skill 的目录也随仓库版本变化：v0.1.0 位于 `skill/deslop/`，从 v0.2.0 开始则统一使用 `skills/deslop/`。
 
@@ -132,6 +132,8 @@ Claude Code 的 Plugin 配置由 [`.claude-plugin/plugin.json`](../.claude-plugi
 | `path/to/file audit` | 只检查指定路径，以及判断相关约定所必需的最少上下文 |
 
 只有 `apply` 表示允许编辑。拉取远程内容、重置、切换分支、暂存、提交、推送和创建备份仍需用户另行授权。
+
+在只读模式中，如果工具支持，应使用禁止写入的选项，或把缓存和生成输出重定向到临时位置。如果工具仍留下临时缓存，审计结果应明确披露；如果某项检查无法避免改动仓库拥有的内容，就不要运行，并说明原因。
 
 Codex 通过 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 要求用户明确调用这个 Skill；该文件只对 OpenAI 的运行环境生效。Claude Code 读取通用格式的 `SKILL.md`，可能根据其中的描述自动选用该 Skill；但只要没有 `apply`，操作仍然是只读的。需要确保每次都以同样方式调用时，请明确输入 `/deslop` 或 `/deslop:deslop`。
 

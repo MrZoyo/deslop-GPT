@@ -1,0 +1,76 @@
+{
+  "schema": "deslop-forward-smoke-v1",
+  "status": "exposed-development-diagnostic",
+  "public_performance_claim": false,
+  "date": "2026-09-03",
+  "release": {
+    "version": "0.3.0",
+    "commit": "83c30df5e4f037244f4fa7ee5be44370ba676ef6",
+    "skill_content_hash": "e77005b2a37511f4e23af63a7156cbab9e8fe74cab94d25840ebd120891d7133"
+  },
+  "codex_subagents": {
+    "model": "not-exposed-by-host",
+    "invocation": "exact Skill loaded by path; not a CLI discovery test",
+    "baseline": false,
+    "runs_per_case": 1,
+    "cases": [
+      {"id": "test-bloat", "behavior": true, "reduction": true, "negative_change": true, "remaining_tests": 1},
+      {"id": "verification-bloat", "behavior": true, "reduction": true, "negative_change": true, "remaining_tests": 1},
+      {"id": "fallback-bloat", "behavior": true, "reduction": true, "negative_change": true, "remaining_tests": 4}
+    ],
+    "audit": {
+      "id": "test-bloat-default-audit",
+      "repository_files_unchanged": true,
+      "aggregate_file_identity_before": "b8c3e6bf28b9fd0e0616e1fee63a0b7b18803b17e3e5e1b96e5b776642322b3e",
+      "aggregate_file_identity_after": "b8c3e6bf28b9fd0e0616e1fee63a0b7b18803b17e3e5e1b96e5b776642322b3e"
+    }
+  },
+  "claude_code": {
+    "cli_version": "2.1.259",
+    "authentication": "claude.ai first-party subscription",
+    "model": "claude-haiku-4-5-20251001",
+    "plugin_loading": "--plugin-dir with /deslop:deslop",
+    "baseline": false,
+    "cost_basis": "Claude CLI list-price estimate; the signed-in subscription was not billed per call",
+    "runs": [
+      {
+        "mode": "audit",
+        "terminal_reason": "completed",
+        "semantic_audit": true,
+        "tracked_fixture_files_unchanged": true,
+        "transient_untracked_cache_files_created": 4,
+        "usage": {
+          "cost_usd": 0.094662,
+          "input_tokens": 66,
+          "cache_creation_input_tokens": 20320,
+          "cache_read_input_tokens": 192860,
+          "output_tokens": 6934
+        }
+      },
+      {
+        "mode": "apply",
+        "terminal_reason": "max_turns",
+        "turn_limit": 12,
+        "final_report_completed": false,
+        "artifact_behavior_gate": true,
+        "artifact_reduction_gate": true,
+        "artifact_negative_change_gate": true,
+        "remaining_tests": 4,
+        "usage": {
+          "cost_usd": 0.0896533,
+          "input_tokens": 98,
+          "cache_creation_input_tokens": 17769,
+          "cache_read_input_tokens": 299973,
+          "output_tokens": 4804
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "No without-Skill baseline",
+    "One run per case",
+    "Frozen development fixtures rather than held-out cases",
+    "Codex subagent model and token telemetry unavailable",
+    "Claude apply call stopped at the configured turn ceiling"
+  ]
+}
