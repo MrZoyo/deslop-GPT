@@ -17,7 +17,7 @@ active config / external request / public CLI / persisted record / runtime selec
 
 A test can show that a branch executes; it cannot make the branch current. Synthetic flags, monkeypatched thresholds, future-only configs, diagnostic commands, and scripted dry-runs need a real work package or consumer before they own production behavior.
 
-Registries and CLIs require the same test. A registry entry, command, config, diagnostic module, and their tests can form one closed product-surface loop. Exclude that cluster while searching for a caller. If nothing remains except archives or plans, delete the active chain together.
+A registry entry, command, config, diagnostic module, and their tests can form one closed product-surface loop. Trace operator workflows and public contracts as well as callers outside the cluster: manual CLI use and external consumers need not leave in-repository call sites. Finding no caller, or only archives or plans, is not itself retirement evidence; unresolved ownership remains MEDIUM under the [confidence gate](../SKILL.md#confidence-and-apply-behavior). Delete the active chain together only after concrete reachability or retirement evidence establishes that it serves no supported behavior.
 
 ## Trace edges, not only nodes
 
@@ -32,7 +32,7 @@ producer test passes    reader test passes    state-machine test passes
 Before retiring a cross-layer fixture, validator, wrapper, or package loader:
 
 1. Map each behavior carried by the old path to its current owner.
-2. Retire behavior with no current owner.
+2. Retire behavior only when evidence establishes it is obsolete or unreachable; unresolved ownership remains MEDIUM.
 3. Move surviving behavior to the lowest stable public seam that still crosses the real boundary.
 4. Keep one hermetic integration root for each current delivery path whose edges would otherwise be unprotected.
 
@@ -69,7 +69,7 @@ For required identity, path, count, handedness, or source fields, check three la
 2. the parser requires the field instead of using `get(..., old_value)`;
 3. validation rejects malformed current data.
 
-Filesystem absence and missing keys do not select a legacy protocol. Compatibility requires an explicit version, producer, consumer, and retirement condition.
+Use the supported protocol's version-selection rules. If its contract defines a missing version field as v1, preserve that interpretation; do not invent a legacy mode from an undocumented omission. Identify the supported producers, consumers, and formats. Continued compatibility support does not require a retirement plan; removal requires affirmative evidence that the promise has ended.
 
 ## Treat current documentation as product surface
 

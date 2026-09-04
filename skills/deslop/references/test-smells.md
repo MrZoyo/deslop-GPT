@@ -58,11 +58,7 @@ One test dominates another only when it protects the same owner, branch, result,
 
 ## Closed justification loops
 
-Production code does not justify a test merely because the test exercises it. A test does not justify production code merely because the production code exists. Trace test -> production branch -> reason -> external evidence.
-
-If a test exists only to keep a defensive branch green, and the branch exists only because that test was added, the pair is mutual-support slop. Apply the same rule to checksum tests and digest code, receipt tests and receipt validators, wrapper tests and wrappers, compatibility tests and obsolete branches, and validator tests and validators. Do not preserve one member merely because the other member depends on it; delete the closed cluster when no independent root remains.
-
-Independent roots include an explicit current-task requirement, a current authoritative project document, real external caller, public API, documented protocol, security or trust boundary, persisted corruption boundary, scientific invariant, or a separately maintained reference dataset.
+Apply the [closed-loop evidence rules](../SKILL.md#closed-justification-loops) and [confidence gate](../SKILL.md#confidence-and-apply-behavior). Trace test -> production branch -> reason -> independent evidence root. Resolve whether the test records a distinct supported contract or merely repeats the implementation's assumptions. An unsuccessful search alone does not establish a closed loop. Delete the pair only after its lack of an independent purpose is established.
 
 ## Keep or delete
 
@@ -82,7 +78,7 @@ Do not optimize for test count, assertion count, branch coverage, or line covera
 
 ## Retire fixtures by behavior
 
-An obsolete fixture and the behavior once reached through it are separate decisions. Map every fixture-backed test to a current owner. Delete behavior with no owner; move surviving behavior to the lowest stable public seam. Before removing a cross-layer fixture, confirm that one hermetic test still crosses the current producer, reader, and consumer. Green endpoint unit tests do not prove that edge.
+An obsolete fixture and the behavior once reached through it are separate decisions. Map every fixture-backed test to a current owner. Retire behavior only when evidence establishes it is obsolete or unreachable; move surviving behavior to the lowest stable public seam. Before removing a cross-layer fixture, confirm that one hermetic test still crosses the current producer, reader, and consumer. Green endpoint unit tests do not prove that edge.
 
 Delete a fixture's private builders, fakes, compatibility fields, and helper stack when no surviving test or production path uses them. Do not restore an unmanaged experiment artifact or preserve a whole legacy package merely to keep one current assertion reachable.
 
@@ -90,11 +86,12 @@ Delete a fixture's private builders, fakes, compatibility fields, and helper sta
 
 Adding a test is not the default response. Add one only when:
 
-- a real externally meaningful behavior is otherwise unprotected;
-- the behavior is genuinely uncertain after reading callers, contracts, and history;
+- cleanup removes verification of a real externally meaningful behavior or exposes a concrete protection gap;
 - a plausible regression would fail the test;
 - the expected result has an independent source; and
 - the test observes a meaningful seam rather than cleanup details.
+
+A small test can replace an obsolete fixture while preserving a fully specified contract. Reuse or adapt surviving coverage when it already protects that behavior.
 
 When production slop is deleted, delete tests whose only purpose was to protect that slop in the same change. Do not add a replacement test merely because a function now lacks a unit test, coverage falls, or a model prefers symmetry. An explicit current-task requirement or current authoritative project document outranks a historical test that asserts obsolete or incorrect behavior; an inferred preference does not.
 
@@ -103,7 +100,7 @@ When production slop is deleted, delete tests whose only purpose was to protect 
 - Prefer one readable test per distinct behavior, not one per branch or helper.
 - Parameterize only genuine equivalence classes; do not hide an opaque generated matrix.
 - Keep scenario names and failure messages capable of localizing a real regression.
-- Run the remaining suite after deletion; zero remaining tests is not a passing cleanup.
+- Run the remaining applicable checks and preserve verification for surviving behavior. Explain empty test collection under the [proportional verification rules](../SKILL.md#proportional-verification).
 - Preserve low-level tests when low-level behavior itself is a stable contract, not merely because the code is private.
 - Count collected nodes before and after, then inspect skips and deselections; a smaller reported total can hide lost execution.
 - Fingerprint the worktree around suites that invoke compilers, materializers, exporters, or code generators.

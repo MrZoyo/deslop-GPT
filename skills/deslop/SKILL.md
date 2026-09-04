@@ -80,6 +80,8 @@ Inside trusted code, use a **fail-visible bias**: allow unexpected failures to s
 
 ## Confidence and apply behavior
 
+These rules govern every candidate in this file and the references. A listed smell or preferred action does not resolve missing evidence or authorize deletion by itself.
+
 - **HIGH:** redundant, tautological, unreachable, self-justifying, or disconnected from a real contract after the evidence chain is resolved.
 - **MEDIUM:** apparently unnecessary, but caller, history, compatibility, or boundary evidence is still missing.
 - **LOW / PRESERVE BY DEFAULT:** security, authorization, concurrency, persistence, transactions, external protocols, supported compatibility, resource limits, and scientific invariants whose purpose may be outside the local file.
@@ -108,7 +110,7 @@ Read only the relevant references:
 4. Delete tests that exist only to keep deleted production slop green. Add a replacement test only when deleting the old test would leave a real external behavior unprotected and an independent oracle exists.
 5. Preserve real public, persistence, security, protocol, compatibility, resource, and scientific boundaries even when their code resembles a smell.
 6. Treat declared authoritative inputs as required unless the protocol explicitly marks them optional. Missing and invalid authoritative artifacts should share the same visible failure semantics.
-7. For a schema or identity change, enumerate every public reader, including CLIs, tools, visualizers, converters, and resume paths. Do not infer compatibility from a missing field or file.
+7. For a schema or identity change, enumerate every public reader, including CLIs, tools, visualizers, converters, and resume paths. Follow contract-defined version selection, including supported defaults; do not invent compatibility from a missing field or file.
 8. Keep permanent tests hermetic: use repository-managed or test-created inputs, write to temporary outputs, and skip only when the test actually crosses the optional dependency boundary.
 
 ## Negative-change budget
@@ -119,7 +121,9 @@ In `deep apply`, exclude generated code, vendored dependencies, `third_party` tr
 
 ## Proportional verification
 
-Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Compare test collection before and after; zero surviving tests is a failure, and unexpected skips or deselections require explanation. When tests can generate files, compare the worktree before and after the suite so a green run cannot hide writes to tracked outputs. In read-only modes, use no-write options or temporary locations for caches and generated output when available, and report any incidental tool artifacts left behind. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run without changing repository-owned content, do not run it in audit mode; state that plainly.
+Run the narrowest existing checks after each meaningful semantic group and the repository's documented final checks once when feasible. Compare test collection before and after, and explain unexpected skips or deselections. An unexplained drop to zero tests, or loss of required verification for surviving behavior, is a failure. A confirmed-retired target may be removed with all its dedicated tests; a scope that already had no tests should use its applicable existing checks. Explain either case and do not retain or add tests merely to obtain a nonzero count.
+
+When tests can generate files, compare the worktree before and after the suite so a green run cannot hide writes to tracked outputs. In read-only modes, use no-write options or temporary locations for caches and generated output when available, and report any incidental tool artifacts left behind. Verification should be independent of the change where possible. Do not create proof files, audit ledgers, checksum reports, or a new verification framework merely to validate a deletion. If a check cannot run without changing repository-owned content, do not run it in audit mode; state that plainly.
 
 ## Final report
 
