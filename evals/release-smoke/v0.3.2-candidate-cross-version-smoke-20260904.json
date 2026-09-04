@@ -170,10 +170,28 @@
     }
   ],
   "distribution_validation": {
-    "command": "claude plugin validate . --strict",
-    "cli_version": "2.1.233 (Claude Code)",
-    "passed": true,
-    "output": "Validation passed"
+    "strict_manifest": {
+      "command": "claude plugin validate . --strict",
+      "cli_version": "2.1.233 (Claude Code)",
+      "passed": true,
+      "output": "Validation passed"
+    },
+    "remote_marketplace_install": {
+      "kind": "Claude Code marketplace installation; no model call",
+      "cli_version": "2.1.233 (Claude Code)",
+      "marketplace": "MrZoyo/deslop-GPT",
+      "plugin": "deslop@deslop",
+      "scope": "user",
+      "marketplace_add_succeeded": true,
+      "install_succeeded": true,
+      "installed_version": "0.3.2",
+      "release_commit": "0cc15c036b07691c600bda1219b8cc5c197ca3f1",
+      "cache_head": "0cc15c036b07691c600bda1219b8cc5c197ca3f1",
+      "tag_skill_git_blob": "a76276340474ae1854dedfc6ef820d71761de2e2",
+      "installed_skill_git_blob": "a76276340474ae1854dedfc6ef820d71761de2e2",
+      "checkout_line_endings": "CRLF",
+      "skill_md_sha256_after_lf_normalization": "3c0d4a317916dd7afb3db4e3f41cf1890ab38848f35ae5eed0df3ff563c2d4fa"
+    }
   },
   "limitations": [
     "Four known development cases rather than a held-out corpus",
@@ -181,6 +199,7 @@
     "Cross-version payload comparison rather than a without-Skill baseline",
     "Direct Skill loading rather than Codex CLI discovery",
     "Collaboration subagents do not expose token, cost, or exact wall-time telemetry",
+    "The Claude Code follow-up tests distribution only, not model behavior",
     "The result is a release diagnostic, not a general model-effect or performance claim"
   ]
 }
