@@ -1,0 +1,186 @@
+{
+  "schema": "deslop-cross-version-forward-smoke-v1",
+  "status": "exposed-development-diagnostic",
+  "public_performance_claim": false,
+  "date": "2026-09-04",
+  "benchmark": {
+    "repository_commit": "24dee721e6ca9bf703ea28c2e9740f80a78ea9d3",
+    "dirty_at_run_start": true,
+    "corpus": "dev-v2-focused-rc5",
+    "cases": [
+      "t02a",
+      "t02b",
+      "f01a",
+      "f02a"
+    ],
+    "grader": "evals/dev-v2-focused/grade_focused.py",
+    "grader_visible_to_agents": false
+  },
+  "payloads": {
+    "v0.3.1": {
+      "source": "repository HEAD",
+      "skill_content_hash": "39146983500952bbe4dae7247ad27671e6ac64c70aa777bc32118765e046feba",
+      "skill_md_sha256": "0ebc15ab46405afb16f66d65d26a38710d0ed56b76750a4176d231c83db2ed5c"
+    },
+    "v0.3.2-candidate": {
+      "source": "dirty candidate working tree",
+      "skill_content_hash": "3414d1b1a89baa1f695ab6d201ccaf7a3465a452403ba30314c3149ee19bb68b",
+      "skill_md_sha256": "3c0d4a317916dd7afb3db4e3f41cf1890ab38848f35ae5eed0df3ff563c2d4fa"
+    }
+  },
+  "runner": {
+    "kind": "Codex collaboration subagent",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "invocation": "exact Skill loaded by path",
+    "independent_context_per_run": true,
+    "runs_per_case_per_payload": 2,
+    "total_calls": 16,
+    "max_concurrency": 2,
+    "payload_assignment": "counterbalanced across repetitions; matched payload runs dispatched concurrently",
+    "without_skill_baseline": false,
+    "token_cost_and_timing_telemetry": "not exposed by collaboration host"
+  },
+  "aggregate": {
+    "v0.3.1": {
+      "full_case_pass": {
+        "passed": 7,
+        "total": 8
+      },
+      "hidden_behavior": {
+        "passed": 7,
+        "total": 8
+      },
+      "remaining_tests": {
+        "passed": 8,
+        "total": 8
+      },
+      "simplification_cases": {
+        "passed": 6,
+        "total": 6
+      },
+      "t02b_preservation": {
+        "passed": 1,
+        "total": 2
+      },
+      "negative_change": {
+        "passed": 8,
+        "total": 8
+      }
+    },
+    "v0.3.2-candidate": {
+      "full_case_pass": {
+        "passed": 8,
+        "total": 8
+      },
+      "hidden_behavior": {
+        "passed": 8,
+        "total": 8
+      },
+      "remaining_tests": {
+        "passed": 8,
+        "total": 8
+      },
+      "simplification_cases": {
+        "passed": 6,
+        "total": 6
+      },
+      "t02b_preservation": {
+        "passed": 2,
+        "total": 2
+      },
+      "negative_change": {
+        "passed": 8,
+        "total": 8
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "t02a",
+      "expected_decision": "simplify",
+      "v0.3.1": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      },
+      "v0.3.2-candidate": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      }
+    },
+    {
+      "id": "t02b",
+      "expected_decision": "preserve",
+      "v0.3.1": {
+        "full_pass": "1/2",
+        "decisions": [
+          "remove-supported-legacy-header",
+          "preserve"
+        ]
+      },
+      "v0.3.2-candidate": {
+        "full_pass": "2/2",
+        "decisions": [
+          "preserve",
+          "preserve"
+        ]
+      }
+    },
+    {
+      "id": "f01a",
+      "expected_decision": "simplify",
+      "v0.3.1": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      },
+      "v0.3.2-candidate": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      }
+    },
+    {
+      "id": "f02a",
+      "expected_decision": "simplify",
+      "v0.3.1": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      },
+      "v0.3.2-candidate": {
+        "full_pass": "2/2",
+        "decisions": [
+          "simplify",
+          "simplify"
+        ]
+      }
+    }
+  ],
+  "distribution_validation": {
+    "command": "claude plugin validate . --strict",
+    "cli_version": "2.1.233 (Claude Code)",
+    "passed": true,
+    "output": "Validation passed"
+  },
+  "limitations": [
+    "Four known development cases rather than a held-out corpus",
+    "Two runs per payload and case do not estimate variance",
+    "Cross-version payload comparison rather than a without-Skill baseline",
+    "Direct Skill loading rather than Codex CLI discovery",
+    "Collaboration subagents do not expose token, cost, or exact wall-time telemetry",
+    "The result is a release diagnostic, not a general model-effect or performance claim"
+  ]
+}

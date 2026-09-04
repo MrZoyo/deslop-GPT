@@ -8,5 +8,6 @@ These are exposed development diagnostics. Unless a report explicitly says other
 
 | Payload | Report | Machine-readable record |
 | --- | --- | --- |
+| v0.3.2 candidate | [`v0.3.2-candidate-cross-version-smoke-20260904.md`](v0.3.2-candidate-cross-version-smoke-20260904.md) | [`JSON`](v0.3.2-candidate-cross-version-smoke-20260904.json) |
 | v0.3.1 candidate | [`v0.3.1-candidate-forward-smoke-20260903.md`](v0.3.1-candidate-forward-smoke-20260903.md) | [`JSON`](v0.3.1-candidate-forward-smoke-20260903.json) |
 | v0.3.0 release | [`v0.3.0-forward-smoke-20260903.md`](v0.3.0-forward-smoke-20260903.md) | [`JSON`](v0.3.0-forward-smoke-20260903.json) |

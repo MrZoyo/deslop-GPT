@@ -113,7 +113,7 @@ claude plugin validate . --strict
 
 ## 发布就绪条件
 
-项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.1，发布时必须创建对应的 v0.3.1 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。在给发布提交打标签之前，就要把 marketplace 源写成显式的 `url` 加 `ref` 形式；`github` 简写会继承用户本地的 Git 传输方式，而 v0.3.1 标签里至今仍是简写，那次发布只有 `main` 上的目录提供了可安装的源。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
+项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 当前为 0.3.2，发布时必须创建对应的 v0.3.2 标签。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。在给发布提交打标签之前，就要把 marketplace 源写成显式的 `url` 加 `ref` 形式；`github` 简写会继承用户本地的 Git 传输方式。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
 
 在面向公众的发布提交之前：
 
@@ -130,6 +130,6 @@ claude plugin validate . --strict
 
 统一使用的 [`skills/deslop/`](../skills/deslop/) 目录遵循通用标准，各运行平台加载的都是完全相同的内容。Codex 可以从 `.agents/skills` 把它加载为独立 Skill；Claude Code 可以从 `.claude/skills` 加载同一目录，也可以通过本仓库的 Claude Plugin 加载。OpenAI 专用的 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 负责 Codex 界面元数据，并要求用户明确调用该 Skill；Claude Code 会忽略这个文件。
 
-Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。manifest 声明的版本是 0.3.1。`main` 上的 marketplace 使用明确的 HTTPS Git source，并同时固定到 `v0.3.1` 和发布提交 `a19128db72503949184655be6c69536753616473`，不会在同一版本下把以后 `main` 的内容交给新用户，也不依赖用户的 GitHub SSH 传输设置。v0.3.1 保留 v0.3.0 的 test-first 范围，同时澄清授权与跨宿主行为。
+Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。manifest 声明的版本是 0.3.2。打标签前，marketplace 使用明确的 HTTPS Git source，仅固定到 `v0.3.2`；不可变标签创建后，`main` 可以再加入对应发布的精确 SHA。v0.3.2 在闭环规则中明确了缺失证据的置信度上限。
 
-Codex Plugin 的打包问题仍未解决，而且与 Claude Code 的发布方式无关。测试使用的是 Codex CLI 0.149.1。Plugin Creator 能通过一份临时的纯 Skills manifest，其中配置了 `skills: "./skills/"`；本地插件市场也能找到并安装它，缓存同样可以正常创建。缓存中确实存在 `skills/deslop/SKILL.md`，但在移除环境中另行安装的独立 Skill 后，新启动的 app-server 调用 `skills/list(forceReload=true)`，仍然没有返回已注册的 `deslop` Skill。因此，当前问题出在 Codex 没有把 Plugin 中的 Skill 注册到运行环境，而不是 `skills/deslop/` 目录结构有误，也不是独立 Skill 本身无效。Claude 专用的 `.claude-plugin/` 元数据不会改变这个结果，不能替代 Codex 当前支持的独立安装方式。
+v0.3.2 不包含 Codex Plugin 打包。在早期 Codex CLI 0.149.1 实验中，Plugin Creator 接受了一份配置 `skills: "./skills/"` 的临时纯 Skills manifest；本地发现、安装和缓存创建也成功，但新的 app-server 没有注册缓存中的 `deslop` Skill。OpenAI 当前的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)已经支持通过 Plugin 分发 Skill，因此旧结果只描述当时测试的宿主，不能视为当前平台限制。若要加入 Codex Plugin，需要针对当前宿主另行验证并作为独立发布变更处理；Claude 专用的 `.claude-plugin/` 元数据不能替代它。

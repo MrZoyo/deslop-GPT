@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "deslop",
   "displayName": "deslop",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Test-first, evidence-backed cleanup for accumulated test, verification, and fallback bloat.",
   "author": {
     "name": "MrZoyo",

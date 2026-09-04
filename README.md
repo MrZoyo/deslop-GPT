@@ -54,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.3.1 as a standalone Skill
+### Codex: install v0.3.2 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.1/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.2/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.3.1 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.2 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.1 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.2 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.1 tag and release commit. This patch release clarifies requirement evidence and host instruction files, adds an active read-only control, and makes the evaluation wrapper host-aware. The v0.3.0 test-first and evidence-edge additions remain unchanged in scope.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.2 tag. This patch release makes missing-evidence limits explicit in the closed-loop rule. The v0.3.1 evaluation evidence remains tied to its exact released payload.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -172,6 +172,7 @@ Read-only verification should redirect caches or generated output when practical
 
 | Runtime payload | Host and path | Runs | What it establishes |
 | --- | --- | --- | --- |
+| v0.3.2 candidate exact hash | Codex collaboration subagents, `gpt-5.6-sol` with `high` reasoning, direct Skill loading | 4 selected `dev-v2` cases, 2 runs per payload and case, 16 calls | v0.3.2 passed 8/8 versus v0.3.1 at 7/8; `t02b` was 2/2 versus 1/2, while all 12 deletion-case runs passed |
 | v0.3.1 release payload hash | Claude Code 2.1.259 CLI, Haiku 4.5, `.claude/skills` discovery | 3 runtime controls, 1 run each, no baseline | Claude selected the Skill from its description alone and still stayed read-only; a question asking for no cleanup did not pull it in |
 | v0.3.1 release payload hash | Claude Code 2.1.259 CLI, Haiku 4.5, `.claude/skills` discovery | 5 `dev-v2` micro cases, 3 apply runs each, no baseline | 12 of 15 runs passed every hidden gate; `t02b` lost its supported legacy header path in 2 of 3 runs |
 | v0.3.1 release payload, pre-release exact hash | Codex subagents loading the Skill by path | 1 default audit plus `t02b` and `t03b` preservation cases | Narrow development regression smoke; all three left fixture content unchanged |
@@ -180,7 +181,7 @@ Read-only verification should redirect caches or generated output when practical
 | v0.3.0, exact release hash | Claude Code 2.1.259 local Plugin, Haiku 4.5 | 1 audit plus 1 apply | Plugin loading and one valid cleanup artifact; apply stopped at its turn ceiling before the final report |
 | Earlier development payloads | Codex CLI 0.149.1, `gpt-5.6-sol` | rc3 micro, rc4 mini, and targeted rc5 diagnostics | Historical development evidence tied only to those payload hashes |
 
-The two 2026-09-03 forward smokes are published under [`evals/release-smoke/`](evals/release-smoke/), and the two Claude Code CLI runs from the same day under [`evals/runtime-controls/results/`](evals/runtime-controls/results/) and [`evals/dev-v2-focused/results/`](evals/dev-v2-focused/results/). All are exposed diagnostics without a baseline and are not held-out model-effect evidence. The repeated `dev-v2` run is the first to contradict an earlier single-run smoke: `t02b` passed once under a Codex subagent, but two of three Haiku runs deleted its supported legacy header branch along with the test covering it — the over-deletion that case exists to catch. The older rc3 micro pilot measured 63.1% more total tokens and 16.5% more wall time with its then-current Skill; that one-run result does not predict v0.3.x cost, but it supports using `deslop` for deliberate accumulated-slop work rather than routine tiny diffs.
+Version-bound forward smokes are published under [`evals/release-smoke/`](evals/release-smoke/). The 2026-09-04 cross-version smoke is the v0.3.2 release gate; it uses known cases and two runs per payload, so it supports only the narrow release decision recorded above. The earlier Claude Code CLI runs remain under [`evals/runtime-controls/results/`](evals/runtime-controls/results/) and [`evals/dev-v2-focused/results/`](evals/dev-v2-focused/results/). Those Haiku runs exposed the `t02b` ambiguity but remain secondary host diagnostics, not target-model release evidence. None of these records is held-out model-effect evidence. The older rc3 micro pilot measured 63.1% more total tokens and 16.5% more wall time with its then-current Skill; that one-run result does not predict v0.3.x cost, but it supports using `deslop` for deliberate accumulated-slop work rather than routine tiny diffs.
 
 ### Focused development evaluation
 

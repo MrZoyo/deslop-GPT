@@ -8,5 +8,6 @@
 
 | Payload | 报告 | 机器可读记录 |
 | --- | --- | --- |
+| v0.3.2 候选版 | [`v0.3.2-candidate-cross-version-smoke-20260904.md`](v0.3.2-candidate-cross-version-smoke-20260904.md) | [`JSON`](v0.3.2-candidate-cross-version-smoke-20260904.json) |
 | v0.3.1 候选版 | [`v0.3.1-candidate-forward-smoke-20260903.md`](v0.3.1-candidate-forward-smoke-20260903.md) | [`JSON`](v0.3.1-candidate-forward-smoke-20260903.json) |
 | v0.3.0 正式版 | [`v0.3.0-forward-smoke-20260903.md`](v0.3.0-forward-smoke-20260903.md) | [`JSON`](v0.3.0-forward-smoke-20260903.json) |
