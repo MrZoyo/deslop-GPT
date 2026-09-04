@@ -50,7 +50,7 @@ Invoke the installed Plugin with its canonical namespaced command:
 /deslop:deslop audit
 ```
 
-The marketplace catalog follows `main`, declares Plugin version 0.3.2, and uses an explicit HTTPS Git source pinned to the matching v0.3.2 tag. This keeps new installations on the released runtime even when `main` later contains development work, without depending on a user's GitHub SSH transport setting. Because Claude Code uses the manifest version as its update key, future Plugin changes must bump the version and move the catalog pin to the new release.
+The marketplace catalog follows `main`, declares Plugin version 0.3.2, and uses an explicit HTTPS Git source pinned to the matching v0.3.2 tag and release commit `0cc15c036b07691c600bda1219b8cc5c197ca3f1`. This keeps new installations on the released runtime even when `main` later contains development work, without depending on a user's GitHub SSH transport setting. Because Claude Code uses the manifest version as its update key, future Plugin changes must bump the version and move the catalog pin to the new release.
 
 For local Plugin development, start Claude Code from this repository with:
 

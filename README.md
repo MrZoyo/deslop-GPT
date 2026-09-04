@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.2 tag. This patch release makes missing-evidence limits explicit in the closed-loop rule. The v0.3.1 evaluation evidence remains tied to its exact released payload.
+The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.2 tag and release commit `0cc15c036b07691c600bda1219b8cc5c197ca3f1`. This patch release makes missing-evidence limits explicit in the closed-loop rule. The v0.3.1 evaluation evidence remains tied to its exact released payload.
 
 ### One checkout, standalone discovery on both hosts
 

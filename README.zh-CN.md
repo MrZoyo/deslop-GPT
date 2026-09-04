@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源使用明确的 HTTPS Git URL，并固定到 v0.3.2 标签。这个补丁版本在闭环规则中明确了“缺少证据”的置信度上限。v0.3.1 的评测证据仍只对应它当时发布的精确 payload。
+Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源使用明确的 HTTPS Git URL，并固定到 v0.3.2 标签和发布提交 `0cc15c036b07691c600bda1219b8cc5c197ca3f1`。这个补丁版本在闭环规则中明确了“缺少证据”的置信度上限。v0.3.1 的评测证据仍只对应它当时发布的精确 payload。
 
 ### 一份本地源码，同时供两个平台加载
 
