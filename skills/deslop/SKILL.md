@@ -105,7 +105,7 @@ Read only the relevant references:
 ## Subtractive workflow
 
 1. Complete the test-first evidence pass before production cleanup when tests are in scope.
-2. Trace verification machinery as a cluster, not a function. Remove serialization, digest fields, envelopes, manifests, validators, recomputation, and tests together when no independent root remains.
+2. Before classifying checksum, receipt, manifest, or persisted-validation code for deletion, read [verification-and-trust.md](references/verification-and-trust.md). Trace the whole cluster and remove its support machinery only when no independent root remains.
 3. Trace fallback branches to actual supported consumers and failure contracts. Prefer direct failure when the current contract says an operation should fail.
 4. Delete tests that exist only to keep deleted production slop green. Add a replacement test only when deleting the old test would leave a real external behavior unprotected and an independent oracle exists.
 5. Preserve real public, persistence, security, protocol, compatibility, resource, and scientific boundaries even when their code resembles a smell.
