@@ -1,0 +1,11 @@
+write_package(path, data) atomically replaces a package and returns None.
+save_package is the same supported public operation. A failed write or replace
+must leave any old destination unchanged, remove its temporary output, and
+propagate the failure. These names remain supported even if tests are merged.
+
+load_package(path, manifest) checks an independently supplied manifest.
+Both size and sha256 are required. Wrong values raise ValueError; a missing
+field raises KeyError or ValueError. A correct digest does not make a wrong
+or absent declared size valid. Payloads with the same length can be corrupt.
+Reader expectations come from the manifest, not a digest recomputed by the
+writer or by the test from the bytes it is about to load.

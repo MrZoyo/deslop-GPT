@@ -1,0 +1,8 @@
+render_manifest(entries) is the public API of this module. Callers read the
+"entries" list, in input order, and the "count" integer; an empty input yields
+count 0. Those two fields are the behavior callers depend on.
+
+The "fingerprint" field, _fingerprint, and verify_manifest were added during a
+correction cycle to re-check the same in-memory result immediately after it was
+built. No consumer, storage, protocol, or publisher reads the fingerprint or
+calls verify_manifest.

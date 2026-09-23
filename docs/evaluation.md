@@ -21,7 +21,7 @@ Micro-case and miniature-repository results are separate. They must not be combi
 
 ## Follow-up evidence-edge draft
 
-[`dev-v3-evidence-edges`](../evals/dev-v3-evidence-edges/README.md) is a separate draft derived from 19 anonymized field observations. Seven paired fixtures currently exercise production reachability, current-path integration roots, managed test inputs and outputs, authoritative artifact presence, complete schema-reader enforcement, and required-field defaults.
+[`dev-v3-evidence-edges`](../evals/dev-v3-evidence-edges/README.md) is a separate draft derived from 19 anonymized field observations and a local cleanup review. Nine paired fixtures exercise production reachability, current-path integration roots, managed test inputs and outputs, authoritative artifact presence, complete schema-reader enforcement, required-field defaults, and public package APIs with independent manifest checks. Draft2 strengthens correction history and calibrates a bounded repair of weak failure tests. Draft3 adds a fingerprint-contract pair whose zero-test calibration rejects removing all coverage after deleting the target machinery. Draft4 clarifies retirement evidence and corrects recognition of reader-loop coverage and removed output fields.
 
 The draft introduces `repair` cases where cleanup exposes a fail-open current contract, alongside ordinary `simplify` and `preserve` decisions. Because the same field review informed the Skill update, this is exposed development regression evidence rather than a holdout. It has offline polarity calibration but no frozen model baseline, so it is not part of the active quantitative benchmark and must not be combined with `dev-v2-focused` results.
 

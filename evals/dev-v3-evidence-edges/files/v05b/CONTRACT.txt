@@ -1,0 +1,8 @@
+render_manifest(entries) produces the manifest handed to the release publisher,
+which is a separate service. Callers read "entries" in input order and "count".
+
+The publisher recomputes sha256 over the canonical JSON of "entries" (sorted
+keys, compact separators) and rejects any manifest whose "fingerprint" differs.
+The field is part of the published wire contract, not a local self-check. For
+the entry list [{"id": "a"}] the published fingerprint is
+3f2d3382920cf76f6c108c87a501b0c6742601774c5db8bd3d71732299a9d852.

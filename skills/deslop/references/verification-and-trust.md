@@ -132,6 +132,8 @@ Reopening an encoded file, archive, media object, or persisted record can be gen
 
 Check what the retained integrity mechanism actually covers. A digest of payload bytes does not validate separately stored metadata such as publication state, declared counts, or identity. Those fields can be invalid while the payload digest still matches. Treat each metadata check as a separate candidate; preserve its supported contract, and require evidence of equivalent coverage or retirement before deleting it.
 
+For example, a reader given correct payload bytes and digest but a wrong or missing required `size` still has an invalid manifest. Preserve that rejection separately from content-corruption detection. In contrast, a writer that hashes its in-memory input and immediately verifies the same input against that newly generated value has no independent readback evidence; that local chain can be removed once its lack of another consumer is established. Preserve the public write/read operations in both cases.
+
 ## Defensive and fallback checks
 
 Repeated null/type/shape checks, broad catches, catch-log-rethrow, catch-and-fallback, repeated normalization, and self-validating result objects are suspicious when they add no boundary or failure domain. Preserve checks that enforce a documented safety, resource, authorization, transaction, concurrency, persistence, protocol, or numerical invariant.

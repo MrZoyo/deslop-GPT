@@ -15,6 +15,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+from unittest.mock import patch
 
 
 sys.dont_write_bytecode = True
@@ -149,6 +150,8 @@ def source_metrics(root: Path) -> dict[str, int]:
         "test_loc": 0,
         "test_count": 0,
         "functions": 0,
+        "production_functions": 0,
+        "hash_operations": 0,
         "classes": 0,
         "branches": 0,
         "syntax_errors": 0,
@@ -167,6 +170,8 @@ def source_metrics(root: Path) -> dict[str, int]:
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 metrics["functions"] += 1
+                if not test_file:
+                    metrics["production_functions"] += 1
                 if test_file and node.name.startswith("test_"):
                     metrics["test_count"] += 1
                 if not test_file and any(token in node.name.lower() for token in ABSTRACTION_TOKENS):
@@ -177,6 +182,10 @@ def source_metrics(root: Path) -> dict[str, int]:
                     metrics["abstraction_nodes"] += 1
             elif isinstance(node, (ast.If, ast.IfExp, ast.For, ast.AsyncFor, ast.While, ast.Match)):
                 metrics["branches"] += 1
+            elif isinstance(node, ast.Call):
+                name = getattr(node.func, "attr", getattr(node.func, "id", ""))
+                if name in {"sha256", "sha512", "sha1", "md5", "blake2b", "blake2s"}:
+                    metrics["hash_operations"] += 1
     return metrics
 
 
@@ -228,12 +237,15 @@ def negative_change_budget(fixture: Path, workspace: Path, action: str) -> tuple
         violations.append("new abstractions")
     if after["syntax_errors"] > LIMITS["syntax_errors_max"]:
         violations.append("Python syntax errors")
-    maximum_growth = LIMITS["positive_python_loc_growth_max"][action]
+    maximum_growth = CASES[fixture.name].get(
+        "positive_python_loc_growth_max", LIMITS["positive_python_loc_growth_max"][action]
+    )
     if positive_python_growth > maximum_growth:
         violations.append("Python LOC growth")
     evidence = (
         f"action={action}; new_files={new_files}; new_external_dependencies={new_dependencies}; "
         f"positive_python_loc_growth={positive_python_growth}; "
+        f"maximum_python_loc_growth={maximum_growth}; "
         f"metric_delta={json.dumps(delta, sort_keys=True, separators=(',', ':'))}; "
         f"violations={violations}"
     )
@@ -270,6 +282,7 @@ def raised_call_covered(workspace: Path, call_name: str) -> bool:
             tree = ast.parse(path.read_text())
         except SyntaxError:
             continue
+        parents = {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
         for node in ast.walk(tree):
             if not isinstance(node, ast.With):
                 continue
@@ -291,6 +304,18 @@ def raised_call_covered(workspace: Path, call_name: str) -> bool:
                     return True
                 if isinstance(descendant.func, ast.Attribute) and descendant.func.attr == call_name:
                     return True
+                # Accept a literal reader group without requiring one assertion
+                # block per function. Stop at the nearest binding of the name.
+                if isinstance(descendant.func, ast.Name):
+                    ancestor = parents.get(descendant)
+                    while ancestor is not None and not isinstance(ancestor, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        if isinstance(ancestor, ast.For) and isinstance(ancestor.target, ast.Name) and ancestor.target.id == descendant.func.id:
+                            if isinstance(ancestor.iter, (ast.Tuple, ast.List)):
+                                names = {getattr(item, "id", getattr(item, "attr", None)) for item in ancestor.iter.elts}
+                                if call_name in names:
+                                    return True
+                            break
+                        ancestor = parents.get(ancestor)
     return False
 
 
@@ -328,10 +353,8 @@ def basic_behavior(case_id: str, workspace: Path) -> None:
             "right active camera changed",
         )
     elif case_id == "r02a":
-        require(
-            app.summarize_current([2, 3]) == {"count": 2, "total": 5},
-            "current summary changed",
-        )
+        for values, expected in (([2, 3], {"count": 2, "total": 5}), ([], {"count": 0, "total": 0})):
+            require(app.summarize_current(values) == expected, "current summary changed")
     elif case_id == "r02b":
         require(app.run_current_episode("TASK-CURRENT-03") is True, "current production path changed")
     elif case_id == "h01a":
@@ -375,6 +398,24 @@ def basic_behavior(case_id: str, workspace: Path) -> None:
                 app.load_report(root, descriptor) == ({"status": "ok"}, "frame 1"),
                 "available preview behavior changed",
             )
+    elif case_id in {"v04a", "v04b"}:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.bin"
+            for name in ("write_package", "save_package"):
+                writer = getattr(app, name)
+                path.write_bytes(b"previous")
+                require(writer(path, PACKAGE_BYTES) is None, f"{name} result changed")
+                require(path.read_bytes() == PACKAGE_BYTES, f"{name} did not replace bytes")
+                require(list(Path(directory).iterdir()) == [path], f"{name} left extra output")
+            # Exercise a reader input supplied independently of either writer.
+            path.write_bytes(PACKAGE_BYTES)
+            arguments = (path, dict(PACKAGE_MANIFEST)) if case_id == "v04b" else (path,)
+            require(app.load_package(*arguments) == PACKAGE_BYTES, "public reader changed")
+    elif case_id in {"v05a", "v05b"}:
+        for ids in ((), ("a", "b")):
+            rendered = app.render_manifest(manifest_entries(ids))
+            require(rendered["entries"] == manifest_entries(ids), "manifest entries changed")
+            require(rendered["count"] == len(ids), "manifest count changed")
     elif case_id == "s01a":
         payload = {"schema": "2.0", "storage": "video", "frames": ["a", "b"]}
         require(app.load_episode(payload) == ("a", "b"), "current loader changed")
@@ -415,6 +456,62 @@ def required_artifact_contract(workspace: Path) -> None:
             app.load_package(root, descriptor)
 
 
+MANIFEST_FINGERPRINTS = {
+    # sha256 of the canonical JSON (sorted keys, compact separators) of each entry list
+    (): "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    ("a",): "3f2d3382920cf76f6c108c87a501b0c6742601774c5db8bd3d71732299a9d852",
+    ("a", "b"): "e0c44d4eca74e0d274e4064584afa4cb07bafe23a6e9485328e765d9747e3c22",
+}
+
+
+def manifest_entries(ids):
+    return [{"id": value} for value in ids]
+
+
+PACKAGE_BYTES = b"package-bytes"
+PACKAGE_MANIFEST = {
+    "size": 13,
+    "sha256": "9d7ec3059a3be4a437e8028d9a498f2fd4adfa7183af52ecc712704ee1dc8260",
+}
+
+
+def manifest_contract(app) -> None:
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "package.bin"
+        path.write_bytes(PACKAGE_BYTES)
+        for field, value in (("size", 12), ("sha256", "0" * 64)):
+            invalid = {**PACKAGE_MANIFEST, field: value}
+            with raises(ValueError):
+                app.load_package(path, invalid)
+        for field in PACKAGE_MANIFEST:
+            incomplete = dict(PACKAGE_MANIFEST)
+            del incomplete[field]
+            with raises((KeyError, ValueError)):
+                app.load_package(path, incomplete)
+        path.write_bytes(b"package-bytez")
+        with raises(ValueError):
+            app.load_package(path, dict(PACKAGE_MANIFEST))
+
+
+def atomic_writer_contract(app) -> None:
+    original_write = Path.write_bytes
+
+    def partial_write(path, data):
+        original_write(path, data[:3])
+        raise OSError("disk full after partial write")
+
+    for name in ("write_package", "save_package"):
+        for operation, failure in (("write_bytes", partial_write), ("replace", OSError("replace failed"))):
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "package.bin"
+                path.write_bytes(b"previous")
+                with patch.object(Path, operation, autospec=True, side_effect=failure):
+                    with raises(OSError):
+                        getattr(app, name)(path, PACKAGE_BYTES)
+                require(path.read_bytes() == b"previous", f"{name} changed old destination on failure")
+                require(list(Path(directory).iterdir()) == [path], f"{name} leaked partial output")
+
+
 def preservation_contract(case_id: str, workspace: Path) -> None:
     app = module(workspace)
     if case_id == "r01b":
@@ -440,6 +537,15 @@ def preservation_contract(case_id: str, workspace: Path) -> None:
             require(app.load_report(root, {"report": "report.json"}) == expected, "missing optional key failed")
             descriptor = {"report": "report.json", "optional_preview": "missing.txt"}
             require(app.load_report(root, descriptor) == expected, "missing optional file failed")
+    elif case_id == "v04b":
+        manifest_contract(app)
+        atomic_writer_contract(app)
+    elif case_id == "v05b":
+        for ids, expected in MANIFEST_FINGERPRINTS.items():
+            require(
+                app.render_manifest(manifest_entries(ids))["fingerprint"] == expected,
+                "published fingerprint contract changed",
+            )
     elif case_id == "s01b":
         require(
             app.migrate_episode({"schema": "1.0", "images": ["old"]})
@@ -473,7 +579,7 @@ def case_target(case_id: str, workspace: Path) -> str:
         require(metrics["test_count"] <= 1, "future-only test remains")
         require(integration_root_present(workspace, "active_camera"), "active behavior lacks a test root")
     elif case_id == "r02a":
-        require("legacy" not in text, "legacy package path remains")
+        require(metrics["production_functions"] == 1, "retired package support remains")
         require(metrics["test_count"] <= 1, "legacy package test remains")
         require(
             integration_root_present(workspace, "summarize_current"),
@@ -492,6 +598,21 @@ def case_target(case_id: str, workspace: Path) -> str:
         require(
             raised_call_covered(workspace, "load_package"),
             "missing authoritative artifact lacks a visible negative test",
+        )
+    elif case_id == "v04a":
+        require(metrics["hash_operations"] == 0, "local hash self-check remains")
+        require(metrics["production_functions"] <= 2, "private proof or forwarding bodies remain")
+        require(metrics["test_count"] <= 2, "receipt-only tests remain")
+        require(integration_root_present(workspace, "load_package"), "public readback lacks a test root")
+    elif case_id == "v05a":
+        require(metrics["hash_operations"] == 0, "local fingerprint self-check remains")
+        require(metrics["production_functions"] == 1, "private fingerprint or verifier remains")
+        app = module(workspace)
+        for ids in ((), ("a", "b")):
+            require("fingerprint" not in app.render_manifest(manifest_entries(ids)), "fingerprint field remains")
+        require(
+            integration_root_present(workspace, "render_manifest"),
+            "surviving public manifest behavior lacks a test root",
         )
     elif case_id == "s01a":
         app = module(workspace)

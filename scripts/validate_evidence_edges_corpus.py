@@ -18,7 +18,7 @@ CORPUS = REPOSITORY / "evals" / "dev-v3-evidence-edges"
 EVALS = CORPUS / "evals.json"
 ADJUDICATION = CORPUS / "adjudication.json"
 EVIDENCE_BANK = CORPUS / "evidence-bank.json"
-REVISION = "dev-v3-evidence-edges-draft1"
+REVISION = "dev-v3-evidence-edges-draft4"
 CASE_IDS = {
     "r01a",
     "r01b",
@@ -30,12 +30,17 @@ CASE_IDS = {
     "h02b",
     "v03a",
     "v03b",
+    "v04a",
+    "v04b",
     "s01a",
     "s01b",
     "s02a",
     "s02b",
+    "v05a",
+    "v05b",
 }
-PAIR_IDS = {"r01", "r02", "h01", "h02", "v03", "s01", "s02"}
+FIELD_PAIR_IDS = {"r01", "r02", "h01", "h02", "v03", "s01", "s02"}
+PAIR_IDS = FIELD_PAIR_IDS | {"v04", "v05"}
 
 
 def fail(message: str) -> None:
@@ -118,8 +123,8 @@ def validate_evidence_bank(bank: dict) -> None:
             fail(f"{item['id']}: invalid coverage pairs")
         if coverage["kind"] == "new":
             covered_new_pairs.update(pairs)
-    if covered_new_pairs != PAIR_IDS:
-        fail(f"evidence bank does not map every executable pair: {sorted(covered_new_pairs)}")
+    if covered_new_pairs != FIELD_PAIR_IDS:
+        fail(f"evidence bank does not map its original field pairs: {sorted(covered_new_pairs)}")
     if coverage_counts != {"candidate": 5, "existing": 5, "new": 9}:
         fail(f"evidence-bank coverage counts drifted: {coverage_counts}")
 
@@ -162,6 +167,14 @@ def validate_manifest(evals: dict, adjudication: dict) -> None:
         fail("eval manifest case IDs drifted")
     if not isinstance(adjudicated, list) or {case.get("id") for case in adjudicated} != CASE_IDS:
         fail("adjudication case IDs drifted")
+    growth_overrides = {
+        case["id"]: case["positive_python_loc_growth_max"]
+        for case in adjudicated if "positive_python_loc_growth_max" in case
+    }
+    if growth_overrides != {"v04b": 8}:
+        fail("only the calibrated v04b coverage repair has a growth override")
+    if any(not case.get("growth_reason") for case in adjudicated if case["id"] in growth_overrides):
+        fail("case-specific growth needs a concrete coverage justification")
 
     pairs = {}
     for case in adjudicated:
@@ -249,21 +262,22 @@ def validate_calibration(grader, adjudication: dict) -> None:
             mutant = CORPUS / "calibration" / case_id / "destructive_mutant"
             if not mutant.is_dir():
                 fail(f"{case_id}: missing destructive_mutant")
+
+        for mutant in sorted((CORPUS / "calibration" / case_id).glob("destructive_mutant*")):
             with tempfile.TemporaryDirectory() as directory:
-                workspace = materialize(case_id, "destructive_mutant", Path(directory))
-                require_tests(grader, workspace, f"{case_id} destructive_mutant")
+                workspace = materialize(case_id, mutant.name, Path(directory))
+                require_tests(grader, workspace, f"{case_id} {mutant.name}")
                 expect_failure(
                     lambda case_id=case_id, workspace=workspace: grader.case_contract(
                         case_id, workspace
                     ),
-                    f"{case_id} destructive_mutant contract",
+                    f"{case_id} {mutant.name} contract",
                 )
 
-        alternate = CORPUS / "calibration" / case_id / "alternate_valid"
-        if alternate.is_dir():
+        for alternate in sorted((CORPUS / "calibration" / case_id).glob("alternate_valid*")):
             with tempfile.TemporaryDirectory() as directory:
-                workspace = materialize(case_id, "alternate_valid", Path(directory))
-                require_tests(grader, workspace, f"{case_id} alternate_valid")
+                workspace = materialize(case_id, alternate.name, Path(directory))
+                require_tests(grader, workspace, f"{case_id} {alternate.name}")
                 grader.case_contract(case_id, workspace)
                 if case_id.endswith("a"):
                     grader.case_target(case_id, workspace)
@@ -274,19 +288,18 @@ def validate_calibration(grader, adjudication: dict) -> None:
                     fail(f"{case_id}: alternate_valid exceeds budget: {budget_evidence}")
             alternate_categories.add(case["category"])
 
-        insufficient = CORPUS / "calibration" / case_id / "insufficient_cleanup"
-        if insufficient.is_dir():
+        for insufficient in sorted((CORPUS / "calibration" / case_id).glob("insufficient_cleanup*")):
             if action != "simplify":
                 fail(f"{case_id}: only simplify cases may have insufficient_cleanup")
             with tempfile.TemporaryDirectory() as directory:
-                workspace = materialize(case_id, "insufficient_cleanup", Path(directory))
-                require_tests(grader, workspace, f"{case_id} insufficient_cleanup")
+                workspace = materialize(case_id, insufficient.name, Path(directory))
+                require_tests(grader, workspace, f"{case_id} {insufficient.name}")
                 grader.case_contract(case_id, workspace)
                 expect_failure(
                     lambda case_id=case_id, workspace=workspace: grader.case_target(
                         case_id, workspace
                     ),
-                    f"{case_id} insufficient_cleanup target",
+                    f"{case_id} {insufficient.name} target",
                 )
                 before = grader.source_metrics(fixture)
                 after = grader.source_metrics(workspace)
@@ -297,6 +310,23 @@ def validate_calibration(grader, adjudication: dict) -> None:
                 ):
                     fail(f"{case_id}: insufficient cleanup removed no surface")
             insufficient_categories.add(case["category"])
+
+        for zero in sorted((CORPUS / "calibration" / case_id).glob("zero_tests*")):
+            # A cleanup that reaches the target but leaves no discoverable test is
+            # rejected by the remaining-test gate even though behavior is intact.
+            if action == "preserve":
+                fail(f"{case_id}: only positive cases may have zero_tests states")
+            with tempfile.TemporaryDirectory() as directory:
+                workspace = materialize(case_id, zero.name, Path(directory))
+                result = grader.run_tests(workspace)
+                if result["count"] != 0 or result["passed"]:
+                    fail(f"{case_id} {zero.name}: zero-test state must discover no tests")
+                grader.case_contract(case_id, workspace)
+                budget_passed, budget_evidence = grader.negative_change_budget(
+                    fixture, workspace, action
+                )
+                if not budget_passed:
+                    fail(f"{case_id} {zero.name}: zero-test state exceeds budget: {budget_evidence}")
 
     if alternate_categories != set(adjudication["scope"]):
         fail(f"every category needs an alternate-valid calibration: {sorted(alternate_categories)}")
@@ -344,6 +374,28 @@ def validate_negative_change_gate(grader) -> None:
         "Python LOC growth",
     )
 
+    # The larger v04b allowance is bounded; it does not waive the default gates.
+    fixture = CORPUS / "files" / "v04b"
+    reject("bounded-growth", "app.py", "\n" + "\n".join(f"EXTRA_{n} = {n}" for n in range(9)), "Python LOC growth")
+    reject(
+        "extra-test",
+        "test_app.py",
+        "\n\nclass AddedTests(unittest.TestCase):\n    def test_added(self):\n        self.assertTrue(True)\n",
+        "new tests",
+    )
+
+
+def validate_coverage_repair(grader) -> None:
+    # The extra lines must expose real faults that the original suite misses.
+    tests = CORPUS / "calibration" / "v04b" / "alternate_valid" / "test_app.py"
+    for state in ("destructive_mutant_digest", "destructive_mutant_partial_write"):
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = materialize("v04b", state, Path(directory))
+            require_tests(grader, workspace, f"v04b {state} original coverage")
+            shutil.copy2(tests, workspace / "test_app.py")
+            if grader.run_tests(workspace)["passed"]:
+                fail(f"v04b repaired coverage missed {state}")
+
 
 def main() -> None:
     evals = json.loads(EVALS.read_text())
@@ -354,11 +406,12 @@ def main() -> None:
     grader = load_grader()
     validate_calibration(grader, adjudication)
     validate_negative_change_gate(grader)
+    validate_coverage_repair(grader)
     print(
-        "Validated dev-v3-evidence-edges-draft1: 19 field observations "
-        "(9 newly covered, 5 existing, 5 candidates), 7 executable pairs, "
-        "golden/mutant polarity, alternate-valid states, "
-        "insufficient-cleanup states, and negative-change gates."
+        f"Validated {REVISION}: 19 field observations "
+        "(9 covered, 5 existing, 5 candidates), 7 field pairs plus 2 cleanup-follow-up pairs, "
+        "golden/mutant polarity, alternate-valid states, insufficient-cleanup states, "
+        "zero-test polarity, bounded growth, and independent coverage repair."
     )
 
 

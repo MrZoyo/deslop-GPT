@@ -54,25 +54,25 @@
 
 ## 快速开始
 
-### Codex：安装独立版 Skill（v0.3.2）
+### Codex：安装独立版 Skill（v0.3.3）
 
 把下面的 GitHub Skill 地址交给内置安装器：
 
 ```text
 $skill-installer
 请从以下地址安装 Skill：
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.2/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
 ```
 
 如果希望直接检查本地源码，可以把 Skill 运行目录链接到 Codex 官方文档规定的用户级 Skill 目录：
 
 ```bash
-git clone --branch v0.3.2 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.3 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.2 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
+Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.3 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
 
 ### Claude Code：从 GitHub 安装 Plugin
 
@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。如果使用本地源码仓库，可在仓库根目录运行 `claude --plugin-dir .` 直接加载。插件市场目录从 `main` 读取，但 Plugin 源使用明确的 HTTPS Git URL，并固定到 v0.3.2 标签和发布提交 `0cc15c036b07691c600bda1219b8cc5c197ca3f1`。这个补丁版本在闭环规则中明确了“缺少证据”的置信度上限。v0.3.1 的评测证据仍只对应它当时发布的精确 payload。
+Plugin 的标准命令是 `/deslop:deslop`。插件市场通过明确的 HTTPS Git source 固定到 `v0.3.3`。本地源码仓库可用 `claude --plugin-dir .` 加载。这个补丁版本明确公开契约与独立测试覆盖的保留边界；历史评测仍只对应当时的精确 payload。
 
 ### 一份本地源码，同时供两个平台加载
 
@@ -99,7 +99,7 @@ ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop
 
 ### 发布方式现状
 
-共用的 [`skills/deslop/`](skills/deslop/) 目录遵循开放的 Agent Skills 结构，Codex 和 Claude Code 加载的内容完全相同。[`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) 与 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) 提供 Claude Code 所需的 Plugin 配置。目前仍不发布 Codex Plugin：测试环境虽然能安装并缓存纯 Skills Plugin，却没有把其中的 Skill 注册到 Codex。Codex 的独立安装方式不受影响。详情见[发布方式兼容性说明](docs/development.zh-CN.md#发布方式兼容性说明)。
+共用的 [`skills/deslop/`](skills/deslop/) 目录遵循开放的 Agent Skills 结构，Codex 和 Claude Code 加载的内容完全相同。[`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) 与 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) 提供 Claude Code 所需的 Plugin 配置。本版本通过独立 Skill 支持 Codex，未包含 Codex Plugin 元数据；历史 Plugin 注册实验不能代表当前平台支持情况。详情见[发布方式兼容性说明](docs/development.zh-CN.md#发布方式兼容性说明)。
 
 ### 明确调用
 
@@ -187,7 +187,7 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.zh-CN.md) 使用成对的小案例和三个端到端小型仓库，检查 Agent 是否能正确判断该删什么、该留什么。只有先通过行为检查，才会计算精简指标。小案例和小型仓库的结果始终分开报告，本仓库不发布项目级性能分数。
 
-后续的 [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，并先实现了 7 对新的可执行案例。目前只校验草案内部一致性，不把它描述成模型表现证据。
+后续的 [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，现有 9 对可执行案例；draft2 增加公开 API/manifest 边界，并补强修改历史与测试增长校准；draft3 增加指纹契约案例对和零测试极性状态，draft4 完成退役依据与评分识别的发布复核。目前只校验草案内部一致性，不把它描述成模型表现证据。
 
 结果应如何解读，见[评测](docs/evaluation.zh-CN.md)；完整规则见 [`evals/README.zh-CN.md`](evals/README.zh-CN.md)。
 

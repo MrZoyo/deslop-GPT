@@ -1,0 +1,7 @@
+Current contract and recorded corrections for this synthetic fixture:
+1. The original workflow used legacy_task_id packages and run_legacy_episode.
+2. That workflow was retired. No supported consumer or stored-data migration
+   uses the package path. Current callers use summarize_current(values).
+3. summarize_current returns count and total, including zero for an empty list.
+   Its implementation is unrestricted; earlier source-spelling checks are not
+   part of the API or a security policy.

@@ -54,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.3.2 as a standalone Skill
+### Codex: install v0.3.3 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.2/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.3.2 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.3 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.2 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.3 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. For a local checkout, load the repository directly with `claude --plugin-dir .` from the repository root. The marketplace catalog is read from `main`, but its Plugin source uses an explicit HTTPS Git URL pinned to the v0.3.2 tag and release commit `0cc15c036b07691c600bda1219b8cc5c197ca3f1`. This patch release makes missing-evidence limits explicit in the closed-loop rule. The v0.3.1 evaluation evidence remains tied to its exact released payload.
+The canonical Plugin command is `/deslop:deslop`. The marketplace uses an explicit HTTPS Git source pinned to `v0.3.3`. For a local checkout, run `claude --plugin-dir .` from the repository root. This patch clarifies preservation of public contracts and independent test coverage; historical evaluation results remain tied to their original payloads.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -99,7 +99,7 @@ Use only the link for the host you need, and run each `ln` command only when its
 
 ### Distribution status
 
-The shared [`skills/deslop/`](skills/deslop/) payload follows the open Agent Skills structure and is used unchanged by Codex and Claude Code. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) and [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) provide Claude Code packaging. Codex Plugin distribution remains withheld because the tested Codex host installed and cached a Skills-only Plugin without registering its bundled Skill; Codex standalone installation remains supported. See the [distribution compatibility note](docs/development.md#distribution-compatibility-note).
+The shared [`skills/deslop/`](skills/deslop/) payload follows the open Agent Skills structure and is used unchanged by Codex and Claude Code. [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) and [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) provide Claude Code packaging. This release distributes a standalone Skill for Codex and does not include Codex Plugin metadata. The historical Plugin experiment does not describe current platform support. See the [distribution compatibility note](docs/development.md#distribution-compatibility-note).
 
 ### Invoke it explicitly
 
@@ -187,7 +187,7 @@ Version-bound forward smokes are published under [`evals/release-smoke/`](evals/
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.md) tests preservation and simplification decisions across paired micro cases and three end-to-end miniature repositories. Behavior gates run before reduction metrics. Micro and mini-repository results remain separate, and the repository publishes no project-level performance score.
 
-The follow-up [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.md) draft records 19 anonymized field observations and implements 7 new executable pairs. It is validated as a draft, not reported as model-performance evidence.
+The follow-up [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.md) draft records 19 anonymized field observations and contains nine executable pairs. Draft2 adds a public-API/manifest pair and strengthens correction-history and coverage calibration; draft3 adds a fingerprint-contract pair with a zero-test polarity state, and draft4 reviews retirement evidence and grading recognition. It is validated as a draft, not reported as model-performance evidence.
 
 See [Evaluation](docs/evaluation.md) for interpretation limits and [`evals/README.md`](evals/README.md) for the canonical protocol.
 

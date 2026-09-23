@@ -1,0 +1,22 @@
+import hashlib
+
+
+def write_package(path, data):
+    temporary = path.with_name(path.name + ".tmp")
+    try:
+        temporary.write_bytes(data)
+        temporary.replace(path)
+    except OSError:
+        raise
+
+
+save_package = write_package
+
+
+def load_package(path, manifest):
+    data = path.read_bytes()
+    if len(data) != manifest["size"]:
+        raise ValueError("package size mismatch")
+    if hashlib.sha256(data).hexdigest() != manifest["sha256"]:
+        raise ValueError("package digest mismatch")
+    return data

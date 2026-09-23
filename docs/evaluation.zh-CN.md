@@ -21,7 +21,7 @@
 
 ## 后续证据边界草案
 
-[`dev-v3-evidence-edges`](../evals/dev-v3-evidence-edges/README.zh-CN.md) 是另一套独立草案，来源于 19 条匿名化现场观察。目前先完成了 7 对可执行 fixture，分别检查生产可达性、当前路径的集成根、测试输入输出是否受管、权威 artifact 是否必需、所有 schema reader 是否一致，以及关键字段是否仍有历史默认值。
+[`dev-v3-evidence-edges`](../evals/dev-v3-evidence-edges/README.zh-CN.md) 是另一套独立草案，来源于 19 条匿名化现场观察和一次本地清理复核。目前有 9 对可执行 fixture，检查生产可达性、当前路径的集成根、测试输入输出是否受管、权威 artifact 是否必需、schema reader 是否一致、关键字段默认值，以及公开 package API 和独立 manifest 校验。draft2 还补强了修改历史证据，并校准了弱失败测试所需的小幅增长。draft3 增加一对指纹契约案例，其零测试校准状态说明：达到目标但不留任何测试仍然判失败。
 
 当清理过程暴露 current contract 的 fail-open 缺口时，这套草案允许 `repair`，并继续区分普通的 `simplify` 与 `preserve`。由于同一份现场复核也用于更新 Skill，这里只能作为答案已暴露的开发回归证据，不能当作独立留出集。它已经具备离线正反校准，但还没有冻结后的模型 baseline，因此不属于当前定量基准，也不能与 `dev-v2-focused` 的结果混算。
 

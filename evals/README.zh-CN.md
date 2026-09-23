@@ -10,7 +10,7 @@
 
 16 个小案例中，每个“应删除”案例都有一个编号前缀相同的“应保留”对照案例；同时提供已知正确的结果、会破坏行为的错误改法，以及其他有效方案，用来校准评分。另有三个小型仓库，在整库规模上模拟逐步累积的冗余测试、形式大于实效的验证和回退逻辑。
 
-`dev-v2-focused-rc5` 已经冻结。另建的 [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，并先把其中 7 组做成可执行案例，覆盖生产可达性、测试 hermeticity、权威 artifact 和 schema 契约。CI 会校验它的内部一致性，但它目前还不能用于模型对比，结果也不能与 `dev-v2-focused` 混算。
+`dev-v2-focused-rc5` 已经冻结。另建的 [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，目前有 9 组可执行案例，覆盖生产可达性、测试 hermeticity、权威 artifact 和 schema 契约。draft2 根据本地清理复核增加公开 API/manifest 案例，并补强修改历史与测试增长校准；draft3 根据 2026-09-23 的 Opus 5.5 A/B 增加指纹契约案例对和零测试极性状态。CI 会校验它的内部一致性，但它目前还不能用于模型对比，结果也不能与 `dev-v2-focused` 混算。
 
 [`runtime-controls`](runtime-controls/README.zh-CN.md) 单独检查授权边界和其他宿主运行时承诺。这些控制案例既不是清理质量案例，也不计入任何语料分数。
 
@@ -67,7 +67,7 @@ uv run --with agent-skill-eval==0.7.0 \
 - 三个小型仓库的行为检查、精简目标和指标条件；
 - 包含 16 个小案例的 manifest，以及包含 3 个小型仓库的 manifest。
 
-`dev-v2-focused-rc5` 已经冻结。`dev-v3-evidence-edges-draft1` 仍在变化期间，不要对它运行 GPT A/B；应先完成复核并冻结版本，再收集可比结果。已经发布的 rc3 小案例试运行和 rc4 小型仓库试运行应继续作为两组独立的历史证据保存。
+`dev-v2-focused-rc5` 已经冻结。`dev-v3-evidence-edges-draft4` 仍在变化期间，不要对它运行 GPT A/B；应先完成复核并冻结版本，再收集可比结果。已经发布的 rc3 小案例试运行和 rc4 小型仓库试运行应继续作为两组独立的历史证据保存。
 
 ## 版本冻结后的模型运行方式
 

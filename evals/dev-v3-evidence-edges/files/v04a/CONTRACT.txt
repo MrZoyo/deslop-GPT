@@ -1,0 +1,8 @@
+write_package(path, data) and save_package(path, data) are public byte writers.
+Both overwrite the destination and return None. Callers depend on both names,
+not on distinct function objects or forwarding bodies. load_package(path)
+returns the stored bytes, including files produced by another writer.
+
+The private receipt was added during a refactor to check the same in-memory
+argument immediately. It is neither persisted nor returned; no protocol,
+consumer, or storage verification uses it. This format has no digest metadata.

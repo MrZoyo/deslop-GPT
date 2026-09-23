@@ -10,7 +10,7 @@ The active development benchmark is [`dev-v2-focused`](dev-v2-focused/README.md)
 
 The 16 micro cases have same-prefix preservation counterexamples, golden/mutant polarity calibration, and alternate-valid calibration. The three mini repositories model accumulated test, verification, and fallback slop at repository scale.
 
-`dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and 7 executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. It is validated in CI but is not yet a model-comparison corpus; its results must not be combined with `dev-v2-focused`.
+`dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and nine executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. Draft2 adds the public-API/manifest pair and strengthens correction-history and coverage calibration after a local cleanup review; draft3 adds a fingerprint-contract pair with a zero-test polarity state from the 2026-09-23 Opus 5.5 A/B. It is validated in CI but is not yet a model-comparison corpus; its results must not be combined with `dev-v2-focused`.
 
 [`runtime-controls`](runtime-controls/README.md) separately checks authorization and other host/runtime promises. These controls are neither cleanup-quality cases nor part of either corpus score.
 
@@ -67,7 +67,7 @@ The focused validator checks:
 - three mini-repository behavior, reduction, and metric gates;
 - the 16-case micro manifest and 3-case mini-repository manifest.
 
-The `dev-v2-focused-rc5` revision is frozen. Do not run GPT A/B on the `dev-v3-evidence-edges-draft1` corpus while it is changing; review and freeze it before collecting comparable results. Keep the published rc3 micro and rc4 mini pilots as separate historical evidence.
+The `dev-v2-focused-rc5` revision is frozen. Do not run GPT A/B on the `dev-v3-evidence-edges-draft4` corpus while it is changing; review and freeze it before collecting comparable results. Keep the published rc3 micro and rc4 mini pilots as separate historical evidence.
 
 ## Model run shapes after freeze
 

@@ -1,0 +1,7 @@
+Current support policy for this synthetic fixture:
+public_label(record) is the supported label API. It strips surrounding
+whitespace and compares names without case, including non-ASCII names.
+
+The planner's product_space output and legacy_product_label entry point have
+been retired. No supported caller, stored format, or migration workflow uses
+them. The skipped saved-output test is a remnant of that retired workflow.

@@ -1,5 +1,5 @@
 {
-  "corpus_revision": "dev-v3-evidence-edges-draft1",
+  "corpus_revision": "dev-v3-evidence-edges-draft4",
   "status": "draft",
   "scope": [
     "production_reachability",
@@ -42,7 +42,7 @@
       "category": "production_reachability",
       "expected": "simplify",
       "target": "Remove the obsolete package fixture and private legacy execution path.",
-      "evidence_root": "The surviving current summary has a separate public contract."
+      "evidence_root": "The visible correction record explicitly retires the package path and leaves the summary implementation unrestricted."
     },
     {
       "id": "r02b",
@@ -58,7 +58,7 @@
       "category": "test_hermeticity",
       "expected": "simplify",
       "target": "Remove the skipped one-off-output test and its test-owned production helper.",
-      "evidence_root": "The unmanaged output has no clean-checkout producer or consumer."
+      "evidence_root": "The visible support policy explicitly retires the saved-output workflow and its public helper."
     },
     {
       "id": "h01b",
@@ -131,6 +131,40 @@
       "expected": "preserve",
       "target": "Preserve the documented default for an optional display label.",
       "evidence_root": "Display text is optional presentation data, not task identity."
+    },
+    {
+      "id": "v04a",
+      "pair": "v04",
+      "category": "artifact_authority",
+      "expected": "simplify",
+      "target": "Remove the in-memory proof chain and pure forwarding body while preserving both public writers and the reader.",
+      "evidence_root": "The visible contract retires the private proof only; callers still use both writer names."
+    },
+    {
+      "id": "v04b",
+      "pair": "v04",
+      "category": "artifact_authority",
+      "expected": "preserve",
+      "target": "Preserve all public package operations, required size and digest checks, and atomic failure cleanup.",
+      "evidence_root": "The independent manifest and public write/read contract specify distinct metadata, content, and partial-output failures.",
+      "positive_python_loc_growth_max": 8,
+      "growth_reason": "The alternate valid state replaces a pre-write-only failure with a real partial write and adds same-size corruption to the existing roundtrip test; test count is unchanged and seven nonblank lines are added."
+    },
+    {
+      "id": "v05a",
+      "pair": "v05",
+      "category": "artifact_authority",
+      "expected": "simplify",
+      "target": "Remove the in-memory fingerprint self-check and its verifier while keeping one test rooted in the surviving public manifest behavior.",
+      "evidence_root": "The visible contract states that nothing consumes the fingerprint and that callers depend on entries and count; the surviving public behavior must not be left with zero tests."
+    },
+    {
+      "id": "v05b",
+      "pair": "v05",
+      "category": "artifact_authority",
+      "expected": "preserve",
+      "target": "Preserve the fingerprint field and its canonical computation.",
+      "evidence_root": "An independent publisher recomputes and rejects mismatching fingerprints, and the test pins the published literal; a producer-computed digest with an external consumer is a wire contract, not theater."
     }
   ]
 }

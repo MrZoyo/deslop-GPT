@@ -77,4 +77,6 @@ Do not replace removed abstraction with a differently named abstraction. A few d
 
 A thin wrapper can still own a real boundary. Preserve one that bridges independently versioned formats, manages a temporary dataset or resource lifecycle, maintains a published import path, or translates a stable external contract. Thinness alone is not deletion evidence.
 
+For a pure forwarding alias, preserve the public name without necessarily preserving its function body: `format_user = render_user` can retain both entry points when their contract allows it. Keep a distinct wrapper when it owns format conversion, error translation, or lifecycle behavior. Likewise, removing a writer's private receipt/checksum chain does not retire the public writer; simplify its body while preserving its arguments, result, and side effects.
+
 For active-config reachability and cross-layer ownership, also read [evidence-and-reachability.md](evidence-and-reachability.md).

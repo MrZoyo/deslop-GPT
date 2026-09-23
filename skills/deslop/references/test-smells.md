@@ -95,6 +95,13 @@ A small test can replace an obsolete fixture while preserving a fully specified 
 
 When production slop is deleted, delete tests whose only purpose was to protect that slop in the same change. Do not add a replacement test merely because a function now lacks a unit test, coverage falls, or a model prefers symmetry. An explicit current-task requirement or current authoritative project document outranks a historical test that asserts obsolete or incorrect behavior; an inferred preference does not.
 
+### Correction examples
+
+- **Delete:** a documented change replaces implementation A with B, but a leftover test scans source text to prove A is absent. If no contract constrains the implementation, keep B's observable behavior covered and remove the source scan with A's private support. Renaming A or adding another absence test does not finish the cleanup.
+- **Preserve:** the current protocol explicitly rejects an old format, or a migration API still supports it. Test that observable rejection or migration; the fact that it mentions an old format does not make it obsolete.
+- **Retarget surviving behavior:** when a self-only checksum cluster is removed and its tests were the last ones exercising a surviving public contract, adapt one to an independently specified result. Preserve that behavioral root; retire all dedicated tests when the entire target is confirmed obsolete. Do not invent an oracle just to obtain a nonzero count.
+- **Repair existing coverage:** a writer test raises before creating a file, so it cannot expose a leaked partial output. Replacing it with a partial-write failure and checking the old destination and temporary-file cleanup can add a few lines while improving independent signal. Test length and checksum words alone do not establish a new self-proof loop.
+
 ## Consolidation discipline
 
 - Prefer one readable test per distinct behavior, not one per branch or helper.
