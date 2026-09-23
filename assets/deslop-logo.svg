@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">deslop logo</title>
+  <desc id="desc">A mint geometric lowercase d with a horizontal negative-space cut, on a dark rounded square.</desc>
+  <rect width="256" height="256" rx="54" fill="#121a17"/>
+  <path id="mark" d="M176 24H216V132H151C146 116 132 106 114 106C94 106 78 122 78 144C78 166 94 182 114 182C132 182 146 172 151 156H216V224H176V208C160 221 140 228 114 228C68 228 36 191 36 144C36 97 68 60 114 60C140 60 160 69 176 86V24Z" fill="#b8e9ca"/>
+</svg>

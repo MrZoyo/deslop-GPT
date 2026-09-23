@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/deslop-banner.svg" alt="deslop — 专为 Agent 维护的代码库设计，优先做减法的清理工具" width="100%">
+  <img src="assets/deslop-banner.svg" alt="deslop 标志与字标 — 以证据为依据的代码清理" width="100%">
 </p>
 
 <h1 align="center">deslop</h1>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/deslop-banner.svg" alt="deslop — deletion-first cleanup for agent-maintained codebases" width="100%">
+  <img src="assets/deslop-banner.svg" alt="deslop — evidence-backed code cleanup" width="100%">
 </p>
 
 <h1 align="center">deslop</h1>
