@@ -1,0 +1,13 @@
+Purpose: maintain the small inventory module used by a local packing desk.
+The lifecycle requirements below are authoritative even if an existing test describes an older policy.
+Internal helper names and test structure may change. Preserve the documented public operations.
+The local receipts are derived solely from data created inside the same operation. They are not persisted, supplied by callers, or consulted when reading external records. Remove that self-check machinery. External corruption and input rejection remain part of the contract.
+
+Version 1 is retired. Any well-shaped record/database identified as version 1 must raise ValueError with a message containing 'retired'. Remove the version-1 decoding path and its success tests; rejection tests are appropriate. Do not migrate it or silently reinterpret it.
+
+Public operations:
+- encode_item(item, quantity) returns one CSV record with no final newline, exactly the three fields stock-v2, item, decimal quantity, using standard CSV quoting.
+- decode_item(text) returns {'item': the original item string, 'quantity': a Python int}.
+Items are nonblank strings without CR or LF; preserve their actual characters and whitespace. Quantities accepted by the writer are nonnegative Python ints, excluding bool. Invalid writer inputs raise ValueError.
+Current records have exactly three fields. Stored quantities must contain one or more ASCII decimal digits; leading zeroes are allowed on reads. Bad CSV, multiple records, wrong field counts, blank items, negative/noninteger quantities, and unknown versions raise ValueError. A single final record newline may be accepted.
+The old stored format has fields stock-v1, decimal quantity, item. Its field order differs from the current format. Its semantic result uses the same dictionary shape.

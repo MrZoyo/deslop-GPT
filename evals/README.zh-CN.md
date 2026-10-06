@@ -10,7 +10,7 @@
 
 16 个小案例中，每个“应删除”案例都有一个编号前缀相同的“应保留”对照案例；同时提供已知正确的结果、会破坏行为的错误改法，以及其他有效方案，用来校准评分。另有三个小型仓库，在整库规模上模拟逐步累积的冗余测试、形式大于实效的验证和回退逻辑。
 
-`dev-v2-focused-rc5` 已经冻结。另建的 [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，目前有 9 组可执行案例，覆盖生产可达性、测试 hermeticity、权威 artifact 和 schema 契约。draft2 根据本地清理复核增加公开 API/manifest 案例，并补强修改历史与测试增长校准；draft3 根据 2026-09-23 的 Opus 5.5 A/B 增加指纹契约案例对和零测试极性状态。CI 会校验它的内部一致性，但它目前还不能用于模型对比，结果也不能与 `dev-v2-focused` 混算。
+`dev-v2-focused-rc5` 已经冻结。另建的 [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，目前有 9 组可执行案例，覆盖生产可达性、测试 hermeticity、权威 artifact 和 schema 契约。draft2 根据本地清理复核增加公开 API/manifest 案例，并补强修改历史与测试增长校准；draft3 根据 2026-09-23 的 Opus 5.5 A/B 增加指纹契约案例对和零测试极性状态。CI 校验其内部一致性。0.3.4 说明另行报告采用 edge-coverage-v1 修订的开发对照；结果不能与 `dev-v2-focused` 混算，也不能当作独立留出集证据。
 
 [`runtime-controls`](runtime-controls/README.zh-CN.md) 单独检查授权边界和其他宿主运行时承诺。这些控制案例既不是清理质量案例，也不计入任何语料分数。
 
@@ -112,3 +112,7 @@ uv run --with agent-skill-eval==0.7.0 \
 ## 已退役的 `dev-v1`
 
 覆盖范围较广、包含 20 个案例的 `dev-v1` 已不再用作当前调优基准。它的测试样例、旧评分程序、评测规则和历史诊断结果保存在 [`archive/dev-v1/`](archive/dev-v1/) 中，只用于回顾历史和参考较宽范围的安全回归。当前 CI 不会运行它。
+
+## 0.3.4
+
+0.3.4 版本新增独立的生命周期与跨格式套件，原 rc5、draft4 保持冻结。可选 edge-coverage-v1 只修正拒绝断言识别，不改变历史预算或分数。 [详见发布说明](../docs/0.3.4.zh-CN.md).

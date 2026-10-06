@@ -1,0 +1,20 @@
+{
+  "revision": "dev-v4-persistence-draft1",
+  "role": "exposed development counterexamples; not held-out model-effect evidence",
+  "observations": [
+    {
+      "id": "stored-format-lifecycle",
+      "source": "Local gpt61-sol-full-ab-20261005 evaluation, verification-bloat",
+      "source_commit": "0d69367554cd1b89231750f75d6d15715b0778b1",
+      "source_skill_sha256": "aa761a900a162789f2d7058427bfa86d72cf18741df0e0e5dd781ce380e946bb",
+      "observed": "Both arms changed a stored object to a bare list. All six outputs rejected a valid pre-cleanup report despite passing the frozen round-trip grader.",
+      "denominator": "one exposed fixture, three runs per arm; not six independent scenarios",
+      "boundary": "The old fixture did not explicitly state its historical-format retirement policy. Preserve its original score and record the compatibility change separately.",
+      "new_contract": "The supported member explicitly retains formats 1 and 2; the retired member explicitly rejects format 1 while keeping format 2.",
+      "wrong_change": "Let a writer and reader change together and infer compatibility from their new round trip, or retain a positively retired decoder without a consumer.",
+      "minimum_change": "Remove unused receipt/checksum machinery while keeping supported representations; remove the legacy path only under the retirement contract.",
+      "oracle": "Fixed stored JSON independent of the candidate writer, a literal external digest, corruption probes, public writer return, and lifecycle acceptance/rejection.",
+      "calibration": "Supported/retired decoder mutants and a coupled writer-reader format mutant have green ordinary suites and fail hidden contracts. Alternate serialization layouts remain valid."
+    }
+  ]
+}

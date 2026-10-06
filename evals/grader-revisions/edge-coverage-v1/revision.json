@@ -1,0 +1,7 @@
+{
+  "revision": "edge-coverage-v1",
+  "base": "dev-v3-evidence-edges-draft4",
+  "base_sha256": "ad41ed0b5195cbe3da9fa69f607b9524d0c135e899e15cb75b7d4310a83751c5",
+  "change": "Recognize assertRaisesRegex alongside assertRaises/raises; all behavior, target and numeric budget rules unchanged.",
+  "historical_scores": "Keep original reports; any regrade is a separate record."
+}

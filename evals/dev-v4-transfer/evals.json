@@ -1,0 +1,96 @@
+{
+  "schema": "deslop-transfer-evals-v1",
+  "skill_name": "deslop",
+  "corpus_role": "independent-forward-transfer",
+  "corpus_revision": "dev-v4-transfer-draft1",
+  "evals": [
+    {
+      "id": "csv_keep_v1",
+      "prompt": "Clean up this small inventory module and its tests. Read CONTRACT.txt first; it records the current format lifecycle. Remove local self-generated verification overhead and simplify the implementation where useful. Keep the documented current operations and useful input/corruption checks. Update obsolete tests according to the lifecycle policy and leave a runnable unittest suite. Work only in this case directory.",
+      "expected_output": "The documented lifecycle and public operations hold while local verification overhead is removed.",
+      "files": [
+        "cases/csv_keep_v1/app.py",
+        "cases/csv_keep_v1/test_app.py",
+        "cases/csv_keep_v1/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    },
+    {
+      "id": "csv_retire_v1",
+      "prompt": "Clean up this small inventory module and its tests. Read CONTRACT.txt first; it records the current format lifecycle. Remove local self-generated verification overhead and simplify the implementation where useful. Keep the documented current operations and useful input/corruption checks. Update obsolete tests according to the lifecycle policy and leave a runnable unittest suite. Work only in this case directory.",
+      "expected_output": "The documented lifecycle and public operations hold while local verification overhead is removed.",
+      "files": [
+        "cases/csv_retire_v1/app.py",
+        "cases/csv_retire_v1/test_app.py",
+        "cases/csv_retire_v1/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    },
+    {
+      "id": "sqlite_keep_v1",
+      "prompt": "Clean up this small inventory module and its tests. Read CONTRACT.txt first; it records the current format lifecycle. Remove local self-generated verification overhead and simplify the implementation where useful. Keep the documented current operations and useful input/corruption checks. Update obsolete tests according to the lifecycle policy and leave a runnable unittest suite. Work only in this case directory.",
+      "expected_output": "The documented lifecycle and public operations hold while local verification overhead is removed.",
+      "files": [
+        "cases/sqlite_keep_v1/app.py",
+        "cases/sqlite_keep_v1/test_app.py",
+        "cases/sqlite_keep_v1/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    },
+    {
+      "id": "sqlite_retire_v1",
+      "prompt": "Clean up this small inventory module and its tests. Read CONTRACT.txt first; it records the current format lifecycle. Remove local self-generated verification overhead and simplify the implementation where useful. Keep the documented current operations and useful input/corruption checks. Update obsolete tests according to the lifecycle policy and leave a runnable unittest suite. Work only in this case directory.",
+      "expected_output": "The documented lifecycle and public operations hold while local verification overhead is removed.",
+      "files": [
+        "cases/sqlite_retire_v1/app.py",
+        "cases/sqlite_retire_v1/test_app.py",
+        "cases/sqlite_retire_v1/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    }
+  ]
+}

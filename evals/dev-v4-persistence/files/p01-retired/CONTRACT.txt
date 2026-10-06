@@ -1,0 +1,15 @@
+The report archive has completed its migration to format 2. All current writers
+emit format 2; read_report must reject format 1, missing format identifiers, and
+unknown formats. The former rows-based decoder and its success test predate this
+retirement decision. Do not preserve that retired behavior through a fallback.
+
+Format 2 stores its record list under records. Its format number and field name
+remain the persisted interface. write_report returns None. read_report returns
+the records in order after comparing their canonical JSON (sorted keys, compact
+separators, UTF-8) to a separately supplied SHA-256 digest. A changed record must
+fail verification. The digest describes the records, not the entire file.
+Additional stored fields are ignored.
+
+The local receipt has no archive consumer, publication authority, reader role,
+or required output. Its helpers are private and its only clients are writer
+self-checks and tests. Removing them does not change the format 2 contract.

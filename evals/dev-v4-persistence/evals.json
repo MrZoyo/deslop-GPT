@@ -1,0 +1,52 @@
+{
+  "schema": "deslop-persistence-evals-v1",
+  "skill_name": "deslop",
+  "corpus_role": "development",
+  "corpus_revision": "dev-v4-persistence-draft1",
+  "evals": [
+    {
+      "id": "p01-supported",
+      "prompt": "Apply a focused, evidence-backed cleanup to the report writer, reader, and tests. Remove unused local verification machinery, respect the documented storage lifecycle and public operations, and run the remaining checks.",
+      "expected_output": "The documented report contracts remain valid with local self-verification removed.",
+      "files": [
+        "files/p01-supported/app.py",
+        "files/p01-supported/test_app.py",
+        "files/p01-supported/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    },
+    {
+      "id": "p01-retired",
+      "prompt": "Apply a focused, evidence-backed cleanup to the report writer, reader, and tests. Remove unused local verification machinery, respect the documented storage lifecycle and public operations, and run the remaining checks.",
+      "expected_output": "The documented report contracts remain valid with local self-verification removed.",
+      "files": [
+        "files/p01-retired/app.py",
+        "files/p01-retired/test_app.py",
+        "files/p01-retired/CONTRACT.txt"
+      ],
+      "assertions": [],
+      "should_trigger": true,
+      "force_skill_invocation": true,
+      "stage_files": false,
+      "side_effect_level": "local-only",
+      "side_effect_contract": {
+        "allow_new_local_branches": false,
+        "allow_new_remote_branches": false,
+        "allow_new_commits": false,
+        "allow_new_review_requests": false,
+        "allow_worktree_changes": true
+      }
+    }
+  ]
+}

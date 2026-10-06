@@ -20,6 +20,13 @@ jobs:
         run: python3 scripts/validate_focused_corpus.py
       - name: Validate evidence-edge draft corpus
         run: python3 scripts/validate_evidence_edges_corpus.py
+      - name: Validate persistence counterexamples and coverage revision
+        run: |
+          python3 scripts/validate_persistence_corpus.py
+          python3 scripts/validate_grader_revision.py
+          python3 evals/dev-v4-transfer/held_back/validate_transfer.py
+          python3 evals/grader-revisions/transfer-existing-v0-v1/probe.py --calibrate
+          python3 evals/grader-revisions/persistence-legacy-integrity-v1/probe.py --calibrate
       - name: Validate harness wrapper
         run: |
           uv run --with agent-skill-eval==0.7.0 \
@@ -36,3 +43,7 @@ jobs:
             python scripts/run_agent_skill_eval.py validate evals/dev-v3-evidence-edges/evals.json
           uv run --with agent-skill-eval==0.7.0 \
             python scripts/run_agent_skill_eval.py validate evals/runtime-controls/evals.json
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/dev-v4-persistence/evals.json
+          uv run --with agent-skill-eval==0.7.0 \
+            python scripts/run_agent_skill_eval.py validate evals/dev-v4-transfer/evals.json

@@ -54,25 +54,25 @@
 
 ## 快速开始
 
-### Codex：安装独立版 Skill（v0.3.3）
+### Codex：安装独立版 Skill（v0.3.4）
 
 把下面的 GitHub Skill 地址交给内置安装器：
 
 ```text
 $skill-installer
 请从以下地址安装 Skill：
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.4/skills/deslop
 ```
 
 如果希望直接检查本地源码，可以把 Skill 运行目录链接到 Codex 官方文档规定的用户级 Skill 目录：
 
 ```bash
-git clone --branch v0.3.3 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.4 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的改动。带 v0.3.3 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
+安装后请确认所选 Skill 路径指向预期版本，发现检查见[入门指南](docs/getting-started.zh-CN.md)。带 v0.3.4 标签的地址固定指向当前发布的独立版 Skill；[`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) 是开发分支，可能包含尚未发布的内容。
 
 ### Claude Code：从 GitHub 安装 Plugin
 
@@ -83,7 +83,7 @@ Codex 支持通过符号链接加载 Skill 目录，并会自动识别其中的�
 /plugin install deslop@deslop
 ```
 
-Plugin 的标准命令是 `/deslop:deslop`。插件市场通过明确的 HTTPS Git source 固定到 `v0.3.3`。本地源码仓库可用 `claude --plugin-dir .` 加载。这个补丁版本明确公开契约与独立测试覆盖的保留边界；历史评测仍只对应当时的精确 payload。
+Plugin 的标准命令是 `/deslop:deslop`。v0.3.4 目录通过明确的 HTTPS Git source 固定到发布标签。本地源码仓库可用 `claude --plugin-dir .` 加载。[0.3.4 发布说明](docs/0.3.4.zh-CN.md) 记录这次持久化规则的定点修正和有升有降的评测结果；历史证据仍绑定当时的精确 payload。
 
 ### 一份本地源码，同时供两个平台加载
 
@@ -187,7 +187,9 @@ Codex 通过 [`allow_implicit_invocation: false`](skills/deslop/agents/openai.ya
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.zh-CN.md) 使用成对的小案例和三个端到端小型仓库，检查 Agent 是否能正确判断该删什么、该留什么。只有先通过行为检查，才会计算精简指标。小案例和小型仓库的结果始终分开报告，本仓库不发布项目级性能分数。
 
-后续的 [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，现有 9 对可执行案例；draft2 增加公开 API/manifest 边界，并补强修改历史与测试增长校准；draft3 增加指纹契约案例对和零测试极性状态，draft4 完成退役依据与评分识别的发布复核。目前只校验草案内部一致性，不把它描述成模型表现证据。
+后续的 [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.zh-CN.md) 草案收录了 19 条匿名化现场观察，现有 9 对可执行案例；draft2 增加公开 API/manifest 边界，并补强修改历史与测试增长校准；draft3 增加指纹契约案例对和零测试极性状态，draft4 完成退役依据与评分识别的发布复核。0.3.4 说明另行报告了采用 edge-coverage-v1 修订的开发对照；它不是独立留出集证据，也不支持泛化优势的结论。
+
+[0.3.4 版本](docs/0.3.4.zh-CN.md) 新增生命周期反例、独立设计的 CSV／SQLite 案例，以及单独的覆盖识别修订；历史输入和原分数保持不变。
 
 结果应如何解读，见[评测](docs/evaluation.zh-CN.md)；完整规则见 [`evals/README.zh-CN.md`](evals/README.zh-CN.md)。
 

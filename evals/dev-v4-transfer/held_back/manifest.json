@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "case_id": "csv_keep_v1",
+      "kind": "csv",
+      "legacy_supported": true,
+      "mutants": [
+        "mutant_drop_legacy",
+        "mutant_weaken_corruption"
+      ],
+      "baseline_production_lines": 59,
+      "fixture_path": "cases/csv_keep_v1",
+      "overlay_path": "held_back/overlays/csv_keep_v1"
+    },
+    {
+      "case_id": "csv_retire_v1",
+      "kind": "csv",
+      "legacy_supported": false,
+      "mutants": [
+        "mutant_accept_retired",
+        "mutant_dead_decoder"
+      ],
+      "baseline_production_lines": 59,
+      "fixture_path": "cases/csv_retire_v1",
+      "overlay_path": "held_back/overlays/csv_retire_v1"
+    },
+    {
+      "case_id": "sqlite_keep_v1",
+      "kind": "sqlite",
+      "legacy_supported": true,
+      "mutants": [
+        "mutant_drop_legacy",
+        "mutant_weaken_corruption"
+      ],
+      "baseline_production_lines": 60,
+      "fixture_path": "cases/sqlite_keep_v1",
+      "overlay_path": "held_back/overlays/sqlite_keep_v1"
+    },
+    {
+      "case_id": "sqlite_retire_v1",
+      "kind": "sqlite",
+      "legacy_supported": false,
+      "mutants": [
+        "mutant_accept_retired",
+        "mutant_dead_decoder"
+      ],
+      "baseline_production_lines": 60,
+      "fixture_path": "cases/sqlite_retire_v1",
+      "overlay_path": "held_back/overlays/sqlite_retire_v1"
+    }
+  ]
+}

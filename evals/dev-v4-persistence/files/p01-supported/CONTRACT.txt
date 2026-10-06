@@ -1,0 +1,14 @@
+The report archive has active readers for formats 1 and 2. Both remain supported.
+Format 1 stores its record list under rows; format 2 uses records. The format
+number and those field names are the persisted interface. Missing or unknown
+format identifiers are invalid. The writer emits format 2 and returns None.
+
+read_report returns the records, in order, after comparing their canonical JSON
+(sorted keys, compact separators, UTF-8) to a separately supplied SHA-256 digest.
+A changed record must fail that comparison. The digest describes the records,
+not the entire file representation. Additional stored fields are ignored.
+
+The receipt was introduced during repeated local verification patches. It has
+no archive consumer, publication authority, reader role, or required output.
+Its helpers are private and its only clients are writer self-checks and tests.
+Removing receipt generation does not end support for either persisted format.

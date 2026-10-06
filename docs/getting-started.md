@@ -6,32 +6,32 @@
 
 ## Install
 
-### Codex: released standalone Skill v0.3.3
+### Codex: released standalone Skill v0.3.4
 
 OpenAI's [Codex Skills documentation](https://developers.openai.com/codex/skills/) documents `$skill-installer` for curated skills and skills from other repositories. Invoke it with this repository URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.4/skills/deslop
 ```
 
-The v0.3.3 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. Codex and Claude Code load the same Skill. This patch clarifies preservation of public APIs, persisted metadata, and independent coverage of surviving behavior, with paired cleanup examples. Earlier versions remain available at their immutable tags.
+The v0.3.4 installable payload is only [`skills/deslop/`](../skills/deslop/), not the evaluation corpus or project documentation. Codex and Claude Code load the same Skill. This patch clarifies how cleanup preserves supported stored formats and domain return values, with examples for both supported and explicitly retired formats. Earlier versions remain available at their immutable tags.
 
 The currently bundled `$skill-installer` manages downloaded Skills in an installer-managed location, by default under `$CODEX_HOME/skills` (commonly `~/.codex/skills`). That is current installer behavior, not a permanent public path contract. `$HOME/.agents/skills` below is the documented, directly reviewable user discovery path.
 
 ### Reviewable standalone checkout for Codex and Claude Code
 
-Codex discovers personal Skills under `$HOME/.agents/skills`; Claude Code uses `$HOME/.claude/skills`. Both follow symlinked Skill directories. Clone the project outside either discovery tree, then create only the link or links you need:
+Codex discovers personal Skills under `$HOME/.agents/skills`; Claude Code uses `$HOME/.claude/skills`. A symlink keeps the installed source reviewable; confirm discovery on your host as described below. Clone the project outside either discovery tree, then create only the link or links you need:
 
 ```bash
-git clone --branch v0.3.3 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.4 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.claude/skills/deslop"
 ```
 
-Use only the link for the host you need. Run an `ln` command only when its destination does not already exist. Codex normally detects Skill changes automatically. Claude Code watches existing Skill directories, but if the top-level directory was created after a session started, restart that session. The standalone command names are `$deslop` in Codex and `/deslop` in Claude Code.
+Use only the link for the host you need. Run an `ln` command only when its destination does not already exist. Confirm the selected Skill path and version before use. If a symlink does not appear in discovery, install a physical copy of the tagged `skills/deslop/` directory instead, without overwriting an existing installation. Multiple copies named `deslop` can select an older payload; choose the intended path explicitly. Claude Code watches existing Skill directories, but if the top-level directory was created after a session started, restart that session. The standalone command names are `$deslop` in Codex and `/deslop` in Claude Code.
 
 This is an independent community Skill. Compatibility does not imply affiliation with or endorsement by OpenAI or Anthropic.
 
@@ -50,7 +50,7 @@ Invoke the installed Plugin with its canonical namespaced command:
 /deslop:deslop audit
 ```
 
-The marketplace catalog follows `main` and uses an explicit HTTPS Git source pinned to `v0.3.3`, keeping installations on the released payload as development continues. Claude Code uses the manifest version as its update key, so each Plugin release must update both its version and catalog ref.
+The marketplace catalog follows `main` and uses an explicit HTTPS Git source pinned to `v0.3.4`, keeping installations on the released payload as development continues. Claude Code uses the manifest version as its update key, so each Plugin release must update both its version and catalog ref.
 
 For local Plugin development, start Claude Code from this repository with:
 
@@ -60,16 +60,16 @@ claude --plugin-dir .
 
 This loads the same [`skills/deslop/`](../skills/deslop/) payload under the `/deslop:deslop` namespace without installing it.
 
-### Upgrade from v0.3.2 or earlier
+### Upgrade from v0.3.3 or earlier
 
-v0.3.3 changes the runtime guidance while keeping the `skills/deslop/` path unchanged. A source checkout installed through a symlink only needs to move to the v0.3.3 tag; the link itself does not change. Reinstall an installer-managed Codex copy from the v0.3.3 URL above. Update an installed Claude Code Plugin with `claude plugin update deslop@deslop`, then restart Claude Code. Older installations can upgrade directly the same way.
+v0.3.4 changes the runtime guidance while keeping the `skills/deslop/` path unchanged. A source checkout installed through a symlink only needs to move to the v0.3.4 tag; the link itself does not change. Reinstall an installer-managed Codex copy from the v0.3.4 URL above. Update an installed Claude Code Plugin with `claude plugin update deslop@deslop`, then restart Claude Code. Older installations can upgrade directly the same way.
 
 ### Upgrade from v0.1.0
 
 The installer does not automatically follow a Git directory rename. Reinstall from:
 
 ```text
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.4/skills/deslop
 ```
 
 The old v0.1.0 path was:
@@ -85,7 +85,7 @@ test -L "$HOME/.agents/skills/deslop"
 readlink "$HOME/.agents/skills/deslop"
 ```
 
-Only when that output confirms the expected v0.1.0 symlink to `~/.local/share/deslop-GPT/skill/deslop`, remove the symlink itself and recreate it for v0.3.3:
+Only when that output confirms the expected v0.1.0 symlink to `~/.local/share/deslop-GPT/skill/deslop`, remove the symlink itself and recreate it for v0.3.4:
 
 ```bash
 unlink "$HOME/.agents/skills/deslop"
@@ -97,7 +97,7 @@ If the destination is a real directory or points somewhere else, stop and review
 
 ### Development branch
 
-The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.3.3 path when reproducibility matters.
+The [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) path may contain unreleased changes. Use it only when you intentionally want the development version; use the tagged v0.3.4 path when reproducibility matters.
 
 The standalone runtime path is versioned with the repository: v0.1.0 remains at `skill/deslop/`, while v0.2.0 and later use the canonical `skills/deslop/` path.
 
@@ -105,7 +105,7 @@ The standalone runtime path is versioned with the repository: v0.1.0 remains at 
 
 Claude Code packaging is defined by [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json), and the GitHub installation catalog is [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). These files are Claude-specific and do not replace Codex standalone discovery.
 
-v0.3.3 continues to use the tagged standalone Skill as its Codex release path. Current OpenAI documentation also supports distributing Skills through Plugins, but this repository does not yet ship Codex Plugin metadata. The earlier Codex CLI 0.149.1 registration experiment remains historical development evidence; it does not describe current Codex platform support.
+v0.3.4 continues to use the tagged standalone Skill as its Codex release path. Current OpenAI documentation also supports distributing Skills through Plugins, but this repository does not yet ship Codex Plugin metadata. The earlier Codex CLI 0.149.1 registration experiment remains historical development evidence; it does not describe current Codex platform support.
 
 ## Invocation modes
 

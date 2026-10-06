@@ -1,0 +1,101 @@
+Independent forward-test package: version lifecycle during semantic cleanup
+
+This package was authored without reading the candidate skill, its checkout,
+memory, previous evaluation results, or any existing fixture source. The designer made no cleanup-model calls, network operations, or dependency
+installations; a model authored this test package.
+All execution uses the existing macOS Python environment and Python's stdlib.
+
+Case IDs:
+  csv_keep_v1       CSV stock-v1 remains readable.
+  csv_retire_v1     CSV stock-v1 must be visibly rejected and its decoder removed.
+  sqlite_keep_v1    SQLite user_version=1 remains readable.
+  sqlite_retire_v1  SQLite user_version=1 must be visibly rejected and its decoder removed.
+
+Each visible case has app.py, test_app.py, CONTRACT.txt, and PROMPT.txt. Both
+members of a format pair start with the same implementation and existing tests.
+Their authoritative lifecycle policies differ in CONTRACT.txt. This models an
+explicit requirement change, including the need to remove obsolete success
+tests in a retired case. The starting suites pass; that is insufficient to
+establish compliance with the newly stated retirement policy.
+
+Only a chosen case's visible files belong in a cleanup workspace. evals.json
+contains natural prompts and file lists, with force_skill_invocation=true and
+the copied-fixture-only apply contract. No commit or branch creation is allowed.
+Do not make DESIGN.txt, this package root, or held_back/ accessible as fixture
+input to a candidate. Reference implementations and grading rules are all in
+held_back/. The original package generator is retained outside the checkout with the authoring evidence.
+
+What is held back:
+  - grade_transfer.py, its external records, behavioral assertions, and checks.
+  - known-good and alternate-valid overlays for all four cases.
+  - destructive mutants and insufficient-cleanup states.
+  - manifest.json and validate_transfer.py. Detailed calibration output is saved
+    outside the checkout with --output when requested.
+
+The hidden legacy CSV is a fixed literal with old field order, leading zeroes,
+and a quoted item. Legacy SQLite files are built from fixed SQL defining the old
+schema and inserting text quantities. Neither passes through a candidate writer.
+Hidden checks preserve current values, quoting, item characters, empty inventory
+semantics, supported legacy values, visible retirement errors, meaningful invalid
+input/corruption rejection, and SQLite read/write preservation where specified.
+
+The grader reports three independent categories:
+  behavior: the explicit functional contract and externally constructed records;
+  remaining_tests: a nonzero passing suite with observed successful current
+    writer and reader calls plus writer and reader ValueError rejection coverage;
+  removal: deletion of self-only fingerprint instrumentation, and retirement
+    cases' old semantic decoder/success-test machinery.
+Line counts, source bytes, function counts, and remaining tests run are metrics,
+not scoring thresholds. No internal helper names or test method names are fixed.
+The named public operations in CONTRACT.txt are the API under test. Test files
+may be reorganized under normal unittest discovery; exact counts are not required.
+
+Calibration states per case:
+  known_good / alternate_valid: all three categories pass. The alternatives
+    include different factoring, including inline legacy field normalization.
+  insufficient_cleanup: behavior and suite pass, but local fingerprint work stays.
+  keep-case mutant_drop_legacy: ordinary current tests stay green while genuine
+    hidden reads of independently stored old data fail.
+  keep-case mutant_weaken_corruption: ordinary tests stay green after the relevant
+    old corruption test is removed, but hidden malformed current data is accepted.
+  retire-case mutant_accept_retired: ordinary current tests stay green after
+    removing obsolete tests, but hidden retirement behavior fails.
+  retire-case mutant_dead_decoder: behavior and tests pass while the disconnected
+    old decoder remains; the removal check detects its old semantic result.
+The baseline is also calibrated, so the package does not require the initial
+source to satisfy its own cleanup objective before cleanup.
+
+Run calibration (all workspaces are temporary copies):
+  PYTHONDONTWRITEBYTECODE=1 python3 \
+    held_back/validate_transfer.py
+Use --output /outside/checkout/calibration.json to save input SHA256 values and
+separate category outcomes; otherwise it writes only a stdout summary. The grader applies a 15-second worker timeout;
+validation applies a 20-second per-grade timeout. PYTHONDONTWRITEBYTECODE=1 is
+set for subprocesses. Input hashes are compared before and after validation.
+
+Grade a copied fixture:
+  PYTHONDONTWRITEBYTECODE=1 python3 \
+    held_back/grade_transfer.py CASE_ID /absolute/path/to/copied/fixture
+The CLI emits one JSON object and exits 0 for pass, 1 for failed/unverified checks,
+or 2 for invalid CLI usage. Hidden materials must stay outside that copied fixture.
+
+Boundaries and limitations:
+These are four deliberately small, related Python cases, not an estimate of
+general cleanup quality or real application maintenance performance. The pair
+structure is intentional; report denominators by case and by format, rather than
+treating the four cases as unrelated samples. They test contract-driven format
+lifecycle choice, not a universal requirement to preserve all old representations.
+There is no new compatibility framework, migration system, or externally trusted
+checksum in the task. Hash/fingerprint imports and digest calls in production
+modules are a bounded static check against the fixture's self-only machinery.
+They do not prove the absence of every imaginable redundant computation.
+Retired decoder detection probes module-level one-argument Python functions with
+independent old rows/connections; it does not prove arbitrary unreachable code
+has vanished. Discovery/coverage assumes conventional Python unittest code and
+non-adversarial local refactoring. These checks are not a sandbox for hostile code.
+Read-only SQLite semantics use logical schema/row/version snapshots rather than
+claiming complete physical file-byte identity. Durability, concurrency, schema
+migration, large records, performance, exhaustive parser fuzzing, and additional
+formats are outside the explicit contract. Calibration establishes that the
+designed checks distinguish these supplied states; it says nothing about an
+unseen frozen candidate's results.

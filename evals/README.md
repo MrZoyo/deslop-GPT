@@ -10,7 +10,7 @@ The active development benchmark is [`dev-v2-focused`](dev-v2-focused/README.md)
 
 The 16 micro cases have same-prefix preservation counterexamples, golden/mutant polarity calibration, and alternate-valid calibration. The three mini repositories model accumulated test, verification, and fallback slop at repository scale.
 
-`dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and nine executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. Draft2 adds the public-API/manifest pair and strengthens correction-history and coverage calibration after a local cleanup review; draft3 adds a fingerprint-contract pair with a zero-test polarity state from the 2026-09-23 Opus 5.5 A/B. It is validated in CI but is not yet a model-comparison corpus; its results must not be combined with `dev-v2-focused`.
+`dev-v2-focused-rc5` is frozen. The separate [`dev-v3-evidence-edges`](dev-v3-evidence-edges/README.md) draft contains 19 anonymized field observations and nine executable pairs about production reachability, test hermeticity, authoritative artifacts, and schema contracts. Draft2 adds the public-API/manifest pair and strengthens correction-history and coverage calibration after a local cleanup review; draft3 adds a fingerprint-contract pair with a zero-test polarity state from the 2026-09-23 Opus 5.5 A/B. CI validates its internal consistency. The 0.3.4 notes report a separate exposed development comparison using edge-coverage-v1; these results must not be combined with `dev-v2-focused` or treated as holdout evidence.
 
 [`runtime-controls`](runtime-controls/README.md) separately checks authorization and other host/runtime promises. These controls are neither cleanup-quality cases nor part of either corpus score.
 
@@ -112,3 +112,7 @@ No result from this command is publishable without the frozen revision, model/co
 ## Retired `dev-v1`
 
 The broad 20-case `dev-v1` suite is no longer an active tuning benchmark. Its fixtures, old grader, protocol, and historical diagnostics remain under [`archive/dev-v1/`](archive/dev-v1/) for history and broad safety-regression reference. Active CI does not run it.
+
+## 0.3.4
+
+The 0.3.4 release adds separate lifecycle and cross-format suites; original rc5 and draft4 remain frozen. The opt-in edge-coverage-v1 revision changes only rejection-assertion recognition, not historical budgets or scores. [Details](../docs/0.3.4.md).

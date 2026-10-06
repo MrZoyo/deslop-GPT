@@ -1,0 +1,14 @@
+Purpose: maintain the small inventory module used by a local packing desk.
+The lifecycle requirements below are authoritative even if an existing test describes an older policy.
+Internal helper names and test structure may change. Preserve the documented public operations.
+The local receipts are derived solely from data created inside the same operation. They are not persisted, supplied by callers, or consulted when reading external records. Remove that self-check machinery. External corruption and input rejection remain part of the contract.
+
+Version 1 is retired. Any well-shaped record/database identified as version 1 must raise ValueError with a message containing 'retired'. Remove the version-1 decoding path and its success tests; rejection tests are appropriate. Do not migrate it or silently reinterpret it.
+
+Public operations:
+- write_inventory(path, items) accepts an iterable of (item, quantity) pairs, creates or replaces a current inventory, and returns the number of rows written.
+- read_inventory(path) returns dictionaries {'item': item, 'quantity': Python int}, sorted by item, including [] for an empty current inventory.
+Items are nonblank strings and must be unique. Preserve their actual characters and whitespace. Writer quantities are nonnegative Python ints, excluding bool. Invalid input raises ValueError before replacing existing rows.
+Current SQLite databases use PRAGMA user_version=2 and inventory_items(item TEXT PRIMARY KEY, quantity INTEGER NOT NULL). Reads reject blank/duplicate items and noninteger/negative stored quantities. Missing required tables, broken SQLite files, and unknown database versions raise ValueError. Reads leave stored rows and user_version unchanged.
+Writes to an existing version-1 or unknown-version database raise ValueError and leave its stored rows and version unchanged. No write migration is requested.
+The old stored schema uses PRAGMA user_version=1 and stock(name TEXT PRIMARY KEY, units TEXT). Supported legacy units are nonnegative decimal strings (including leading zeroes), returned as Python ints. Invalid legacy units/items raise ValueError.

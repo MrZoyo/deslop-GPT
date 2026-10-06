@@ -113,7 +113,7 @@ claude plugin validate . --strict
 
 ## 发布就绪条件
 
-项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；Claude Plugin manifest 为 0.3.3，与 v0.3.3 发布标签对应。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。在给发布提交打标签之前，就要把 marketplace 源写成显式的 `url` 加 `ref` 形式；`github` 简写会继承用户本地的 Git 传输方式。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
+项目从 v0.1.0 起按语义化版本发布。`0.x` 版本已经可以使用，但仍在持续演进。带附注的 Git 标签一经发布便不再移动，用来唯一标识一个发布版本。发布 manifest 中的版本号必须与 Git 标签一致，只是不带开头的 `v`；0.3.4 manifest 对应标签 `v0.3.4`。Claude Code 以 manifest 版本号判断更新，所以每次修改 Plugin 内容都必须提升版本号，并把 marketplace pin 移到新发布。在给发布提交打标签之前，就要把 marketplace 源写成显式的 `url` 加 `ref` 形式；`github` 简写会继承用户本地的 Git 传输方式。标签创建后，`main` 上的目录可以再加入该发布的精确提交 SHA，而不修改标签中的 Plugin payload。基准评测自身的修订标签与项目发布版本彼此独立。
 
 在面向公众的发布提交之前：
 
@@ -130,6 +130,10 @@ claude plugin validate . --strict
 
 统一使用的 [`skills/deslop/`](../skills/deslop/) 目录遵循通用标准，各运行平台加载的都是完全相同的内容。Codex 可以从 `.agents/skills` 把它加载为独立 Skill；Claude Code 可以从 `.claude/skills` 加载同一目录，也可以通过本仓库的 Claude Plugin 加载。OpenAI 专用的 [`agents/openai.yaml`](../skills/deslop/agents/openai.yaml) 负责 Codex 界面元数据，并要求用户明确调用该 Skill；Claude Code 会忽略这个文件。
 
-Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。manifest 声明 0.3.3，marketplace 使用明确的 HTTPS Git source，固定到 `v0.3.3` 发布标签。标签存在后，`main` 目录可额外固定到其精确提交 SHA。0.3.3 补充清理判断示例，并将开发语料整理为 draft4；离线检查通过不等于模型效果提升。
+Claude Code 的发布配置位于 [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) 和 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json)。仓库根目录就是 Plugin 根目录，因此 Claude 会按默认规则扫描 `skills/<name>/SKILL.md`，并提供标准的命名空间命令 `/deslop:deslop`。0.3.4 manifest 与 marketplace 的明确 HTTPS Git source 对应固定标签 `v0.3.4`。标签存在后，`main` 目录可额外固定到其精确提交 SHA。0.3.3 补充清理判断示例，并将开发语料整理为 draft4；离线检查通过不等于模型效果提升。
 
-v0.3.3 不包含 Codex Plugin 打包。在早期 Codex CLI 0.149.1 实验中，Plugin Creator 接受了一份配置 `skills: "./skills/"` 的临时纯 Skills manifest；本地发现、安装和缓存创建也成功，但新的 app-server 没有注册缓存中的 `deslop` Skill。OpenAI 当前的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)已经支持通过 Plugin 分发 Skill，因此旧结果只描述当时测试的宿主，不能视为当前平台限制。若要加入 Codex Plugin，需要针对当前宿主另行验证并作为独立发布变更处理；Claude 专用的 `.claude-plugin/` 元数据不能替代它。
+v0.3.4 不包含 Codex Plugin 打包。在早期 Codex CLI 0.149.1 实验中，Plugin Creator 接受了一份配置 `skills: "./skills/"` 的临时纯 Skills manifest；本地发现、安装和缓存创建也成功，但新的 app-server 没有注册缓存中的 `deslop` Skill。OpenAI 当前的 [Codex Skills 文档](https://developers.openai.com/codex/skills/)已经支持通过 Plugin 分发 Skill，因此旧结果只描述当时测试的宿主，不能视为当前平台限制。若要加入 Codex Plugin，需要针对当前宿主另行验证并作为独立发布变更处理；Claude 专用的 `.claude-plugin/` 元数据不能替代它。
+
+## 0.3.4 补充验证
+
+[发布说明](0.3.4.zh-CN.md) 记录运行时边界和发布状态。除既有检查外，运行 `scripts/validate_persistence_corpus.py`、`scripts/validate_grader_revision.py`、`evals/dev-v4-transfer/held_back/validate_transfer.py`、`evals/grader-revisions/transfer-existing-v0-v1/probe.py --calibrate`、`evals/grader-revisions/persistence-legacy-integrity-v1/probe.py --calibrate`，并验证两个新 manifest。版本 0 探针记录对照期间发现的独立补充证据。原始结果与校准详细输出放在 checkout 外。

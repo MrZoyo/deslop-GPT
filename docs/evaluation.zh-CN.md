@@ -23,7 +23,7 @@
 
 [`dev-v3-evidence-edges`](../evals/dev-v3-evidence-edges/README.zh-CN.md) 是另一套独立草案，来源于 19 条匿名化现场观察和一次本地清理复核。目前有 9 对可执行 fixture，检查生产可达性、当前路径的集成根、测试输入输出是否受管、权威 artifact 是否必需、schema reader 是否一致、关键字段默认值，以及公开 package API 和独立 manifest 校验。draft2 还补强了修改历史证据，并校准了弱失败测试所需的小幅增长。draft3 增加一对指纹契约案例，其零测试校准状态说明：达到目标但不留任何测试仍然判失败。
 
-当清理过程暴露 current contract 的 fail-open 缺口时，这套草案允许 `repair`，并继续区分普通的 `simplify` 与 `preserve`。由于同一份现场复核也用于更新 Skill，这里只能作为答案已暴露的开发回归证据，不能当作独立留出集。它已经具备离线正反校准，但还没有冻结后的模型 baseline，因此不属于当前定量基准，也不能与 `dev-v2-focused` 的结果混算。
+当清理过程暴露 current contract 的 fail-open 缺口时，这套草案允许 `repair`，并继续区分普通的 `simplify` 与 `preserve`。由于同一份现场复核也用于更新 Skill，这里只能作为答案已暴露的开发回归证据，不能当作独立留出集。它已经具备离线正反校准。[0.3.4 对照](0.3.4.zh-CN.md) 使用固定 payload 和独立的 edge-coverage-v1 修订，仍属于开发证据，不能与 `dev-v2-focused` 的结果混算或当作独立留出集证据。
 
 ## 运行时控制与发布 smoke
 
@@ -74,3 +74,7 @@
 ## 工具背景
 
 评测流程参考了 [agent-skill-eval](https://github.com/tardigrde/agent-skill-eval) 和 [SkillBenchmark](https://github.com/TiesPetersen/SkillBenchmark)。提到这些项目不代表对方认可本项目，也不意味着使用不同评测集、Skill、模型或评测框架版本得到的结果可以直接比较。
+
+## 0.3.4
+
+0.3.4 版本新增生命周期配对案例、独立 CSV／SQLite 验证案例和可选的拒绝覆盖识别修订。各层分别记录版本和证据；冻结的 rc5、draft4 源码及历史分数保持不变。 [详见发布说明](0.3.4.zh-CN.md).

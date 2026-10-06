@@ -54,25 +54,25 @@ Resemblance to a smell is a lead, not a verdict. Security and trust boundaries, 
 
 ## Quick Start
 
-### Codex: install v0.3.3 as a standalone Skill
+### Codex: install v0.3.4 as a standalone Skill
 
 Invoke the bundled installer with this GitHub Skill URL:
 
 ```text
 $skill-installer
 Install the Skill from:
-https://github.com/MrZoyo/deslop-GPT/tree/v0.3.3/skills/deslop
+https://github.com/MrZoyo/deslop-GPT/tree/v0.3.4/skills/deslop
 ```
 
 For a reviewable local checkout, symlink the runtime directory into Codex's canonical user Skill location:
 
 ```bash
-git clone --branch v0.3.3 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
+git clone --branch v0.3.4 --depth 1 https://github.com/MrZoyo/deslop-GPT.git "$HOME/.local/share/deslop-GPT"
 mkdir -p "$HOME/.agents/skills"
 ln -s "$HOME/.local/share/deslop-GPT/skills/deslop" "$HOME/.agents/skills/deslop"
 ```
 
-Codex supports symlinked Skill directories and detects changes automatically. The tagged v0.3.3 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
+After installation, confirm that the selected Skill path points to the intended release; see the discovery checks in [Getting Started](docs/getting-started.md). The tagged v0.3.4 path is the current released, pinned standalone Skill; [`main`](https://github.com/MrZoyo/deslop-GPT/tree/main/skills/deslop) is the development branch and may contain unreleased changes.
 
 ### Claude Code: install the Plugin from GitHub
 
@@ -83,7 +83,7 @@ Inside Claude Code, add this repository as a marketplace and install the Plugin:
 /plugin install deslop@deslop
 ```
 
-The canonical Plugin command is `/deslop:deslop`. The marketplace uses an explicit HTTPS Git source pinned to `v0.3.3`. For a local checkout, run `claude --plugin-dir .` from the repository root. This patch clarifies preservation of public contracts and independent test coverage; historical evaluation results remain tied to their original payloads.
+The canonical Plugin command is `/deslop:deslop`. The v0.3.4 catalog uses an explicit HTTPS Git source pinned to the release tag. For a local checkout, run `claude --plugin-dir .` from the repository root. [0.3.4 release notes](docs/0.3.4.md) describe the narrow persistence-policy change and mixed evaluation results; historical evidence remains tied to its exact payload.
 
 ### One checkout, standalone discovery on both hosts
 
@@ -187,7 +187,9 @@ Version-bound forward smokes are published under [`evals/release-smoke/`](evals/
 
 [`dev-v2-focused`](evals/dev-v2-focused/README.md) tests preservation and simplification decisions across paired micro cases and three end-to-end miniature repositories. Behavior gates run before reduction metrics. Micro and mini-repository results remain separate, and the repository publishes no project-level performance score.
 
-The follow-up [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.md) draft records 19 anonymized field observations and contains nine executable pairs. Draft2 adds a public-API/manifest pair and strengthens correction-history and coverage calibration; draft3 adds a fingerprint-contract pair with a zero-test polarity state, and draft4 reviews retirement evidence and grading recognition. It is validated as a draft, not reported as model-performance evidence.
+The follow-up [`dev-v3-evidence-edges`](evals/dev-v3-evidence-edges/README.md) draft records 19 anonymized field observations and contains nine executable pairs. Draft2 adds a public-API/manifest pair and strengthens correction-history and coverage calibration; draft3 adds a fingerprint-contract pair with a zero-test polarity state, and draft4 reviews retirement evidence and grading recognition. The 0.3.4 notes report a separate exposed development comparison using the edge-coverage-v1 revision; it is not holdout evidence or a claim of general superiority.
+
+The [0.3.4 release](docs/0.3.4.md) adds lifecycle counterexamples, independently designed CSV/SQLite cases, and a separate coverage-recognition revision. Historical inputs and scores remain unchanged.
 
 See [Evaluation](docs/evaluation.md) for interpretation limits and [`evals/README.md`](evals/README.md) for the canonical protocol.
 
