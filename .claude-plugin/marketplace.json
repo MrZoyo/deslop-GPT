@@ -12,7 +12,8 @@
       "source": {
         "source": "url",
         "url": "https://github.com/MrZoyo/deslop-GPT.git",
-        "ref": "v0.3.4"
+        "ref": "v0.3.4",
+        "sha": "c6d8245fe9a2ff8fa1cb87528906ffafc038c286"
       },
       "description": "Audit or apply test-first, evidence-backed cleanup for accumulated test, verification, and fallback bloat."
     }
